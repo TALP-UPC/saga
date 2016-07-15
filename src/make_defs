@@ -1,0 +1,59 @@
+# Saga - Un transcriptor fonético para el idioma español
+#
+# Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
+#        TALP - Universitat Politècnica de Catalunya, ESPAÑA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Opciones de compilado y lincado para depuracion y explotacion.
+C_LINUX		=	-O3 -finline-functions -Wno-inline -DNDEBUG -c -I${INC} -DALBINO
+L_LINUX		=	-O3 -finline-functions -Wno-inline -DNDEBUG -L${LIB}
+LIB_LINUX	=	-lveu -static
+CC_LINUX    =   gcc -pedantic -Wall -D'ARCH="Linux"' 
+CPP_LINUX	=	g++
+
+CFLAGS		=	$(C_LINUX)
+CPPFLAGS	=	$(C_LINUX)
+LFLAGS		=	$(L_LINUX)
+LIBVEU		=	$(LIB_LINUX)
+CC			=	$(CC_LINUX)
+CPP			=	$(CPP_LINUX)
+MAKE		=	make -s
+
+# Reglas de construccion.
+.c.o		:
+				@echo $(CC) $(CFLAGS) -o $@ $<
+				@$(CC) $(CFLAGS) -o $@ $<
+
+.C.o		:
+				@echo $(CC) $(CFLAGS) -o $@ $<
+				@$(CC) $(CFLAGS) -o $@ $<
+
+#       C++ language section for extension .cpp
+
+.SUFFIXES: .cpp
+
+.cpp:
+	$(LINK.cc) $(LFLAGS) -o $@ $< $(LDLIBS)
+.cpp.o:
+	$(COMPILE.cc) $(CFLAGS) $(OUTPUT_OPTION) $<
+.cpp.a:
+	$(COMPILE.cc) $(CFLAGS) -o $% $<
+	$(AR) $(ARFLAGS) $@ $%
+	$(RM) $%
+
+
+#############################################################################
+

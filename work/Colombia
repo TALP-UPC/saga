@@ -1,0 +1,49 @@
+#!/bin/csh
+
+###################################################################
+#                                                                 #
+#   Script para transcribir texto utilizando Saga                 #
+#  Transcripción en el dialecto hablado en Colombia (andes)       #
+#                                                                 #
+#                                         José B. Mariño          #
+#                                         Febrero de 1998         #
+###################################################################
+
+if ($#argv != 2) then
+   echo "Usage: $0  dir_root file_orig file_dest"
+   exit 1
+endif
+
+
+set dirRoot = $1
+set fileIn = $2
+set fileOut = $3
+
+set DirDicc = $dirRoot/work/dicc/Col
+set DicExc = $DirDicc/ColExc.dicc
+set DicSust = $DirDicc/ColSust.dicc
+
+set PostProcesado = "cat"
+set DirSaga = $dirRoot/bin
+set flag = "-MS -MA"
+
+( $DirSaga/Saga $flag -d $DicExc -x $DicSust -e errores$$ $fileIn | \
+      $PostProcesado >! $fileOut ) >! extranyos$$
+
+if (! -z errores$$) then
+   echo "=====================================" >>! SAGA.ERRORES
+   date >> SAGA.ERRORES
+   cat $fileIn >> SAGA.ERRORES
+   cat $fileOut >> SAGA.ERRORES
+   cat errores$$ >> SAGA.ERRORES
+endif
+
+if (! -z extranyos$$) then
+   echo "=====================================" >>! SAGA.ERRORES
+   cat extranyos$$ >> SAGA.ERRORES
+endif
+
+\rm -f errores$$ extranyos$$
+
+exit 0
+

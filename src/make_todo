@@ -1,0 +1,79 @@
+# Saga - Un transcriptor fonético para el idioma español
+#
+# Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
+#        TALP - Universitat Politècnica de Catalunya, ESPAÑA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+$(PROG1)	:	$(OBJT1) $(HEADER1) $(LIBRERIA)
+				@echo $(CC) $(LFLAGS) $(OBJT1) -o $@ $(LIBR1)
+				@$(CC) $(LFLAGS) $(OBJT1) -o $@ $(LIBR1)
+
+$(PROG2)	:	$(OBJT2) $(LIBRERIA)
+				@echo $(CC) $(LFLAGS) $(OBJT2) -o $@ $(LIBR2)
+				@$(CC) $(LFLAGS) $(OBJT2) -o $@ $(LIBR2)
+
+$(PROG3)	:	$(OBJT3) $(LIBRERIA)
+				@echo $(CC) $(LFLAGS) $(OBJT3) -o $@ $(LIBR3)
+				@$(CC) $(LFLAGS) $(OBJT3) -o $@ $(LIBR3)
+
+$(PROG4)	:	$(OBJT4) $(LIBRERIA)
+				@echo $(CC) $(LFLAGS) $(OBJT4) -o $@ $(LIBR4)
+				@$(CC) $(LFLAGS) $(OBJT4) -o $@ $(LIBR4)
+
+$(PROG5)	:	$(OBJT5) $(LIBRERIA)
+				@echo $(CC) $(LFLAGS) $(OBJT5) -o $@ $(LIBR5)
+				@$(CC) $(LFLAGS) $(OBJT5) -o $@ $(LIBR5)
+
+$(PROG6)	:	$(OBJT6) $(LIBRERIA)
+				@echo $(CC) $(LFLAGS) $(OBJT6) -o $@ $(LIBR6)
+				@$(CC) $(LFLAGS) $(OBJT6) -o $@ $(LIBR6)
+
+$(PROG7)	:	$(OBJT7) $(LIBRERIA)
+				@echo $(CC) $(LFLAGS) $(OBJT7) -o $@ $(LIBR7)
+				@$(CC) $(LFLAGS) $(OBJT7) -o $@ $(LIBR7)
+
+$(OBJETOS)	:	$(FUENTES) $(HEADERS)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+
+$(OBJETOS1)	:	$(FUENTES1) $(HEADERS1)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+
+$(OBJETOS2)	:	$(FUENTES2) $(HEADERS2)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+
+$(OBJETOS3)	:	$(FUENTES3) $(HEADERS3)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+
+$(OBJETOS4)	:	$(FUENTES4) $(HEADERS4)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+
+$(OBJETOS5)	:	$(FUENTES5) $(HEADERS5)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+
+$(OBJETOS6)	:	$(FUENTES6) $(HEADERS6)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+
+$(OBJETOS7)	:	$(FUENTES7) $(HEADERS7)
+				@$(MAKE) $(@F)
+				@mv -f $(@F) $(@D)
+

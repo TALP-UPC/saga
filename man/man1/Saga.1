@@ -1,0 +1,485 @@
+'\" te
+.PU
+.TH SAGA 1 "Primavera de 2009" Ramses Veu
+.PP
+.SH NAME
+Saga \- transcribe foneticamente textos en castellano
+.SH SINOPSIS
+.B Saga
+.RB [ Opciones ]
+.RB ( TextIn\ |\ - )
+.RB [ NomOut ]
+.SH DESCRIPCION
+.I Saga
+es la herramienta de
+.B Ramses
+empleada para transcribir foneticamente textos en castellano.
+Asi que al loro, y desconfia de las imitaciones. Para ver el modo de funcionamiento
+basta con ejecutar el programa sin ningun argumento. Una pantalla resumen de las opciones admitidas
+aparecera en la salida de error estandar. Esta informacion suele estar mas actualizada que la de este
+propio manual, asi que los autores recomiendan ejecutar siempre el comando sin ningun argumento para
+garantizar que el modo de funcionamiento es el correcto.
+.PP
+En el momento de escribirse esta pagina, la salida de
+.I Saga
+sin ningun argumento es:
+.PD 0
+.RS 4m
+
+Empleo:
+.RS 4m
+    Saga [opciones] (TxtIn | -) [NomOut]
+.RE
+donde:
+.RS 4m
+.IP "TxtIn     : texto ortografico de entrada ('-' indica entrada estandar)"
+.IP "NomOut    : nombre, sin extension, de los ficheros de salida (por defecto, salida estandar)"
+.RE
+y opciones puede ser:
+.RS 4m
+.IP "-f        : Transcripcion fonetica (ext. .fon)"
+.IP "-F        : Transcripcion en fonemas (ext. .fnm)"
+.IP "-p        : Transcripcion en fonemas por palabras (ext. .fnp)"
+.IP "-s        : Transcripcion en semisilabas (ext. .sem)"
+.IP "-y        : Transcripcion en semifonemas (ext. .sef)"
+.IP " "
+.IP "-a        : Transcribir palabras aisladas"
+.IP "-b        : Transcribir cada linea de forma aislada"
+.IP "-Y ExtPal[,FinPal] : Marca de inicio y/o final de palabra"
+.IP "-S        : Conservar los silencios en la salida"
+.IP " "
+.IP "-d DicExc : Diccionario de excepciones ortograficas"
+.IP "-T TrnPal : Diccionario de transcripcion de palabras"
+.IP "-t TrnFon : Diccionario de transcripcion de grafemas"
+.IP "-x DicSus : Diccionario de substitucion de fonemas"
+.IP "-g DicGrp : Diccionario de substitucion de grupos foneticos"
+.IP "-v NovVoc : Lista de grafemas vocalicos introducidos"
+.IP "-c NovCns : Lista de grafemas consonanticos introducidos"
+.IP "-l NovFon : Lista de fonemas introducidos"
+.IP " "
+.IP "-MS       : Aplicar seseo"
+.IP "-MX       : Transcribir [x] como [ks]"
+.IP "-MH       : Transcribir [s] implosiva como [h] siempre"
+.IP "-Mh       : Transcribir [s] implosiva como [h] salvo final o enlace entre palabras"
+.IP "-MK       : Transcribir [sT] como [ks]"
+.IP "-MA       : Transcribir [b], [d] y [g] andinas"
+.IP "-My       : Transcribir siempre vocalica la conjuncion /y/"
+.IP "-MEb      : Eliminar [b] entre vocales y al final de palabra"
+.IP "-MEd      : Eliminar [d] entre vocales y al final de palabra"
+.IP "-MEg      : Eliminar [g] entre vocales y al final de palabra"
+.IP "-MN       : Velarizar las [n] implosivas"
+.IP "-MM       : Velarizar todas las nasales implosivas"
+.IP "-M~       : Nasalizar vocales"
+.IP "-MP       : Representar [pbdtkgx] implosivas internas como [G]"
+.IP "-MR       : Transcribir [r] implosiva como [R]"
+.IP "-M@       : Transcribir [l] y [r] tras [pbd...] como [@l] [@r]"
+.IP "-M:       : Marcar consonantes implosivas con [:]"
+.IP "-M_       : Marcar vocales postonicas con [_]"
+.IP "-M.       : Marcar con . los fonemas inicial y final de palabra"
+.IP "-MC       : Separar las oclusiones (p: pcl p   t: tcl t ...)"
+.IP " "
+.IP "-e FicErr : Fichero de errores"
+.IP " "
+.RE
+.RE
+.IP " "
+TxtIn = "-" implica lectura de entrada estandar (teclado). Por defecto,
+(FonOut no indicado) se escribe en salida estandar (pantalla)
+
+Por defecto se realiza solo la transcripcion fonetica (ext. .fon)
+
+La transcripcion fonetica siempre conserva los silencios. Las otras,
+si no se indica la opcion -S, no los conservan.
+
+Los diccionarios de excepciones ortograficas y substitucion de grupos
+foneticos permiten el uso de '*' al principio y/o final de la palabra
+
+Para encadenar mas de un diccionario, usar: FicDic1+FicDic2...
+
+
+.RE
+
+.PD
+.RE
+.RE
+.PP
+.SH INSTALACION
+.PP
+Para instalar
+.BR Saga ,
+hay que descomprimir el fichero
+.I Saga.tgz
+en el directorio donde se desee realizar la instalacion.
+.I Saga.tgz
+es un fichero creado con el comando
+.B tar
+de Unix/Linux que puede ser descomprimido usando la orden:
+.nf
+	tar xvzf Saga.tgz
+.fi
+A continuacion, ejecutese el comando
+.B make
+para obtener el fichero ejecutable. Este, asi como los objetos y las librerias necesarios para generarlo, se crearan en
+los directorios
+.IR bin ,
+.I obj
+y
+.IR lib ,
+respectivamente. Por defecto, estos directorios cuelgan directamente del directorio raiz de la instalacion, aunque este
+comportamiento puede modificarse editando el fichero
+.IR makefile .
+
+Tambien se crearan los directorios
+.BR man ,
+donde se aloja esta pagina de manual;
+.BR doc ,
+donde se alojan las referencias y esta pagina en formato
+.BR pdf ;
+y 
+.BR work ,
+donde se presentan distintos
+.I scripts
+de ejemplo que permiten realizar la transcripcion fonetica en varios dialectos del espanhol.
+
+.PP
+.SH INVOCACION
+.PP
+.BR Saga ,
+sin mas opciones y/o argumentos, proporciona una descripcion concisa de las opciones reconocidas y los argumentos
+necesarios. 
+.B Saga
+reconoce dos posibles argumentos:
+
+.B TextIn
+es el fichero de entrada que contiene el texto del cual se desea obtener la transcripcion fonetica. Si en lugar del
+nombre de un fichero se indica el caracter '-', el texto de entrada se tomara de la entrada estandar, permitiendo
+la entrada por teclado o la concatenacion en un
+.IR pipeline .
+
+El texto de entrada debe estar, en general, en formato de 7 bits. Esto es,
+.B Saga
+no reconocera vocales acentuadas, la dieresis o la tilde encima de la n (para formar 'enhe').
+Para indicar estos caracteres de 8 bits debe anteponerse el caracter de 7 bits correspondiente
+antes de la letra modificada. Asi, para indicar una /o/ acentuada debe introducirse /'o/,
+para la dieresis /"u/, y para la enhe /~n/. Para facilitar la entrada de texto,
+.B Saga
+permite tambien el uso de caracteres acentuados, con dieresis o la 'enhe', pero esto solo
+funciona si el juego de caracteres con que ha sido escrito el texto coincide con el implementado
+internamente en el programa.
+
+.B NomOut
+es el nombre raiz del fichero o ficheros con la transcripcion fonetica. El nombre completo se forma concatenando este
+nombre raiz con la extension correspondiente al tipo o tipos de transcripcion deseados. En el caso de no indicarse
+.BR NomOut ,
+las distintas transcripciones se escribiran en la salida estandar (en general, en la pantalla).
+
+Las opciones que reconoce 
+.B Saga
+se dividen en opciones del tipo de transcripcion, modo de realizarla, aplicacion de diccionarios y modificadores del
+comportamiento del transcriptor.
+.RS 4m
+.SH "Tipos de Transcripcion"
+.B Saga
+permite cinco tipos distintos de transcripcion. Pueden indicarse uno o mas de ellos en cada invocacion al programa.
+Por defecto solo realiza la transcripcion fonetica (opcion
+.BR -f ).
+En este tipo de transcripcion, cada palabra aparece transcrita en sus fonemas, con estos concatenados sin espacios entre
+ellos y las silabas separadas por guiones ('-'). El resultado de la transcripcion se almacena en el fichero formado por
+el nonmbre raiz indicado en
+.IR NomOut ,
+y la extension 
+.IR .fon .
+Por ejemplo, si el texto contenido en el fichero
+.I TextIn
+es:
+.PP
+.RS
+ mi casa no es blanca
+.RE
+.PP
+El resultado escrito en
+.I NomOut.fon
+sera:
+.PP
+.RS
+.IP "mi k'a-sa n'o 'ez Bl'aN-ka"
+.RE
+.PP
+La opcion
+.B -F
+permite obtener la transcripcion en fonemas, en la cual cada fonema va separado por espacios, y el resultado se almacena
+en  el fichero
+.IR NomOut.fnm :
+.PP
+.RS
+.IP "m i k 'a s a n 'o 'e z B l 'a N k a"
+.RE
+.PP
+La opcion
+.B -p
+permite obtener la transcripcion en fonemas por palabras, en la cual cada fonema va separado por espacios, pero se
+incluyen guiones para separar las silabas, y barras para separar las palabras. El resultado se almacena en 
+.IR NomOut.fnp :
+.PP
+.RS
+.IP " m i / k 'a - s a / n 'o / 'e z / B l 'a N - k a"
+.RE
+.PP
+La opcion
+.B -s
+proporciona en
+.I NomOut.sem
+el resultado de transcribir el texto de entrada en semisilabas:
+.PP
+.RS
+.IP " mi- -i ka- -'a sa- -a no- -'o e- -'ez Bla- -'aN ka- -a"
+.RE
+.PP
+Finalmente, la opcion 
+.B -y
+proporciona en
+.I NomOut.sef
+la transcripcion en semifonemas:
+.PP
+.RS
+.IP ".-m m+i m-i i+. .-k k+'a k-'a 'a+s 'a-s s+a s-a a+. .-n n+'o n-'o 'o+. .-'e 'e+z 'e-z z+. .-B B+l B-l l+'a l-'a 'a+N 'a-N N+k N-k k+a k-a a+."
+.RE
+.SH "Modos de Transcripcion"
+Por defecto, 
+.B Saga
+realiza la transcripcion considerando los efectos de la coarticulacion entre palabras. Asi, en el ejemplo anterior, la
+/s/ de la palabras 'es' es sonora ([z] en vez de [s]), y la /b/ de la palabra 'blanca' es aproximante ([B] en vez de 
+[b]). Este comportamiento puede modificarse con la opcion 
+.B -a
+que indica que cada palabra ha de ser transcrita como si estuviera rodeada de pausas:
+.PP
+.RS
+.IP "mi k'a-sa n'o 'es bl'aN-ka"
+.RE
+.PP
+La opcion
+.B -b
+permite hacer lo mismo pero solo linea a linea. Es decir, considera los saltos de linea equivalentes a una pausa.
+
+La opcion 
+.B -Y ExtPal[,FinPal]
+hace que la marca usada por
+.B Saga
+en la transcripcion en semifonemas para indicar el fonema inicial y final de cada palabra sea
+.B ExtPal 
+en vez de la opcion por defecto que es un punto '.'.
+Si solo se especifica 
+.BR ExtPal ,
+esta sera la cadena usada para indicar tanto el principio como el final. Si se indica tambien
+.BR FinPal ,
+.B ExtPal
+sera la cadena que marque el principio, y 
+.B FinPal
+la que marque el final.
+
+La opcion 
+.B -S
+permite conservar los signos de puntuacion y otras indicaciones de silencio en la salida generada. Estos solo son
+conservados por defecto en el caso de la transcripcion fonetica.
+.RE
+.SH Diccionarios
+
+En su operacion por defecto, 
+.B Saga
+realiza la transcripcion fonetica estandar de cualquier palabra patrimonial del espanhol. Las
+reglas seguidas en esta descripcion pueden encontrarse en [Marinho95a]. Siendo el espanhol una lengua
+de escritura fonetica, esta conversion, salvo error, es siempre correcta. Existen, sin embargo, diversas situaciones
+en las que es necesario modificar el modo normal de operacion del programa: palabras no patrimoniales, como 'ping-pong';
+cultismos, como 'quo'; palabras extranjeras, como 'whisky'; etc. Tambien es necesario modificar el comportamiento por
+defecto a la hora de reflejar las distintas variantes dialectales como, por ejemplo, las de los
+dialectos hispanoamericanos descritos en [MM98a]. El modo mas inmediato es la utilizacion de
+modificadores de la transcripcion, explicados en la siguiente seccion, y de diccionarios especificos, que se describen
+a continuacion.
+
+Los distintos diccionarios son ficheros de texto en los que cada linea refleja una modificacion al comportamiento
+estandas. Cada linea esta compuesta por dos partes separadas por tabulador. En general, aquello que antecede al
+tabulador sera sustituido por lo que le sigue. Varios diccionarios del mismo tipo pueden ser usados al mismo tiempo
+uniendo sus nombres con el caracter '+'. Asi,
+.IR Dic1 + Dic2
+sera equivalente al diccionario resultante de concatenar las lineas de
+.I Dic1
+y
+.IR Dic2 .
+
+La opcion
+.I -d DicExc
+permite el uso de un diccionario de excepciones ortograficas. Esta excepciones son palabras cuya transcripcion estandar
+es incorrecta y para las que se proporciona una
+.I ortografia simulada
+que si permite su correcta transcripcion. Casos tipicos son las palabras extranjeras 'whisky' o 'football'. Para
+conseguir una transcripcion correcta, podemos usar un diccionario de excepciones con las lineas:
+.RS
+.PP
+.nf
+whisky	g"uiski
+footbal	f'utbol
+.fi
+.PP
+.RE
+Notese que la ortografia figurada ha de ser indicada en formato de 7 bits, con las vocales acentuadas indicadas como
+tilde+vocal.
+.PP
+La opcion
+.I -T TrnPal
+permite indicar la transcripcion fonetica concreta de cada una de las palabras que aparecen en la primera columna del
+diccionario
+.IR TrnPal .
+Asi, para el ejemplo anterior, podriamos usar un diccionario de transcripcion con las lineas:
+.RS
+.PP
+.nf
+whisky	gw'is-ki 
+footbal	fuD-B'ol
+.fi
+.PP
+.RE
+Es posible indicar modificacione que afecten sistematicamente a las palabras empezadas o terminadas con una determinada
+cadena usando el caracter comodin '*'. Asi, para transcribir las palabras empezadas por 'ps' podemos usar:
+.RS
+.PP
+.nf
+ps*	s
+.fi
+.PP
+.RE
+La opcion
+.I -t TrnFon
+permite indicar cual es la transcripcion correcta de un grafema o grupo de grafemas. Asi, si queremos que el
+digrafo 'ph' sea transcrito siempre como /f/, podemos incluir la linea siguiente:
+.RS
+.PP
+.nf
+ph	f
+.fi
+.PP
+.RE
+La opcion 
+.I -x DicSus
+permite sustituir todas las apariciones de un fonema por otro distinto. Por ejemplo, un modo de indicar la aspiracion
+del sonido /x/ (grafema [j]) seria:
+.RS
+.PP
+.nf
+x	h
+.fi
+.PP
+.RE
+La opcion 
+.I -g DicGrp
+permite convetir cadenas de fonemas en otras cadenas. Como en el caso del diccionario de excepciones, es posible indicar
+cadenas iniciales o finales de palabra. Asi, para indicar que el final /NG/, que aparece en la transcripcion de palabras
+extrajeras como 'parking' o 'ping-pong', introduciriamos una linea del tipo
+.RS
+.PP
+.nf
+*NG	N
+.fi
+.PP
+.RE
+Al forzar transcripciones ortograficas con las opciones anteriores pueden aparecer grafemas o fonemas nuevos. Si es
+el caso, y para posibilitar la silabizacion y la division en fonemas, es necesario indicar estos nuevos grafemas y/o
+fonemas en las listas correspondientes:
+
+.B -v NovVoc
+para indicar los nuevos grafemas vocalicos.
+.PP
+.B -c NovCns
+para indicar los nuevos grafemas consonanticos.
+.PP
+.B -l NovFon
+para indicar los nuevos fonemas aparecidos.
+.RE
+.SH Modificadores de la transcripcion
+La opcion
+.B -M
+seguida de una o dos letras permite modificar el modo estandar de transcripcion para adaptarse a distintos dialectos o
+para senhalar situaciones concretas como la implosividad de las consonantes o la tonicidad de las vocales. Las opciones
+disponibles, y una corta descripcion de las mismas, son:
+
+.IP "-MS    Aplicar seseo"
+.IP "-MX    Transcribir [x] como [ks]"
+.IP "-MH    Transcribir [s] implosiva como [h] siempre"
+.IP "-Mh    Transcribir [s] implosiva como [h] salvo final o enlace entre palabras"
+.IP "-MK    Transcribir [sT] como [ks]"
+.IP "-MA    Transcribir [b], [d] y [g] andinas"
+.IP "-My    Transcribir siempre vocalica la conjuncion /y/"
+.IP "-MEb   Eliminar [b] entre vocales y al final de palabra"
+.IP "-MEd   Eliminar [d] entre vocales y al final de palabra"
+.IP "-MEg   Eliminar [g] entre vocales y al final de palabra"
+.IP "-MN    Velarizar las [n] implosivas"
+.IP "-MM    Velarizar todas las nasales implosivas"
+.IP "-M~    Nasalizar las vocales"
+.IP "-MP    Representar [pbdtkgx] implosivas internas como [G]"
+.IP "-MR    Transcribir [r] implosiva como [R]"
+.IP "-M@    Transcribir [l] y [r] tras [pbd...] como [@l] [@r]"
+.IP "-M:    Marcar consonantes implosivas con [:]"
+.IP "-M_    Marcar vocales postonicas con [_]"
+.IP "-M.    Marcar con . los fonemas inicial y final de palabra"
+.IP "-MC    Separar las oclusiones (p: pcl p   t: tcl t ...)"
+
+.SH DIAGNOSTICOS
+.B Saga
+proporciona tres tipos de mensaje de diagnostico: mensajes de error en la ejecucion del
+programa, mensajes de error en la transcripcion y aparicion de palabras extranhas.
+
+Los errores de ejecucion pueden ser debidos a la utilizacion de opciones incorrectas, en
+cuyo caso se muestra el modo de funcionamiento y termina la ejecucion, o a errores internos
+del programa, en cuyo caso puede que se proporcione un mensaje explicativo.
+
+Los mensajes de error en la transcripcion pueden deberse a diversas causas, pero siempre se
+refieren a palabras que
+.B Saga
+no sabe como transcribir. Un caso tipico es la de palabras sin ninguna vocal, o con demasiadas
+consonantes, en cuyo caso
+.B Saga
+no sabe como realizar la silabificacion. Estos errores se muestran en la salida de error 
+estandar, pero la ejecucion continua con el resto del texto.
+
+Los mensajes referidos a palabras extranhas se producen cuando una palabra es sospechosa de
+no ser una palabra propia del espanhol. Eso ocurre, por ejemplo, si aparecen muchas vocales
+o consantes seguidas. En caso de encontrar una palabra de este tipo, la ejecucion prosigue pero,
+al acabar, se muestra la lista de palabras extranhas encontradas. Esta lista suele ser de
+utilidad para localizar palabras que requieren un tratmiento especial, probablemente con el
+uso de diccionarios.
+
+La opcion
+.I -e FicErr
+permite redirigir la informacion de errores de transcripcion y palabras extranhas al fichero
+.IR FicErr .
+
+.SH BIBLIOGRAFIA
+.B [LM93a]
+J. Llisterri y J.B. Marinho, "Spanish Adaptation of SAMPA and Automatic Phonetic Transcription",
+internal report SAM-A/UPC/001/V1, 1993.
+
+.B [Marinho95a]
+J.B. Marinho, "SAGA. Reglas de Transcripción del Espanhol Standard", internal report UPC, 1995.
+
+.B [MM98a]
+A. Moreno y J.B. Marinho, "Spanish Dialects: Phonetic Transcription", Proc. ICSLP98, pp. 
+189-192, Sydney, Australia, 1998.
+
+.SH LICENCIA
+.BR Saga:
+Un transcriptor fonetico para el idioma espanhol
+
+Copyright (C) 1993-2009  Albino Nogueiras Rodriguez y Jose B. Marinho
+        TALP - Universitat Politecnica de Catalunya, ESPANHA
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
