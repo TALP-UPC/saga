@@ -8,13 +8,6 @@ EXTRA_DIST = gpl-3.0.txt Readme.txt \
  doc/SAMPA_Spanish_93.pdf \
  doc/SpanishDialectalVariants-ICSLP98.pdf \
  man/man1/Saga.1 \
- work/Peru \
- work/Mexico \
- work/Argentina \
- work/Colombia \
- work/Castilla \
- work/Chile \
- work/Venezuela \
  work/dicc/Arg/ArgExc.dicc \
  work/dicc/Arg/ArgDicGrp.dicc \
  work/dicc/Arg/ArgNovFon.dicc \
@@ -63,6 +56,14 @@ libsaga_la_SOURCES = src/SagaAcc.c src/SagaDic.c src/SagaExt.c src/SagaSil.c src
 libsaga_la_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
 libsaga_la_LDFLAGS = -no-undefined
 libsaga_la_LIBADD = libveu.la
+
+bin_SCRIPTS =  work/saga-peru \
+ work/saga-mexico \
+ work/saga-argentina \
+ work/saga-colombia \
+ work/saga-castilla \
+ work/saga-chile \
+ work/saga-venezuela
 
 bin_PROGRAMS = saga
 
