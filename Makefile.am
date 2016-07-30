@@ -96,7 +96,7 @@ saga_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
 saga_SOURCES = src/Saga.c
 saga_LDADD = libsaga.la libveu.la
 
-include_HEADERS += \
+pkginclude_HEADERS += \
   Util/LisUdf.h \
   Util/Util.h \
   src/ExcAcc.h \
