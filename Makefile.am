@@ -6,8 +6,11 @@ EXTRA_DIST = gpl-3.0.txt Readme.txt \
  doc/Saga_man.pdf \
  doc/Saga_Reglas_Trans.pdf \
  doc/SAMPA_Spanish_93.pdf \
- doc/SpanishDialectalVariants-ICSLP98.pdf \
- man/man1/Saga.1 \
+ doc/SpanishDialectalVariants-ICSLP98.pdf
+
+dist_man1_MANS = man/man1/saga.1
+
+EXTRA_DIST = \
  work/dicc/Arg/ArgExc.dicc \
  work/dicc/Arg/ArgDicGrp.dicc \
  work/dicc/Arg/ArgNovFon.dicc \

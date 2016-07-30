@@ -5,7 +5,7 @@
 .SH NAME
 Saga \- transcribe foneticamente textos en castellano
 .SH SINOPSIS
-.B Saga
+.B saga
 .RB [ Opciones ]
 .RB ( TextIn\ |\ - )
 .RB [ NomOut ]
@@ -21,14 +21,14 @@ propio manual, asi que los autores recomiendan ejecutar siempre el comando sin n
 garantizar que el modo de funcionamiento es el correcto.
 .PP
 En el momento de escribirse esta pagina, la salida de
-.I Saga
+.I saga
 sin ningun argumento es:
 .PD 0
 .RS 4m
 
 Empleo:
 .RS 4m
-    Saga [opciones] (TxtIn | -) [NomOut]
+    saga [opciones] (TxtIn | -) [NomOut]
 .RE
 donde:
 .RS 4m
@@ -106,16 +106,16 @@ Para encadenar mas de un diccionario, usar: FicDic1+FicDic2...
 .SH INSTALACION
 .PP
 Para instalar
-.BR Saga ,
+.BR saga ,
 hay que descomprimir el fichero
-.I Saga.tgz
+.I saga.tgz
 en el directorio donde se desee realizar la instalacion.
-.I Saga.tgz
+.I saga.tgz
 es un fichero creado con el comando
 .B tar
 de Unix/Linux que puede ser descomprimido usando la orden:
 .nf
-	tar xvzf Saga.tgz
+	tar xvzf saga.tgz
 .fi
 A continuacion, ejecutese el comando
 .B make
@@ -144,10 +144,10 @@ de ejemplo que permiten realizar la transcripcion fonetica en varios dialectos d
 .PP
 .SH INVOCACION
 .PP
-.BR Saga ,
+.BR saga ,
 sin mas opciones y/o argumentos, proporciona una descripcion concisa de las opciones reconocidas y los argumentos
 necesarios. 
-.B Saga
+.B saga
 reconoce dos posibles argumentos:
 
 .B TextIn
@@ -157,12 +157,12 @@ la entrada por teclado o la concatenacion en un
 .IR pipeline .
 
 El texto de entrada debe estar, en general, en formato de 7 bits. Esto es,
-.B Saga
+.B saga
 no reconocera vocales acentuadas, la dieresis o la tilde encima de la n (para formar 'enhe').
 Para indicar estos caracteres de 8 bits debe anteponerse el caracter de 7 bits correspondiente
 antes de la letra modificada. Asi, para indicar una /o/ acentuada debe introducirse /'o/,
 para la dieresis /"u/, y para la enhe /~n/. Para facilitar la entrada de texto,
-.B Saga
+.B saga
 permite tambien el uso de caracteres acentuados, con dieresis o la 'enhe', pero esto solo
 funciona si el juego de caracteres con que ha sido escrito el texto coincide con el implementado
 internamente en el programa.
@@ -174,12 +174,12 @@ nombre raiz con la extension correspondiente al tipo o tipos de transcripcion de
 las distintas transcripciones se escribiran en la salida estandar (en general, en la pantalla).
 
 Las opciones que reconoce 
-.B Saga
+.B saga
 se dividen en opciones del tipo de transcripcion, modo de realizarla, aplicacion de diccionarios y modificadores del
 comportamiento del transcriptor.
 .RS 4m
 .SH "Tipos de Transcripcion"
-.B Saga
+.B saga
 permite cinco tipos distintos de transcripcion. Pueden indicarse uno o mas de ellos en cada invocacion al programa.
 Por defecto solo realiza la transcripcion fonetica (opcion
 .BR -f ).
@@ -246,7 +246,7 @@ la transcripcion en semifonemas:
 .RE
 .SH "Modos de Transcripcion"
 Por defecto, 
-.B Saga
+.B saga
 realiza la transcripcion considerando los efectos de la coarticulacion entre palabras. Asi, en el ejemplo anterior, la
 /s/ de la palabras 'es' es sonora ([z] en vez de [s]), y la /b/ de la palabra 'blanca' es aproximante ([B] en vez de 
 [b]). Este comportamiento puede modificarse con la opcion 
@@ -264,7 +264,7 @@ permite hacer lo mismo pero solo linea a linea. Es decir, considera los saltos d
 La opcion 
 .B -Y ExtPal[,FinPal]
 hace que la marca usada por
-.B Saga
+.B saga
 en la transcripcion en semifonemas para indicar el fonema inicial y final de cada palabra sea
 .B ExtPal 
 en vez de la opcion por defecto que es un punto '.'.
@@ -285,7 +285,7 @@ conservados por defecto en el caso de la transcripcion fonetica.
 .SH Diccionarios
 
 En su operacion por defecto, 
-.B Saga
+.B saga
 realiza la transcripcion fonetica estandar de cualquier palabra patrimonial del espanhol. Las
 reglas seguidas en esta descripcion pueden encontrarse en [Marinho95a]. Siendo el espanhol una lengua
 de escritura fonetica, esta conversion, salvo error, es siempre correcta. Existen, sin embargo, diversas situaciones
@@ -423,7 +423,7 @@ disponibles, y una corta descripcion de las mismas, son:
 .IP "-MC    Separar las oclusiones (p: pcl p   t: tcl t ...)"
 
 .SH DIAGNOSTICOS
-.B Saga
+.B saga
 proporciona tres tipos de mensaje de diagnostico: mensajes de error en la ejecucion del
 programa, mensajes de error en la transcripcion y aparicion de palabras extranhas.
 
@@ -433,10 +433,10 @@ del programa, en cuyo caso puede que se proporcione un mensaje explicativo.
 
 Los mensajes de error en la transcripcion pueden deberse a diversas causas, pero siempre se
 refieren a palabras que
-.B Saga
+.B saga
 no sabe como transcribir. Un caso tipico es la de palabras sin ninguna vocal, o con demasiadas
 consonantes, en cuyo caso
-.B Saga
+.B saga
 no sabe como realizar la silabificacion. Estos errores se muestran en la salida de error 
 estandar, pero la ejecucion continua con el resto del texto.
 
@@ -465,7 +465,7 @@ A. Moreno y J.B. Marinho, "Spanish Dialects: Phonetic Transcription", Proc. ICSL
 189-192, Sydney, Australia, 1998.
 
 .SH LICENCIA
-.BR Saga:
+.BR saga:
 Un transcriptor fonetico para el idioma espanhol
 
 Copyright (C) 1993-2009  Albino Nogueiras Rodriguez y Jose B. Marinho
