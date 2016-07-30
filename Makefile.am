@@ -82,6 +82,8 @@ libsaga_la_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
 libsaga_la_LDFLAGS = -no-undefined
 libsaga_la_LIBADD = libveu.la
 
+
+
 bin_SCRIPTS =  work/saga-peru \
  work/saga-mexico \
  work/saga-argentina \
@@ -89,6 +91,23 @@ bin_SCRIPTS =  work/saga-peru \
  work/saga-castilla \
  work/saga-chile \
  work/saga-venezuela
+
+CLEANFILES = $(bin_SCRIPTS)
+EXTRA_DIST += work/saga-peru.in \
+ work/saga-mexico.in \
+ work/saga-argentina.in \
+ work/saga-colombia.in \
+ work/saga-castilla.in \
+ work/saga-chile.in \
+ work/saga-venezuela.in
+
+do_subst = sed -e 's|@bindir@|$(bindir)|g' \
+               -e 's|@datadir@|$(pkgdatadir)|g'
+
+%: %.in
+	$(do_subst) < $< > $@
+	chmod +x $@
+
 
 bin_PROGRAMS = saga
 

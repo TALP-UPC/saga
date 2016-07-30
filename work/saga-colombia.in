@@ -3,33 +3,31 @@
 ###################################################################
 #                                                                 #
 #   Script para transcribir texto utilizando Saga                 #
-#  Transcripción en el dialecto hablado en Chile                  #
+#  Transcripción en el dialecto hablado en Colombia (andes)       #
 #                                                                 #
 #                                         José B. Mariño          #
 #                                         Febrero de 1998         #
 ###################################################################
 
 if ($#argv != 2) then
-   echo "Usage: $0  dir_root file_orig file_dest"
+   echo "Usage: $0 file_orig file_dest"
    exit 1
 endif
 
+set bindir = @bindir@
+set datadir = @datadir@
 
-set dirRoot = $1
-set fileIn = $2
-set fileOut = $3
+set fileIn = $1
+set fileOut = $2
 
-set DirDicc = $dirRoot/work/dicc/Chl
-set DicExc = $DirDicc/ChlExc.dicc
-set DicSust = $DirDicc/ChlSust.dicc
-set DicGrup = $DirDicc/ChlGrup.dicc
-set NovFon = $DirDicc/ChlNovFon.dicc
+set DirDicc = $datadir/dicc/Col
+set DicExc = $DirDicc/ColExc.dicc
+set DicSust = $DirDicc/ColSust.dicc
 
 set PostProcesado = "cat"
-set DirSaga = $dirRoot/bin
-set flag = "-MS -MH"
+set flag = "-MS -MA"
 
-( $DirSaga/Saga $flag -l $NovFon -d $DicExc -x $DicSust -g $DicGrup -e errores$$ $fileIn | \
+( $bindir/saga $flag -d $DicExc -x $DicSust -e errores$$ $fileIn | \
       $PostProcesado >! $fileOut ) >! extranyos$$
 
 if (! -z errores$$) then

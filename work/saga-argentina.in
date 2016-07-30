@@ -3,32 +3,33 @@
 ###################################################################
 #                                                                 #
 #   Script para transcribir texto utilizando Saga                 #
-#  Transcripción en el dialecto hablado en Venezuela (Caribe)     #
+#  Transcripción en el dialecto hablado en Argentina (porteño)    #
 #                                                                 #
 #                                         José B. Mariño          #
 #                                         Febrero de 1998         #
 ###################################################################
 
 if ($#argv != 2) then
-   echo "Usage: $0  dir_root file_orig file_dest"
+   echo "Usage: $0 file_orig file_dest"
    exit 1
 endif
 
+set bindir = @bindir@
+set datadir = @datadir@
 
-set dirRoot = $1
-set fileIn = $2
-set fileOut = $3
+set fileIn = $1
+set fileOut = $2
 
-set DirDicc = $dirRoot/work/dicc/Ven
-set DicExc = $DirDicc/VenExc.dicc
-set DicSust = $DirDicc/VenSust.dicc
-set TrnPal = $DirDicc/VenPal.dicc
+set DirDicc = $datadir/dicc/Arg
+set DicExc = $DirDicc/ArgExc.dicc
+set DicSust = $DirDicc/ArgSust.dicc
+set DicGrp = $DirDicc/ArgDicGrp.dicc
+set NovFon = $DirDicc/ArgNovFon.dicc
 
 set PostProcesado = "cat"
-set DirSaga = $dirRoot/bin
-set flag = "-MS -MH -MM -MX"
+set flag = "-MS -Mh"
 
-( $DirSaga/Saga $flag -d $DicExc -x $DicSust -T $TrnPal -e errores$$ $fileIn | \
+( $bindir/saga $flag -d $DicExc -x $DicSust -g $DicGrp -l $NovFon -e errores$$ $fileIn | \
       $PostProcesado >! $fileOut ) >! extranyos$$
 
 if (! -z errores$$) then
