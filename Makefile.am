@@ -10,12 +10,18 @@ EXTRA_DIST = gpl-3.0.txt Readme.txt \
 
 dist_man1_MANS = man/man1/saga.1
 
-EXTRA_DIST = \
+datadiccdir = $(pkgdatadir)/dicc
+
+datadiccargdir = $(datadiccdir)/Arg
+dist_datadiccarg_DATA =  \
  work/dicc/Arg/ArgExc.dicc \
  work/dicc/Arg/ArgDicGrp.dicc \
  work/dicc/Arg/ArgNovFon.dicc \
  work/dicc/Arg/ArgReadme.txt \
- work/dicc/Arg/ArgSust.dicc \
+ work/dicc/Arg/ArgSust.dicc
+
+datadicccasdir = $(datadiccdir)/Cas
+dist_datadicccas_DATA =  \
  work/dicc/Cas/CasTrnFon.dicc \
  work/dicc/Cas/CasDicSust.dicc \
  work/dicc/Cas/CasDicSustOPC.dicc \
@@ -24,21 +30,36 @@ EXTRA_DIST = \
  work/dicc/Cas/CasDicGrp.dicc \
  work/dicc/Cas/CasTrnPal.dicc \
  work/dicc/Cas/CasExc.dicc \
- work/dicc/Cas/CasNovCns.dicc \
+ work/dicc/Cas/CasNovCns.dicc
+
+datadiccchldir = $(datadiccdir)/Chl
+dist_datadiccchl_DATA =  \
  work/dicc/Chl/ChlNovFon.dicc \
  work/dicc/Chl/ChlGrup.dicc \
  work/dicc/Chl/ChlReadme.txt \
  work/dicc/Chl/ChlSust.dicc \
- work/dicc/Chl/ChlExc.dicc \
+ work/dicc/Chl/ChlExc.dicc
+
+datadiccperdir = $(datadiccdir)/Per
+dist_datadiccper_DATA =  \
  work/dicc/Per/PerSust.dicc \
  work/dicc/Per/PerExc.dicc \
- work/dicc/Per/PerReadme.txt \
+ work/dicc/Per/PerReadme.txt
+
+datadiccvendir = $(datadiccdir)/Ven
+dist_datadiccven_DATA =  \
  work/dicc/Ven/VenExc.dicc \
  work/dicc/Ven/VenReadme.txt \
- work/dicc/Ven/VenSust.dicc \
+ work/dicc/Ven/VenSust.dicc
+
+datadicccoldir = $(datadiccdir)/Col
+dist_datadicccol_DATA =  \
  work/dicc/Col/ColExc.dicc \
  work/dicc/Col/ColReadme.txt \
- work/dicc/Col/ColSust.dicc \
+ work/dicc/Col/ColSust.dicc
+
+datadiccmexdir = $(datadiccdir)/Mex
+dist_datadiccmex_DATA =  \
  work/dicc/Mex/MexSust.dicc \
  work/dicc/Mex/MexExc.dicc \
  work/dicc/Mex/MexReadme.txt
@@ -55,7 +76,8 @@ libveu_la_LDFLAGS = -no-undefined
 libveu_la_LIBADD = 
 
 lib_LTLIBRARIES += libsaga.la
-libsaga_la_SOURCES = src/SagaAcc.c src/SagaDic.c src/SagaExt.c src/SagaSil.c src/SagaTrn.c src/SagaCom.c
+libsaga_la_SOURCES = src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
+                     src/SagaSil.c src/SagaTrn.c src/SagaCom.c
 libsaga_la_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
 libsaga_la_LDFLAGS = -no-undefined
 libsaga_la_LIBADD = libveu.la
