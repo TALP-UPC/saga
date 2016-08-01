@@ -1,6 +1,6 @@
 dnl Use autogen.sh to regenerate the configure script
 AC_PREREQ([2.62])
-AC_INIT([Saga-GNU],
+AC_INIT([saga],
         [1.0.9000],
         [http://www.talp.upc.edu/index.php/technology/tools/signal-processing-tools/81-saga])
 
