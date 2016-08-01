@@ -344,27 +344,27 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Escribimos el texto de salida.
 		 */
-		if (SalFon > 0 && fprintf(FpFon, TrnFon) < 0) {
+		if (SalFon > 0 && fprintf(FpFon, "%s", TrnFon) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito\n");
 			continue;
 		}
 
-		if (SalFnm > 0 && fprintf(FpFnm, TrnFnm) < 0) {
+		if (SalFnm > 0 && fprintf(FpFnm, "%s", TrnFnm) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en fonemas\n");
 			continue;
 		}
 
-		if (SalFnmPal > 0 && fprintf(FpFnmPal, TrnFnmPal) < 0) {
+		if (SalFnmPal > 0 && fprintf(FpFnmPal, "%s", TrnFnmPal) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en fonemas\n");
 			continue;
 		}
 
-		if (SalSem > 0 && fprintf(FpSem, TrnSem) < 0) {
+		if (SalSem > 0 && fprintf(FpSem, "%s", TrnSem) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en semisilabas\n");
 			continue;
 		}
 
-		if (SalSefo > 0 && fprintf(FpSefo, TrnSefo) < 0) {
+		if (SalSefo > 0 && fprintf(FpSefo, "%s", TrnSefo) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en semifonemas\n");
 			continue;
 		}
