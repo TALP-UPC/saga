@@ -1,15 +1,40 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = .
+lib_LTLIBRARIES =
+pkginclude_HEADERS =
+bin_PROGRAMS =
+CLEANFILES =
+EXTRA_DIST =
 
-EXTRA_DIST = gpl-3.0.txt Readme.txt \
- doc/Saga_man.pdf \
- doc/Saga_Reglas_Trans.pdf \
- doc/SAMPA_Spanish_93.pdf \
- doc/SpanishDialectalVariants-ICSLP98.pdf
+# Shared libraries. Probably will be merged into one.
+lib_LTLIBRARIES += libveu.la
+libveu_la_SOURCES = Util/LisUdf.c Util/Util.c
+libveu_la_CFLAGS = -I$(srcdir)/Util
+libveu_la_LDFLAGS = -no-undefined
+libveu_la_LIBADD = 
 
-dist_man1_MANS = man/man1/saga.1
+lib_LTLIBRARIES += libsaga.la
+libsaga_la_SOURCES = src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
+                     src/SagaSil.c src/SagaTrn.c src/SagaCom.c
+libsaga_la_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
+libsaga_la_LDFLAGS = -no-undefined
+libsaga_la_LIBADD = libveu.la
 
+# Headers
+pkginclude_HEADERS += \
+  Util/LisUdf.h \
+  Util/Util.h \
+  src/ExcAcc.h \
+  src/Saga.h 
+
+# The main program
+bin_PROGRAMS += saga
+
+saga_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
+saga_SOURCES = src/Saga.c
+saga_LDADD = libsaga.la libveu.la
+
+# Data:
 datadiccdir = $(pkgdatadir)/dicc
 
 datadiccargdir = $(datadiccdir)/Arg
@@ -64,26 +89,7 @@ dist_datadiccmex_DATA =  \
  work/dicc/Mex/MexExc.dicc \
  work/dicc/Mex/MexReadme.txt
 
-
-noinst_HEADERS = 
-include_HEADERS =
-lib_LTLIBRARIES =
-
-lib_LTLIBRARIES += libveu.la
-libveu_la_SOURCES = Util/LisUdf.c Util/Util.c
-libveu_la_CFLAGS = -I$(srcdir)/Util
-libveu_la_LDFLAGS = -no-undefined
-libveu_la_LIBADD = 
-
-lib_LTLIBRARIES += libsaga.la
-libsaga_la_SOURCES = src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
-                     src/SagaSil.c src/SagaTrn.c src/SagaCom.c
-libsaga_la_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
-libsaga_la_LDFLAGS = -no-undefined
-libsaga_la_LIBADD = libveu.la
-
-
-
+# Scripts, that need to be built:
 bin_SCRIPTS =  work/saga-peru \
  work/saga-mexico \
  work/saga-argentina \
@@ -108,15 +114,12 @@ do_subst = sed -e 's|@bindir@|$(bindir)|g' \
 	$(do_subst) < $< > $@
 	chmod +x $@
 
+# Documentation
+dist_man1_MANS = man/man1/saga.1
 
-bin_PROGRAMS = saga
+EXTRA_DIST += gpl-3.0.txt Readme.txt \
+ doc/Saga_man.pdf \
+ doc/Saga_Reglas_Trans.pdf \
+ doc/SAMPA_Spanish_93.pdf \
+ doc/SpanishDialectalVariants-ICSLP98.pdf
 
-saga_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
-saga_SOURCES = src/Saga.c
-saga_LDADD = libsaga.la libveu.la
-
-pkginclude_HEADERS += \
-  Util/LisUdf.h \
-  Util/Util.h \
-  src/ExcAcc.h \
-  src/Saga.h 
