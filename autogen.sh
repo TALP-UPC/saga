@@ -1,6 +1,6 @@
 #!/bin/sh
 mkdir -p "m4" "config"
-libtoolize \
+libtoolize --copy \
 && aclocal \
-&& automake --add-missing \
+&& automake --add-missing --copy \
 && autoconf
