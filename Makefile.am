@@ -98,7 +98,7 @@ bin_SCRIPTS =  work/saga-peru \
  work/saga-chile \
  work/saga-venezuela
 
-CLEANFILES = $(bin_SCRIPTS)
+CLEANFILES += $(bin_SCRIPTS)
 EXTRA_DIST += work/saga-peru.in \
  work/saga-mexico.in \
  work/saga-argentina.in \
@@ -110,7 +110,7 @@ EXTRA_DIST += work/saga-peru.in \
 do_subst = sed -e 's|@bindir@|$(bindir)|g' \
                -e 's|@datadir@|$(pkgdatadir)|g'
 
-%: %.in
+$(bin_SCRIPTS): %: %.in
 	$(do_subst) < $< > $@
 	chmod +x $@
 
