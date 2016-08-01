@@ -14,8 +14,8 @@ if ($#argv != 2) then
    exit 1
 endif
 
-set bindir = @bindir@
-set datadir = @datadir@
+set bindir = __bindir__
+set datadir = __datadir__
 
 set fileIn = $1
 set fileOut = $2

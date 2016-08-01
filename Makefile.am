@@ -107,8 +107,8 @@ EXTRA_DIST += work/saga-peru.in \
  work/saga-chile.in \
  work/saga-venezuela.in
 
-do_subst = sed -e 's|@bindir@|$(bindir)|g' \
-               -e 's|@datadir@|$(pkgdatadir)|g'
+do_subst = sed -e 's|__bindir__|$(bindir)|g' \
+               -e 's|__datadir__|$(pkgdatadir)|g'
 
 $(bin_SCRIPTS): %: %.in
 	$(do_subst) < $< > $@
