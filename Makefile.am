@@ -51,7 +51,6 @@ dist_datadicccas_DATA =  \
  work/dicc/Cas/CasDicSust.dicc \
  work/dicc/Cas/CasDicSustOPC.dicc \
  work/dicc/Cas/CasReadme.txt \
- work/dicc/Cas/ArgReadme.txt \
  work/dicc/Cas/CasDicGrp.dicc \
  work/dicc/Cas/CasTrnPal.dicc \
  work/dicc/Cas/CasExc.dicc \
