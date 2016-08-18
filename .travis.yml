@@ -1,0 +1,21 @@
+language: c
+os: linux
+
+script: 
+  - ./autogen.sh
+  - mkdir build
+  - cd build
+  - ../configure --prefix="$PWD/install"
+  - make
+  - make check
+  - make install
+
+addons:
+  apt:
+    packages:
+    - autotools-dev
+    - autoconf
+    - automake
+    - libtool
+    - pkg-config
+
