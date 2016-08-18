@@ -6,19 +6,16 @@ bin_PROGRAMS =
 CLEANFILES =
 EXTRA_DIST =
 
-# Shared libraries. Probably will be merged into one.
-lib_LTLIBRARIES += libveu.la
-libveu_la_SOURCES = Util/LisUdf.c Util/Util.c
-libveu_la_CFLAGS = -I$(srcdir)/Util
-libveu_la_LDFLAGS = -no-undefined
-libveu_la_LIBADD = 
-
+# Shared library
 lib_LTLIBRARIES += libsaga.la
-libsaga_la_SOURCES = src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
-                     src/SagaSil.c src/SagaTrn.c src/SagaCom.c
-libsaga_la_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
+libsaga_la_SOURCES = Util/LisUdf.c Util/Util.c
+libsaga_la_CFLAGS = -I$(srcdir)/Util
 libsaga_la_LDFLAGS = -no-undefined
-libsaga_la_LIBADD = libveu.la
+libsaga_la_LIBADD = 
+
+libsaga_la_SOURCES += src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
+                      src/SagaSil.c src/SagaTrn.c src/SagaCom.c
+libsaga_la_CFLAGS += -I$(srcdir)/src
 
 # Headers
 pkginclude_HEADERS += \
@@ -32,7 +29,7 @@ bin_PROGRAMS += saga
 
 saga_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
 saga_SOURCES = src/Saga.c
-saga_LDADD = libsaga.la libveu.la
+saga_LDADD = libsaga.la
 
 # Data:
 datadiccdir = $(pkgdatadir)/dicc
@@ -110,6 +107,7 @@ do_subst = sed -e 's|__bindir__|$(bindir)|g' \
                -e 's|__datadir__|$(pkgdatadir)|g'
 
 $(bin_SCRIPTS): %: %.in
+	mkdir -p work
 	$(do_subst) < $< > $@
 	chmod +x $@
 
