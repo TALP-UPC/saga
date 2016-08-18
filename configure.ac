@@ -21,10 +21,10 @@ AC_CONFIG_HEADERS([config.h])
 LT_PREREQ([2.2])
 AC_C_BIGENDIAN
 
-dnl By default disable building static and shared libraries.
-dnl use ./configure --enable-shared (or --enable-static or both)
+dnl By default disable building static libraries.
+dnl use ./configure --enable-static
 dnl to build them.
-LT_INIT([disable-static, disable-shared])
+LT_INIT([disable-static])
 
 
 AC_CONFIG_FILES([Makefile])
