@@ -23,12 +23,11 @@ set fileOut = $2
 set DirDicc = $datadir/dicc/Ven
 set DicExc = $DirDicc/VenExc.dicc
 set DicSust = $DirDicc/VenSust.dicc
-set TrnPal = $DirDicc/VenPal.dicc
 
 set PostProcesado = "cat"
 set flag = "-MS -MH -MM -MX"
 
-( $bindir/saga $flag -d $DicExc -x $DicSust -T $TrnPal -e errores$$ $fileIn | \
+( $bindir/saga $flag -d $DicExc -x $DicSust -e errores$$ $fileIn | \
       $PostProcesado >! $fileOut ) >! extranyos$$
 
 if (! -z errores$$) then

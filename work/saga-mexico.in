@@ -23,13 +23,11 @@ set fileOut = $2
 set DirDicc = $datadir/dicc/Mex
 set DicExc = $DirDicc/MexExc.dicc
 set DicSust = $DirDicc/MexSust.dicc
-set TrnFon = $DirDicc/MexFon.dicc
-set NovFon = $DirDicc/MexNov.dicc
 
 set PostProcesado = "cat"
 set flag = "-MS -MX"
 
-( $bindir/saga $flag -d $DicExc -x $DicSust -l $NovFon -t $TrnFon -e errores$$ $fileIn | \
+( $bindir/saga $flag -d $DicExc -x $DicSust -e errores$$ $fileIn | \
       $PostProcesado >! $fileOut ) >! extranyos$$
 
 if (! -z errores$$) then

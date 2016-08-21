@@ -21,7 +21,7 @@ set fileIn = $1
 set fileOut = $2
 
 set DirDicc = $datadir/dicc/Cas
-set DicExc = $DirDicc/CasDicExc.dicc
+set DicExc = $DirDicc/CasExc.dicc
 set DicSust = $DirDicc/CasDicSust.dicc
 set DicGrp = $DirDicc/CasDicGrp.dicc
 set NovCns = $DirDicc/CasNovCns.dicc
