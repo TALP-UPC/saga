@@ -91,16 +91,7 @@ int CaseInsensitiveName(const char* src, char* dst, size_t dpmax)
 	}
 }
 
-
-#if !defined(NO_PROTOTYPE)
-
 int   IsAbsPath(char	*Path)
-
-#else						/* defined (__STDC__)					*/
-int	IsAbsPath(Path)
-char	*Path;
-#endif						/* defined (__STDC__)					*/
-
 {
 
    if (Path == NULL || Path[0] == '\0')
@@ -125,23 +116,10 @@ char	*Path;
  * PathName - Construye el nombre completo a partir del path y el nombre
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 void	PathName(	const char	*Path,
 					const char	*Name,
 					const char	*Ext,
 					char		*FullName)
-
-#else						/* defined (__STDC__)					*/
-
-void	PathName(Path, Name, Ext, FullName)
-const char	*Path;
-const char	*Name;
-const char	*Ext;
-char		*FullName;
-
-#endif						/* defined (__STDC__)					*/
-
 {
 	char	*ExtAnt;
 
@@ -177,17 +155,7 @@ char		*FullName;
  * lo crea.
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 int		ChkPathName(const char	*FullPath)
-
-#else						/* defined (__STDC__)					*/
-
-int		ChkPathName(FullPath)
-char	*FullPath;
-
-#endif						/* defined (__STDC__)					*/
-
 {
 	char	Path[_POSIX_PATH_MAX+1], *Dir, *Name;
 
@@ -477,17 +445,7 @@ int		EscrLisSen(
  * cadena separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 int		TamMat(char	*_Str)
-
-#else						/* defined (__STDC__)					*/
-
-int		TamMat(_Str)
-char	*_Str;
-
-#endif						/* defined (__STDC__)					*/
-
 {
 	char	*Str1, *Str = strdup(_Str);
 	size_t	i;
@@ -510,17 +468,7 @@ char	*_Str;
  * separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 char	**MatStr(char	*Str)
-
-#else						/* defined (__STDC__)					*/
-
-char	**MatStr(Str)
-char	*Str;
-
-#endif						/* defined (__STDC__)					*/
-
 {
 	return MatStrChr(Str, " ,");
 }
@@ -568,17 +516,7 @@ char	**MatStrChr(
  * separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 int	*MatInt(char	*_Str)
-
-#else						/* defined (__STDC__)					*/
-
-int	*MatInt(_Str)
-char	*_Str;
-
-#endif						/* defined (__STDC__)					*/
-
 {
 	char	*Str = strdup(_Str);
 	char	*fStr = Str;
@@ -615,17 +553,7 @@ char	*_Str;
  * separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 long	*MatLng(char	*_Str)
-
-#else						/* defined (__STDC__)					*/
-
-long	*MatLng(_Str)
-char	*_Str;
-
-#endif						/* defined (__STDC__)					*/
-
 {
 	char	*tmp = strdup(_Str);
 	char	*Str = tmp;
@@ -659,17 +587,7 @@ char	*_Str;
  * una cadena separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 double	*MatDbl(char	*Str)
-
-#else						/* defined (__STDC__)					*/
-
-double	*MatDbl(Str)
-char	*Str;
-
-#endif						/* defined (__STDC__)					*/
-
 {
 	char	*Cadena;
 	double	*Mat;

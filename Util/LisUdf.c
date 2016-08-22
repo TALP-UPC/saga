@@ -30,19 +30,9 @@
  * ReadLisUdf - Lee una lista de unidades foneticas
  **********************************************************************/
 
-#if defined(__STDC__) && !defined(NO_PROTOTYPE)
-
 int		ReadLisUdf(
 	char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
 	char	***LisUdf)	/* Lista de unidades resultante				*/
-
-#else					/* defined (__STDC__)					*/
-
-int		ReadLisUdf(FicLisUdf, LisUdf)
-char	*FicLisUdf;		/* Fichero ASCII con las unidades foneticas	*/
-char	***LisUdf;		/* Lista de unidades resultante				*/
-
-#endif					/* defined (__STDC__)					*/
 
 {
 	char	Unidad[64000];
