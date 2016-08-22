@@ -26,9 +26,11 @@
 #include	"Saga.h"
 #include	"Util.h"
 
-#ifdef WIN32
 #ifndef _POSIX_PATH_MAX
+#ifdef _MAX_PATH
 #define _POSIX_PATH_MAX _MAX_PATH
+#else
+#error "_POSIX_PATH_MAX not defined"
 #endif
 #endif
 
