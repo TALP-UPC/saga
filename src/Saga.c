@@ -34,13 +34,14 @@ int		AplDicGrp(	char	***DicExc,
 					char	**TxtOrt);
 
 char	**Letras, **Fonemas, **ConsTxt, **Vocales;
-int		 main(int ArgC, char *ArgV[])
+
+int main(int ArgC, char *ArgV[])
 {
-	char	*TxtOrt = (char *) 0, *TrnFon = (char *) 0, *SilOrt = (char *) 0, *SilAcc = (char *) 0;
-	char	*TrnFnm = (char *) 0, *TrnFnmPal = (char *) 0, *TrnSem = (char *) 0, *TrnSefo = (char *) 0;
+	char	*TxtOrt = NULL, *TrnFon = NULL, *SilOrt = NULL, *SilAcc = NULL;
+	char	*TrnFnm = NULL, *TrnFnmPal = NULL, *TrnSem = NULL, *TrnSefo = NULL;
 	char	*FicDicExc, *FicTrnFon, *FicTrnPal, *FicDicSust, *FicDicGrp, *FicNovVoc, *FicNovCons, *FicNovFon;
 	char	***DicExc, ***DicTrnFon, ***DicTrnPal, ***DicSust, ***DicGrp, **LisNovVoc, **LisNovCons, **LisNovFon;
-	char	**PalExt = (char **) 0;
+	char	**PalExt = NULL;
 	int		SalFon, SalFnm, SalFnmPal, SalSem, SalSefo;
 	int		ConSil;
 	int		TrnPalAis;
@@ -89,28 +90,28 @@ int		 main(int ArgC, char *ArgV[])
 	/*
 	 * Cargamos los diccionarios de excepciones y substituciones.
 	 */
-	DicExc = (char ***) 0;
-	if (FicDicExc != (char *) 0 && (DicExc = CargDicExc(FicDicExc)) == (char ***) 0) {
+	DicExc = NULL;
+	if (FicDicExc != NULL && (DicExc = CargDicExc(FicDicExc)) == NULL) {
 		fprintf(stderr, "Error al cargar el diccionario de excepciones\n");
 		return EXIT_FAILURE;
 	}
-	DicTrnFon = (char ***) 0;
-	if (FicTrnFon != (char *) 0 && (DicTrnFon = CargDicExc(FicTrnFon)) == (char ***) 0) {
+	DicTrnFon = NULL;
+	if (FicTrnFon != NULL && (DicTrnFon = CargDicExc(FicTrnFon)) == NULL) {
 		fprintf(stderr, "Error al cargar el diccionario de transcripcion de fonemas\n");
 		return EXIT_FAILURE;
 	}
-	DicTrnPal = (char ***) 0;
-	if (FicTrnPal != (char *) 0 && (DicTrnPal = CargDicExc(FicTrnPal)) == (char ***) 0) {
+	DicTrnPal = NULL;
+	if (FicTrnPal != NULL && (DicTrnPal = CargDicExc(FicTrnPal)) == NULL) {
 		fprintf(stderr, "Error al cargar el diccionario de transcripcion de palabras\n");
 		return EXIT_FAILURE;
 	}
-	DicSust = (char ***) 0;
-	if (FicDicSust != (char *) 0 && (DicSust = CargDicExc(FicDicSust)) == (char ***) 0) {
+	DicSust = NULL;
+	if (FicDicSust != NULL && (DicSust = CargDicExc(FicDicSust)) == NULL) {
 		fprintf(stderr, "Error al cargar el diccionario de substituciones\n");
 		return EXIT_FAILURE;
 	}
-	DicGrp = (char ***) 0;
-	if (FicDicGrp != (char *) 0 && (DicGrp = CargDicExc(FicDicGrp)) == (char ***) 0) {
+	DicGrp = NULL;
+	if (FicDicGrp != NULL && (DicGrp = CargDicExc(FicDicGrp)) == NULL) {
 		fprintf(stderr, "Error al cargar el diccionario de substitucion de grupos\n");
 		return EXIT_FAILURE;
 	}
@@ -118,54 +119,54 @@ int		 main(int ArgC, char *ArgV[])
 	/*
 	 * Creamos las listas de letras, consonantes y fonemas.
 	 */
-	Letras = (char **) 0;
+	Letras = NULL;
 	NumLet = 0;
-	for (i = 0; _Letras[i] != (char *) 0; i++) {
+	for (i = 0; _Letras[i] != NULL; i++) {
 		if (MeteLisUdf(_Letras[i], &NumLet, &Letras) < 0) {
 			fprintf(stderr, "Error al crear la lista de letras\n");
 			return EXIT_FAILURE;
 		}
 	}
 
-	ConsTxt = (char **) 0;
+	ConsTxt = NULL;
 	NumCons = 0;
-	for (i = 0; _ConsTxt[i] != (char *) 0; i++) {
+	for (i = 0; _ConsTxt[i] != NULL; i++) {
 		if (MeteLisUdf(_ConsTxt[i], &NumCons, &ConsTxt) < 0) {
 			fprintf(stderr, "Error al crear la lista de consonantes\n");
 			return EXIT_FAILURE;
 		}
 	}
 
-	Vocales = (char **) 0;
+	Vocales = NULL;
 	NumVoc = 0;
-	for (i = 0; _Vocales[i] != (char *) 0; i++) {
+	for (i = 0; _Vocales[i] != NULL; i++) {
 		if (MeteLisUdf(_Vocales[i], &NumVoc, &Vocales) < 0) {
 			fprintf(stderr, "Error al crear la lista de vocales\n");
 			return EXIT_FAILURE;
 		}
 	}
 
-	Fonemas = (char **) 0;
+	Fonemas = NULL;
 	NumFon = 0;
-	for (i = 0; _Fonemas[i] != (char *) 0; i++) {
+	for (i = 0; _Fonemas[i] != NULL; i++) {
 		if (MeteLisUdf(_Fonemas[i], &NumFon, &Fonemas) < 0) {
 			fprintf(stderr, "Error al crear la lista de fonemas\n");
 			return EXIT_FAILURE;
 		}
 	}
-	for (i = 0; FonCns[i] != (char *) 0; i++) {
+	for (i = 0; FonCns[i] != NULL; i++) {
 		if (MeteLisUdf(FonCns[i], &NumFon, &Fonemas) < 0) {
 			fprintf(stderr, "Error al crear la lista de fonemas\n");
 			return EXIT_FAILURE;
 		}
 	}
-	for (i = 0; FonVoc[i] != (char *) 0; i++) {
+	for (i = 0; FonVoc[i] != NULL; i++) {
 		if (MeteLisUdf(FonVoc[i], &NumFon, &Fonemas) < 0) {
 			fprintf(stderr, "Error al crear la lista de fonemas\n");
 			return EXIT_FAILURE;
 		}
 	}
-	for (i = 0; FonSem[i] != (char *) 0; i++) {
+	for (i = 0; FonSem[i] != NULL; i++) {
 		if (MeteLisUdf(FonSem[i], &NumFon, &Fonemas) < 0) {
 			fprintf(stderr, "Error al crear la lista de fonemas\n");
 			return EXIT_FAILURE;
@@ -173,7 +174,7 @@ int		 main(int ArgC, char *ArgV[])
 	}
 
 	if (ClaveModif & VOCAL_NASAL) {
-		for (i = 0; FonVoc[i] != (char *) 0; i++) {
+		for (i = 0; FonVoc[i] != NULL; i++) {
 			sprintf(Fonema, "%s~", FonVoc[i]);
 			if (MeteLisUdf(Fonema, &NumFon, &Fonemas) < 0) {
 				fprintf(stderr, "Error al crear la lista de fonemas\n");
@@ -182,7 +183,7 @@ int		 main(int ArgC, char *ArgV[])
 		}
 	}
 
-	for (i = 0; DicTrnFon && DicTrnFon[i] != (char **) 0; i++) {
+	for (i = 0; DicTrnFon && DicTrnFon[i] != NULL; i++) {
 		if (MeteLisUdf(DicTrnFon[i][0], &NumLet, &Letras) < 0) {
 			fprintf(stderr, "Error al crear la lista de letras\n");
 			return EXIT_FAILURE;
@@ -193,20 +194,20 @@ int		 main(int ArgC, char *ArgV[])
 		}
 	}
 
-	for (i = 0; DicSust && DicSust[i] != (char **) 0; i++) {
+	for (i = 0; DicSust && DicSust[i] != NULL; i++) {
 		if (MeteLisUdf(DicSust[i][1], &NumFon, &Fonemas) < 0) {
 			fprintf(stderr, "Error al crear la lista de fonemas\n");
 			return EXIT_FAILURE;
 		}
 	}
 
-	if (FicNovFon != (char *) 0) {
+	if (FicNovFon != NULL) {
 		if (ReadLisUdf(FicNovFon, &LisNovFon) < 0) {
 			fprintf(stderr, "Error al leer la lista de nuevos fonemas %s\n", FicNovFon);
 			return EXIT_FAILURE;
 		}
 
-		for (i = 0; LisNovFon[i] != (char *) 0; i++) {
+		for (i = 0; LisNovFon[i] != NULL; i++) {
 			if (MeteLisUdf(LisNovFon[i], &NumFon, &Fonemas) < 0) {
 				fprintf(stderr, "Error al anhadir la lista de fonemas nuevos\n");
 				return EXIT_FAILURE;
@@ -214,13 +215,13 @@ int		 main(int ArgC, char *ArgV[])
 		}
 	}
 
-	if (FicNovVoc != (char *) 0) {
+	if (FicNovVoc != NULL) {
 		if (ReadLisUdf(FicNovVoc, &LisNovVoc) < 0) {
 			fprintf(stderr, "Error al leer la lista de nuevas vocales %s\n", FicNovVoc);
 			return EXIT_FAILURE;
 		}
 
-		for (i = 0; LisNovVoc[i] != (char *) 0; i++) {
+		for (i = 0; LisNovVoc[i] != NULL; i++) {
 			if (MeteLisUdf(LisNovVoc[i], &NumLet, &Letras) < 0 || MeteLisUdf(LisNovVoc[i], &NumVoc, &Vocales) < 0) {
 				fprintf(stderr, "Error al anhadir la lista de vocales nuevas\n");
 				return EXIT_FAILURE;
@@ -228,13 +229,13 @@ int		 main(int ArgC, char *ArgV[])
 		}
 	}
 
-	if (FicNovCons != (char *) 0) {
+	if (FicNovCons != NULL) {
 		if (ReadLisUdf(FicNovCons, &LisNovCons) < 0) {
 			fprintf(stderr, "Error al leer la lista de nuevas consonantes %s\n", FicNovCons);
 			return EXIT_FAILURE;
 		}
 
-		for (i = 0; LisNovCons[i] != (char *) 0; i++) {
+		for (i = 0; LisNovCons[i] != NULL; i++) {
 			if (MeteLisUdf(LisNovCons[i], &NumLet, &Letras) < 0 || MeteLisUdf(LisNovCons[i], &NumCons, &ConsTxt) < 0) {
 				fprintf(stderr, "Error al anhadir la lista de consonantes nuevas\n");
 				return EXIT_FAILURE;
@@ -245,21 +246,21 @@ int		 main(int ArgC, char *ArgV[])
 	/*
 	 * Cargamos el texto ortografico.
 	 */
-	while ((TxtOrt = CargTxtOrt(TrnLinAis)) != (char *) 0) {
+	while ((TxtOrt = CargTxtOrt(TrnLinAis)) != NULL) {
 		/*
 		 * Si existe el diccionario de excepciones, lo aplicamos.
 		 */
-		if (DicExc != (char ***) 0 && AplDicExc(DicExc, &TxtOrt) < 0) {
+		if (DicExc != NULL && AplDicExc(DicExc, &TxtOrt) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de excepciones\n");
 			return EXIT_FAILURE;
 		}
 
-		if ((TxtOrt = ArreglaTxt(TxtOrt)) == (char *) 0) {
+		if ((TxtOrt = ArreglaTxt(TxtOrt)) == NULL) {
 			fprintf(stderr, "Error al arreglar el texto de entrada\n");
 			return EXIT_FAILURE;
 		}
 		
-		if (DicExc != (char ***) 0 && AplDicExc(DicExc, &TxtOrt) < 0) {
+		if (DicExc != NULL && AplDicExc(DicExc, &TxtOrt) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de excepciones\n");
 			return EXIT_FAILURE;
 		}
@@ -267,7 +268,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Determinamos si hay alguna palabra extranha.
 		 */
-		if ((PalExt = CogePalExt(TxtOrt, PalExt, DicExc, DicTrnPal)) == (char **) 0) {
+		if ((PalExt = CogePalExt(TxtOrt, PalExt, DicExc, DicTrnPal)) == NULL) {
 			fprintf(stderr, "Error al localizar palabras extranhas\n");
 			return EXIT_FAILURE;
 		}
@@ -275,7 +276,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Silabificamos el texto ortografico.
 		 */
-		if ((SilOrt = SilaTxtOrt(TxtOrt, DicTrnPal)) == (char *) 0) {
+		if ((SilOrt = SilaTxtOrt(TxtOrt, DicTrnPal)) == NULL) {
 			fprintf(stderr, "Error al silabificar %s\n", TxtOrt);
 			continue;
 		}
@@ -283,7 +284,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Colocamos tildes en la vocales acentuadas.
 		 */
-		if ((SilAcc = AcenSilOrt(SilOrt, DicTrnPal)) == (char *) 0) {
+		if ((SilAcc = AcenSilOrt(SilOrt, DicTrnPal)) == NULL) {
 			fprintf(stderr, "Error al acentuar %s\n", SilOrt);
 			continue;
 		}
@@ -291,7 +292,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Realizamos la transcripcion fonetica.
 		 */
-		if ((TrnFon = TrnSilAcc(SilAcc, DicTrnPal, DicTrnFon, TrnPalAis, ClaveModif)) == (char *) 0) {
+		if ((TrnFon = TrnSilAcc(SilAcc, DicTrnPal, DicTrnFon, TrnPalAis, ClaveModif)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", SilAcc);
 			continue;
 		}
@@ -299,7 +300,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Si existe el diccionario de substituciones, lo aplicamos.
 		 */
-		if (DicSust != (char ***) 0 && AplDicSust(DicSust, &TrnFon) < 0) {
+		if (DicSust != NULL && AplDicSust(DicSust, &TrnFon) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de substituciones\n");
 			return EXIT_FAILURE;
 		}
@@ -307,7 +308,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Si existe el diccionario de substitucion de grupos, lo aplicamos.
 		 */
-		if (DicGrp != (char ***) 0 && AplDicGrp(DicGrp, &TrnFon) < 0) {
+		if (DicGrp != NULL && AplDicGrp(DicGrp, &TrnFon) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de substitucion de grupos\n");
 			return EXIT_FAILURE;
 		}
@@ -315,7 +316,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Realizamos la transcripcion en fonemas.
 		 */
-		if (SalFnm > 0 && (TrnFnm = TrnFonFnm(TrnFon, ConSil)) == (char *) 0) {
+		if (SalFnm > 0 && (TrnFnm = TrnFonFnm(TrnFon, ConSil)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -323,7 +324,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Realizamos la transcripcion en fonemas por palabras.
 		 */
-		if (SalFnmPal > 0 && (TrnFnmPal = TrnFonFnmPal(TrnFon, ConSil)) == (char *) 0) {
+		if (SalFnmPal > 0 && (TrnFnmPal = TrnFonFnmPal(TrnFon, ConSil)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -331,7 +332,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Realizamos la transcripcion en semisilabas.
 		 */
-		if (SalSem > 0 && (TrnSem = TrnFonSem(TrnFon, ConSil)) == (char *) 0) {
+		if (SalSem > 0 && (TrnSem = TrnFonSem(TrnFon, ConSil)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -339,7 +340,7 @@ int		 main(int ArgC, char *ArgV[])
 		/*
 		 * Realizamos la transcripcion en semifonemas.
 		 */
-		if (SalSefo > 0 && (TrnSefo = TrnFonSefo(TrnFon, ConSil, StrIniPal, StrFinPal)) == (char *) 0) {
+		if (SalSefo > 0 && (TrnSefo = TrnFonSefo(TrnFon, ConSil, StrIniPal, StrFinPal)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -406,9 +407,9 @@ char	*CargTxtOrt(int TrnLinAis)
 	int		Final;
 
 	AllocLong = 1000;
-	if ((Txt = (char *) malloc((AllocLong+1)*sizeof(char))) == (char *) 0) {
+	if ((Txt = (char *) malloc((AllocLong+1)*sizeof(char))) == NULL) {
 		fprintf(stderr, "Error al ubicar memoria para Txt\n");
-		return (char *) 0;
+		return NULL;
 	}
 
 	Final = 0;
@@ -417,9 +418,9 @@ char	*CargTxtOrt(int TrnLinAis)
 		Long++;
 		if (Long == AllocLong) {
 			AllocLong += 1000;
-			if ((Txt = (char *) realloc((void *) Txt, (size_t) (AllocLong+1) * sizeof(char))) == (char *) 0) {
+			if ((Txt = (char *) realloc((void *) Txt, (size_t) (AllocLong+1) * sizeof(char))) == NULL) {
 				fprintf(stderr, "Error al reubicar memoria para Txt\n");
-				return (char *) 0;
+				return NULL;
 			}
 		}
 
@@ -440,7 +441,7 @@ char	*CargTxtOrt(int TrnLinAis)
 
 	Txt[Long-1] = '\0';
 
-	return (Long > 1) ? Txt : (char *) 0;
+	return (Long > 1) ? Txt : NULL;
 }
 
 /***********************************************************************
@@ -453,9 +454,9 @@ char	*ArreglaTxt(char *TxtOrt)
 	char	*Txt;
 	size_t		Chr;
 
-	if ((Txt = (char *) malloc((2 * strlen(TxtOrt) + 1) * sizeof(char))) == (char *) 0) {
+	if ((Txt = (char *) malloc((2 * strlen(TxtOrt) + 1) * sizeof(char))) == NULL) {
 		fprintf(stderr, "Error al ubicar memoria para Txt\n");
-		return (char *) 0;
+		return NULL;
 	}
 
 	*Txt = '\0';
@@ -463,7 +464,7 @@ char	*ArreglaTxt(char *TxtOrt)
 		switch(TxtOrt[Chr]) {
 			case 'y':	if ((Chr == 0 || strchr(".,:;¿?()¿¡! \t\n", TxtOrt[Chr - 1])) && (Chr == strlen(TxtOrt) - 1 || strchr(".,:;¿?()¿¡! \t\n", TxtOrt[Chr + 1])))
 							strcat(Txt, "y");
-						else if (strchr("aeiouáéíóú'", TxtOrt[Chr + 1]) == (char *) 0) strcat(Txt, "i");
+						else if (strchr("aeiouáéíóú'", TxtOrt[Chr + 1]) == NULL) strcat(Txt, "i");
 						else strcat(Txt, "y");
 						break;
 			case 'á':	strcat(Txt, "'a");
@@ -530,14 +531,14 @@ int		OpcSaga(
 	/*
 	 * Valores por defecto.
 	 */
-	*FicDicExc = (char *) 0;
-	*FicTrnFon = (char *) 0;
-	*FicTrnPal = (char *) 0;
-	*FicDicSust = (char *) 0;
-	*FicDicGrp = (char *) 0;
-	*FicNovFon = (char *) 0;
-	*FicNovVoc = (char *) 0;
-	*FicNovCons = (char *) 0;
+	*FicDicExc = NULL;
+	*FicTrnFon = NULL;
+	*FicTrnPal = NULL;
+	*FicDicSust = NULL;
+	*FicDicGrp = NULL;
+	*FicNovFon = NULL;
+	*FicNovVoc = NULL;
+	*FicNovCons = NULL;
 	*StrIniPal = strdup(".-");
 	*StrFinPal = strdup("+.");
 	*TrnPalAis = 0;
@@ -548,9 +549,9 @@ int		OpcSaga(
 	*SalSem = 0;
 	*SalSefo = 0;
 	*ConSil = 0;
-	*NomOut = (char *) 0;
+	*NomOut = NULL;
 	*ClaveModif = 0;
-	FicErr = (char *) 0;
+	FicErr = NULL;
 
 	while ((Opcion = getopt(ArgC, ArgV, "abd:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1) {
 		switch (Opcion) {
@@ -587,7 +588,7 @@ int		OpcSaga(
 					break;
 		case 'Y' :	Matriz = MatStr(optarg);
 					*StrIniPal = *StrFinPal = Matriz[0];
-					if (Matriz[1] != (char *) 0) *StrFinPal = Matriz[1];
+					if (Matriz[1] != NULL) *StrFinPal = Matriz[1];
 					break;
 		case 's' :	*SalSem = 1;
 					break;
@@ -672,7 +673,7 @@ int		OpcSaga(
 		*NomOut = strdup("-");
 	}
 
-	if (FicErr != (char *) 0) {
+	if (FicErr != NULL) {
 		if (freopen(FicErr, "wt", stderr) == (FILE *) 0) {
 			fprintf(stderr, "Error al abrir %s\n", FicErr);
 			return -1;
