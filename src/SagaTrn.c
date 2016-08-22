@@ -38,7 +38,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 
 {
 	char	*TrnFon, *TrnPal;
-	int		PosAct, PosSig, LongTxt = strlen(SilAcc), Long;
+	size_t		PosAct, PosSig, LongTxt = strlen(SilAcc), Long;
 	GRP_ORT	GrpAct, GrpAnt, GrpSig;
 	int		Encontrada, i;
 

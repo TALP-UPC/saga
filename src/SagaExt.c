@@ -34,9 +34,9 @@ char	**CogePalExt(	char	*TxtOrt,
 						char	***DicTrn)
 
 {
-	int		PosAct, LongTxt = strlen(TxtOrt);
-	int		Ext, NumExt;
-	int		Encontrada, Long;
+	size_t		PosAct, LongTxt = strlen(TxtOrt);
+	size_t		Ext, NumExt;
+	size_t		Encontrada, Long;
 	GRP_ORT	GrpAct;
 
 	if (PalExt == (char **) 0) {

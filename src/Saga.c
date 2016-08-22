@@ -25,6 +25,7 @@
 #include	<ctype.h>
 #include	<limits.h>
 #include	<values.h>
+#include	<unistd.h> /* getopt family */
 #include	"Util.h"
 #include	"LisUdf.h"
 #include	"Saga.h"
@@ -450,7 +451,7 @@ char	*ArreglaTxt(char *TxtOrt)
 
 {
 	char	*Txt;
-	int		Chr;
+	size_t		Chr;
 
 	if ((Txt = (char *) malloc((2 * strlen(TxtOrt) + 1) * sizeof(char))) == (char *) 0) {
 		fprintf(stderr, "Error al ubicar memoria para Txt\n");
@@ -521,13 +522,8 @@ int		OpcSaga(
 	)
 
 {
-	/*
-	 * Declaraciones de getopt (3C)
-	 */
-	extern int	optind;
-	extern char	*optarg;
-
-	int		Opcion, i;
+	int		Opcion;
+	size_t i;
 	char	*FicErr;
 	char	**Matriz;
 

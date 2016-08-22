@@ -37,9 +37,10 @@
 	/vGhNj/adf/FGjkJ.hmm    -> /vGhNj/adf/F_G_jkJ_.hmm
 	/vGhNj/adf/<pause>_49.hmm -> /vGhNj/adf/(pause)_49.hmm
  **********************************************************************/
-int CaseInsensitiveName(const char* src, char* dst, unsigned int dpmax)
+int CaseInsensitiveName(const char* src, char* dst, size_t dpmax)
 {
-	int sp, dp, ext = 0;
+	int sp, ext = 0;
+	size_t dp;
 
 	/* check dpmax */
 	if (dpmax == 0)
