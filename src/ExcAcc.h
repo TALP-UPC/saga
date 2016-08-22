@@ -49,5 +49,5 @@ static char	*ExcAcc[] = {
 	/* particulas incluyentes	*/
 	 "aun", "has-ta", "in-clu-so", "ex-cep-to", "me-nos", "sal-vo",
 
-	 (char *) 0
+	 NULL
 };

@@ -46,9 +46,9 @@ char	*TrnSilAcc(	char	*SilAcc,
 	 * Ubicamos memoria para albergar el doble mas uno de la longitud
 	 * de SilAcc. Esto garantiza que cabra cualquier transcripcion. No
 	 */
-	if ((TrnFon = (char *) calloc((size_t) (20*LongTxt+1), sizeof(char))) == (char *) 0) {
+	if ((TrnFon = calloc((size_t) (20*LongTxt+1), sizeof(char))) == NULL) {
 		fprintf(stderr, "Error al ubicar memoria para TrnFon\n");
-		return (char *) 0;
+		return NULL;
 	}
 
 	/*
@@ -60,8 +60,8 @@ char	*TrnSilAcc(	char	*SilAcc,
 	 * Cogemos el primer grupo ortografico.
 	 */
 	if (CogeGrpOrt(SilAcc, 0, &GrpAct) < 0) {
-		free((void *) TrnFon);
-		return (char *) 0;
+		free(TrnFon);
+		return NULL;
 	}
 
 	/*
@@ -76,8 +76,8 @@ char	*TrnSilAcc(	char	*SilAcc,
 		 * Cogemos el siguiente grupo ortografico de SilAcc.
 		 */
 		if (CogeGrpOrt(SilAcc, PosAct, &GrpAct) < 0) {
-			free((void *) TrnFon);
-			return (char *) 0;
+			free(TrnFon);
+			return NULL;
 		}
 
 		/*
@@ -111,7 +111,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 		}
 
 		Encontrada = 0;
-		for (i = 0; DicTrnPal != (char ***) 0 && DicTrnPal[i] != (char **) 0; i++) {
+		for (i = 0; DicTrnPal != NULL && DicTrnPal[i] != NULL; i++) {
 			if ((Long = strlen(DicTrnPal[i][0])) != GrpAct.Long) continue;
 			if (strncmp(DicTrnPal[i][0], GrpAct.Cont, Long) == 0) {
 				Encontrada = 1;
@@ -121,13 +121,13 @@ char	*TrnSilAcc(	char	*SilAcc,
 		}
 				
 		if (!Encontrada && (GrpAct.Tipo & PALABRA)) {
-			if ((TrnPal = TrnPalSil(GrpAnt, GrpAct, GrpSig, DicTrnFon, TrnPalAis, ClaveModif)) == (char *) 0) {
-				free((void *) TrnFon);
-				return (char *) 0;
+			if ((TrnPal = TrnPalSil(GrpAnt, GrpAct, GrpSig, DicTrnFon, TrnPalAis, ClaveModif)) == NULL) {
+				free(TrnFon);
+				return NULL;
 			}
 
 			strcat(TrnFon, TrnPal);
-			free((void *) TrnPal);
+			free(TrnPal);
 		}
 		else if (!Encontrada) {
 			strncat(TrnFon, GrpAct.Cont, GrpAct.Long);
@@ -180,9 +180,9 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 	 * Ubicamos memoria para albergar el doble mas uno de la longitud de
 	 * GrpOrt.Long. Esto garantiza que cabra cualquier silabificacion.
 	 */
-	if ((TrnPal = (char *) calloc((size_t) (20*Long+1), sizeof(char))) == (char *) 0) {
+	if ((TrnPal = calloc((size_t) (20*Long+1), sizeof(char))) == NULL) {
 		fprintf(stderr, "Error al ubicar memoria para TrnPal\n");
-		return (char *) 0;
+		return NULL;
 	}
 
 	/*
