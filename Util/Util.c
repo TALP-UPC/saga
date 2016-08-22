@@ -47,7 +47,7 @@ int CaseInsensitiveName(const char* src, char* dst, size_t dpmax)
 		return -1;
 
 	/* reset dst */
-	strcpy(dst,"");
+	dst[0] = '\0';
 
 	/* search directory */
 	for (sp=strlen(src)-1; sp>=0; sp--) {
@@ -468,7 +468,7 @@ int		TamMat(char	*_Str)
  * separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-char	**MatStr(char	*Str)
+char	**MatStr(const char	*Str)
 {
 	return MatStrChr(Str, " ,");
 }
@@ -479,8 +479,8 @@ char	**MatStr(char	*Str)
  **********************************************************************/
 
 char	**MatStrChr(
-	char	*_Str,
-	char	*Delim)
+	const char	*_Str,
+	const char	*Delim)
 
 {
 	char	**Mat, *Str = strdup(_Str);

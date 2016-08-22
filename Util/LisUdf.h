@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef	_LIS_UDF_H
-#	define	_LIS_UDF_H
+#ifndef	LIS_UDF_H
+#define	LIS_UDF_H
 
 int		ReadLisUdf(
-	char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
+	const char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
 	char	***LisUdf);	/* Lista de unidades resultante				*/
 int		SeekLisUdf(
 	char	*Unidad,
@@ -32,4 +32,4 @@ int		MeteLisUdf(
 	int		*TamLis,
 	char	***LisUdf);
 
-#endif						/* defined (_LIS_UDF_H)					*/
+#endif						/* defined (LIS_UDF_H)					*/

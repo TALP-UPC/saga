@@ -45,7 +45,7 @@ int		AplDicPal(
  * CargDicExc - Carga un diccionario de excepciones.
  **********************************************************************/
 
-char	***CargDicExc(char	*FicDic)
+char	***CargDicExc(const char	*FicDic)
 
 {
 	int		Fic, NumFic;

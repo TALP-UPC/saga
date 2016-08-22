@@ -170,7 +170,7 @@ char	*SilaTxtOrt(char *TxtOrt, char ***DicTrnPal);
 int		CogeGrpOrt(	char	*TxtOrt,
 					int		PosAct,
 					GRP_ORT	*GrpAct);
-int		CogeGrpFon(	char	*TrnFon,
+int		CogeGrpFon(char	*TrnFon,
 					int		PosAct,
 					GRP_ORT	*GrpAct);
 char	**CogePalExt(	char	*TxtOrt,
@@ -205,12 +205,12 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 					int		ConSil);
 char	*TrnFonSem(	char	*TrnFon,
 					int		ConSil);
-char	*TrnFonSefo(char	*TrnFon,
+char	*TrnFonSefo(char *TrnFon,
 					int		ConSil,
 					char	*StrFinPal,
 					char	*StrIniPal);
 int		EscrPalExt(char	**PalExt);
-char	***CargDicExc(char *FicDicExc);
+char	***CargDicExc(const char *FicDicExc);
 int		AplDicExc(	char	***DicExc,
 					char	**TxtOrt);
 int		AplDicSust(	char	***DicSust,

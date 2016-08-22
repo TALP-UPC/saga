@@ -107,7 +107,7 @@ int		CogeGrpOrt(	char	*TxtOrt,
  **********************************************************************/
 
 
-int		CogeGrpFon(	char	*TrnFon,
+int		CogeGrpFon(char	*TrnFon,
 					int		PosAct,
 					GRP_ORT	*GrpAct)
 

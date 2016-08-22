@@ -31,7 +31,7 @@
  **********************************************************************/
 
 int		ReadLisUdf(
-	char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
+	const char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
 	char	***LisUdf)	/* Lista de unidades resultante				*/
 
 {

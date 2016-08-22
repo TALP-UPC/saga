@@ -35,34 +35,22 @@ int		AplDicGrp(	char	***DicExc,
 
 char	**Letras, **Fonemas, **ConsTxt, **Vocales;
 
-int main(int ArgC, char *ArgV[])
+int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *FicTrnPal,
+                      const char *FicDicSust, const char *FicDicGrp, const char *FicNovVoc, 
+                      const char *FicNovCons, const char *FicNovFon,
+                      int TrnPalAis, int SalFon, int SalFnm, int SalFnmPal, int SalSem,
+                      int SalSefo, int ConSil, char *StrIniPal, char *StrFinPal,
+                      char *NomOut, long ClaveModif, int TrnLinAis)
 {
 	char	*TxtOrt = NULL, *TrnFon = NULL, *SilOrt = NULL, *SilAcc = NULL;
 	char	*TrnFnm = NULL, *TrnFnmPal = NULL, *TrnSem = NULL, *TrnSefo = NULL;
-	char	*FicDicExc, *FicTrnFon, *FicTrnPal, *FicDicSust, *FicDicGrp, *FicNovVoc, *FicNovCons, *FicNovFon;
 	char	***DicExc, ***DicTrnFon, ***DicTrnPal, ***DicSust, ***DicGrp, **LisNovVoc, **LisNovCons, **LisNovFon;
 	char	**PalExt = NULL;
-	int		SalFon, SalFnm, SalFnmPal, SalSem, SalSefo;
-	int		ConSil;
-	int		TrnPalAis;
-	int		TrnLinAis;
-	char	*StrIniPal, *StrFinPal;
-	char	*NomOut, PathOut[_POSIX_PATH_MAX];
+	char	PathOut[_POSIX_PATH_MAX];
 	char	Fonema[1024];
 	FILE	*FpFon, *FpFnm, *FpFnmPal, *FpSem, *FpSefo;
-	long	ClaveModif = 0;
 	int		i;
 	int		NumLet, NumVoc, NumCons, NumFon;
-
-	/*
-	 * Analizamos la linea de comandos.
-	 */
-	if (OpcSaga(ArgC, ArgV, &FicDicExc, &FicTrnFon, &FicTrnPal, &FicDicSust, &FicDicGrp, &FicNovVoc, &FicNovCons,
-			&FicNovFon, &TrnPalAis, &SalFon, &SalFnm, &SalFnmPal, &SalSem, &SalSefo, &ConSil, &StrIniPal, &StrFinPal, &NomOut,
-			&ClaveModif, &TrnLinAis) < 0) {
-		EmpleoSaga(ArgV);
-		return EXIT_FAILURE;
-	}
 
 	FpSem = FpFon = FpFnm = FpFnmPal = FpSefo = stdout;
 	if (strcmp(NomOut, "-") != 0) {
@@ -394,6 +382,32 @@ int main(int ArgC, char *ArgV[])
 
 	return EXIT_SUCCESS;
 }
+
+int main(int ArgC, char *ArgV[])
+{
+	char	*FicDicExc, *FicTrnFon, *FicTrnPal, *FicDicSust, *FicDicGrp, *FicNovVoc, *FicNovCons, *FicNovFon;
+	int		SalFon, SalFnm, SalFnmPal, SalSem, SalSefo;
+	int		ConSil;
+	int		TrnPalAis;
+	int		TrnLinAis;
+	char	*StrIniPal, *StrFinPal;
+	char	*NomOut;
+	long	ClaveModif = 0;
+
+	/*
+	 * Analizamos la linea de comandos.
+	 */
+	if (OpcSaga(ArgC, ArgV, &FicDicExc, &FicTrnFon, &FicTrnPal, &FicDicSust, &FicDicGrp, &FicNovVoc, &FicNovCons,
+			&FicNovFon, &TrnPalAis, &SalFon, &SalFnm, &SalFnmPal, &SalSem, &SalSefo, &ConSil, &StrIniPal, &StrFinPal, &NomOut,
+			&ClaveModif, &TrnLinAis) < 0) {
+		EmpleoSaga(ArgV);
+		return EXIT_FAILURE;
+	}
+        return MainPorArgumentos(FicDicExc, FicTrnFon, FicTrnPal, FicDicSust, FicDicGrp, FicNovVoc, FicNovCons,
+			FicNovFon, TrnPalAis, SalFon, SalFnm, SalFnmPal, SalSem, SalSefo, ConSil, StrIniPal, StrFinPal, NomOut,
+			ClaveModif, TrnLinAis);
+}
+
 
 /***********************************************************************
  * CargTxtOrt - Carga un texto ortografico.

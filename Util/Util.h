@@ -62,18 +62,9 @@
 / COMPILADORES. VEASE c_varieties.h                              /
  ****************************************************************/
 
-/* Which type of C/C++ compiler are we using? */
-#if defined(__cplusplus)
-#define __C_tipo 3
-#elif defined(__STDC__)
-#define __C_tipo 2
-#else
-#define __C_tipo 1
-#endif /* Which type of C/C++ compiler are we using? */
 
-
-char	**MatStr(char *);
-char	**MatStrChr(char *, char *);
+char	**MatStr(const char *);
+char	**MatStrChr(const char *, const char *);
 int		NovaIden(char ****IdenUdf, int *NumIden, char *Iden);
 int		EsExcUdf(char *Unidad, char **ExcUdf);
 int		EsIdenUdf(char *Uni1, char *Uni2, char ***IdenUdf);
