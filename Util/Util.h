@@ -17,31 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef	_UTIL_H
-#	define	_UTIL_H
+#ifndef	UTIL_H
+#	define	UTIL_H
 
-#	include <errno.h>
 #	include <time.h>
 
 #	if !defined(_UNISTD_H) && !defined(_MSC_VER)
 #		include	<unistd.h>
 #	endif
 
-#	if !defined(_LIMITS_H)
-#		include	<limits.h>
-#	endif
-
-#	if !defined(_MATH_H)
-#		include	<math.h>
-#	endif
-
-#	if !defined(_VALUES_H)
-#		include	<values.h>
-#	endif
-
-#	ifndef	_ERRNO_H
-#		include	<errno.h>
-#	endif
+#include	<limits.h>
+#include	<math.h>
+#include	<values.h>
+#include	<errno.h>
 
 #	ifndef	CLOCKS_PER_SEC
 #		ifdef	CLK_TCK
@@ -73,4 +61,4 @@ char	**LeeLisSen(int *NumFic);
 void LiberaMatStr(char	**MatChr);
 void LiberaLisSen(char	**NomFic, int		NumFic);
 
-#endif						/* defined (_UTIL_H)					*/
+#endif						/* defined (UTIL_H)					*/

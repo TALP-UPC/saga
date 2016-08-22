@@ -42,7 +42,7 @@ int		ReadLisUdf(
 	/*
 	 * Inicializamos la memoria empleada por LisUdf.
 	 */
-	if ((*LisUdf = (char **) malloc(sizeof(char *))) == (char **) 0) {
+	if ((*LisUdf = malloc(sizeof(char *))) == NULL) {
 		return -1;
 	}
 
@@ -59,7 +59,7 @@ int		ReadLisUdf(
 	TamLis = 0;
 	while (fgets(Unidad, sizeof(Unidad), FpLis) != (char *) 0) {
 		TamLis++;
-		if ((*LisUdf = (char **) realloc((void *) *LisUdf, (size_t) (TamLis + 1) * sizeof(char *))) == (char **) 0) {
+		if ((*LisUdf = realloc(*LisUdf, (size_t) (TamLis + 1) * sizeof(char *))) == NULL) {
 			return -1;
 		}
 
@@ -67,7 +67,7 @@ int		ReadLisUdf(
 
 		(*LisUdf)[TamLis-1] = strdup(Unidad);
 	}
-	(*LisUdf)[TamLis] = (char *) 0;
+	(*LisUdf)[TamLis] = NULL;
 
 	(void) fclose(FpLis);
 

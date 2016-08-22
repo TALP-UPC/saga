@@ -128,7 +128,7 @@ void	PathName(	const char	*Path,
 	 * construimos los nombres completos de los ficheros encadenando el
 	 * path y el nombre.
 	 */
-	if (Path != (char *) 0) {
+	if (Path != NULL) {
 		(void) sprintf(FullName, "%s/%s", Path, Name);
 	}
 	else {
@@ -139,9 +139,9 @@ void	PathName(	const char	*Path,
 	 * Si se ha indicado extension y el nombre no la incluia, anhadimos
 	 * la indicada.
 	 */
-	if (Ext != (char *) 0) {
+	if (Ext != NULL) {
 		ExtAnt = strrchr(FullName, '.');
-		if (ExtAnt == (char *) 0 || strcmp(ExtAnt + 1, Ext) != 0) {
+		if (ExtAnt == NULL || strcmp(ExtAnt + 1, Ext) != 0) {
 			(void) strcat(FullName, ".");
 			(void) strcat(FullName, Ext);
 		}
@@ -160,9 +160,9 @@ int		ChkPathName(const char	*FullPath)
 	char	Path[_POSIX_PATH_MAX+1], *Dir, *Name;
 
 	/*
-	 * Si FullPath == (char *) 0, error.
+	 * Si FullPath == NULL, error.
 	 */
-	if (FullPath == (char *) 0) {
+	if (FullPath == NULL) {
 		return -1;
 	}
 
@@ -171,7 +171,7 @@ int		ChkPathName(const char	*FullPath)
 	/* 
 	 * Si Path no contiene ninguna barra (/), Path=. y es correcto.
 	 */
-	if ((Name = strrchr(Path, '/')) == (char *) 0) {
+	if ((Name = strrchr(Path, '/')) == NULL) {
 		return 0;
 	}
 	else {
@@ -183,7 +183,7 @@ int		ChkPathName(const char	*FullPath)
 	 * Eliminamos los posibles '/' que haya al principio.
 	 */
 	while (Dir[0] == '/') Dir++;
-	while ((Dir = strchr(Dir, '/')) != (char *) 0) {
+	while ((Dir = strchr(Dir, '/')) != NULL) {
 		Dir[0] = '\0';
 		if (access(Path, F_OK) != 0) {
 			if (mkdir(Path, 0755) != 0) {
@@ -208,8 +208,8 @@ int		QuitaExt(
 {
 	int		LongFic, LongExt;
 	
-	if (ExtSen == (char *) 0) return 0;
-	if (FicSen == (char *) 0) return -1;
+	if (ExtSen == NULL) return 0;
+	if (FicSen == NULL) return -1;
 
 	LongFic = strlen(FicSen);
 	LongExt = strlen(ExtSen);
@@ -235,8 +235,8 @@ char	*QuitaDir(
 {
 	int		LongFic, LongDir;
 	
-	if (DirSen == (char *) 0) return FicSen;
-	if (FicSen == (char *) 0) return (char *) 0;
+	if (DirSen == NULL) return FicSen;
+	if (FicSen == NULL) return NULL;
 
 	LongFic = strlen(FicSen);
 	LongDir = strlen(DirSen);
@@ -255,7 +255,7 @@ char	*QuitaDir(
 
 /***********************************************************************
  * CreaLisSen - Crea una lista de senhales a partir de un fichero guia
- * o de un vector de nombres de fichero rematado en (char *) 0.
+ * o de un vector de nombres de fichero rematado en NULL.
  **********************************************************************/
 
 char	**CreaLisSen(
@@ -275,7 +275,7 @@ char	**CreaLisSen(
 	 * Debe especificarse el nombre del fichero guia o el vector de
 	 * nombres
 	 */
-	if (LisFic == (char *) 0 && NomFic == (char **) 0) {
+	if (LisFic == NULL && NomFic == (char **) 0) {
 		if (!DirSen || (!strcmp(DirSen, "-") && !strcmp(DirSen, "stdin") && !strcmp(DirSen, "stdio"))) {
 			fprintf(stderr, "Error al crear la lista de senhales:\n");
 			fprintf(stderr, "Debe especificarse el fichero guia o el nombre de los ficheros\n");
@@ -283,7 +283,7 @@ char	**CreaLisSen(
 		}
 	}
 
-	if (LisFic != (char *) 0 && NomFic != (char **) 0) {
+	if (LisFic != NULL && NomFic != (char **) 0) {
 		fprintf(stderr, "Error al crear la lista de senhales:\n");
 		fprintf(stderr, "No se puede especificar un fichero guia y el nombre de los ficheros al mismo tiempo\n");
 		return (char **) 0;
@@ -297,13 +297,13 @@ char	**CreaLisSen(
 	/*
 	 * Si se ha indicado fichero guia, lo leemos.
 	 */
-	if (LisFic != (char *) 0) {
+	if (LisFic != NULL) {
 		if ((FicGui = MatStrChr(LisFic, "+ ,")) == (char **) 0) {
 			fprintf(stderr, "ERROR al procesar la lista de ficheros guia %s\n", LisFic);
 			return (char **) 0;
 		}
 
-		for (NumGui = 0; FicGui[NumGui] != (char *) 0; NumGui++) ;
+		for (NumGui = 0; FicGui[NumGui] != NULL; NumGui++) ;
 
 		/*
 		 * Abrimos los fichero guia
@@ -337,7 +337,7 @@ char	**CreaLisSen(
 	}
 	else if (NomFic != (char **) 0) {
 		char* tmp;
-		for (*NumFic = 0; NomFic[*NumFic] != (char *) 0; (*NumFic)++) {
+		for (*NumFic = 0; NomFic[*NumFic] != NULL; (*NumFic)++) {
 			if ((LisSen = (char **) realloc((void *) LisSen, (*NumFic + 1) * sizeof(char *))) == (char **) 0) {
 				fprintf(stderr, "Error al crear la lista de senhales (%s)\n", strerror(errno));
 				return (char **) 0;
@@ -347,8 +347,8 @@ char	**CreaLisSen(
 
 			(void) QuitaExt(NomSen, ExtSen);
 
-			if (DirSen != (char *) 0) {
-				if ((NomSen = QuitaDir(NomSen, DirSen)) == (char *) 0) {
+			if (DirSen != NULL) {
+				if ((NomSen = QuitaDir(NomSen, DirSen)) == NULL) {
 					fprintf(stderr, "Error al eliminar %s de %s\n", DirSen, NomFic[*NumFic]);
 					return (char **) 0;
 				}
@@ -450,12 +450,12 @@ int		TamMat(char	*_Str)
 	char	*Str1, *Str = strdup(_Str);
 	size_t	i;
 
-	if ((Str1 = Str) == (char *) 0) {
+	if ((Str1 = Str) == NULL) {
 		return -1;
 	}
 
-	for (i = 0; strtok(Str, " ,") != (char *) 0; i++) {
-		Str = (char *) 0;	/* Para la siguiente llamada a strtok	*/
+	for (i = 0; strtok(Str, " ,") != NULL; i++) {
+		Str = NULL;	/* Para la siguiente llamada a strtok	*/
 	}
 
 	free((void *) Str1);
@@ -487,25 +487,25 @@ char	**MatStrChr(
 	char	*fStr = Str;
 	size_t	i;
 
-	if (Str == (char *) 0) {
-		return (char **) 0;
+	if (Str == NULL) {
+		return NULL;
 	}
 
-	if((Mat = (char **) malloc(sizeof(char *))) == (char **) 0) {
+	if((Mat = (char **) malloc(sizeof(char *))) == NULL) {
 		free(fStr);
-		return (char **) 0;
+		return NULL;
 	}
 
-	for (i = 0; (Mat[i] = strtok(Str, Delim)) != (char *) 0; i++) {
+	for (i = 0; (Mat[i] = strtok(Str, Delim)) != NULL; i++) {
 		Mat[i] = strdup(Mat[i]);
-		Str = (char *) 0;	/* Para la siguiente llamada a strtok	*/
-		if((Mat = (char **) realloc((void *) Mat, (i + 2) * sizeof(char *))) == (char **) 0) {
+		Str = NULL;	/* Para la siguiente llamada a strtok	*/
+		if((Mat = realloc(Mat, (i + 2) * sizeof(char *))) == NULL) {
 			free(fStr);
-			return (char **) 0;
+			return NULL;
 		}
 	}
 
-	Mat[i] = (char *) 0;
+	Mat[i] = NULL;
 	free(fStr);
 
 	return Mat;
@@ -524,7 +524,7 @@ int	*MatInt(char	*_Str)
 	int		*Mat;
 	size_t	i;
 	
-	if (Str == (char *) 0) {
+	if (Str == NULL) {
 		return (int *) 0;
 	}
 
@@ -533,8 +533,8 @@ int	*MatInt(char	*_Str)
 		return (int *) 0;
 	}
 
-	for (i = 0; (Cadena = strtok(Str, " ,")) != (char *) 0; i++) {
-		Str = (char *) 0;	/* Para la siguiente llamada a strtok	*/
+	for (i = 0; (Cadena = strtok(Str, " ,")) != NULL; i++) {
+		Str = NULL;	/* Para la siguiente llamada a strtok	*/
 		Mat[i] = atoi(Cadena);
 		if((Mat = (int *) realloc((void *) Mat, (i + 2) * sizeof(int))) == (int *) 0) {
 			free(fStr);
@@ -561,7 +561,7 @@ long	*MatLng(char	*_Str)
 	long		*Mat;
 	size_t	i;
 
-	if (Str == (char *) 0) {
+	if (Str == NULL) {
 		return (long *) 0;
 	}
 
@@ -569,8 +569,8 @@ long	*MatLng(char	*_Str)
 		return (long *) 0;
 	}
 
-	for (i = 0; (Cadena = strtok(Str, " ,")) != (char *) 0; i++) {
-		Str = (char *) 0;	/* Para la siguiente llamada a strtok	*/
+	for (i = 0; (Cadena = strtok(Str, " ,")) != NULL; i++) {
+		Str = NULL;	/* Para la siguiente llamada a strtok	*/
 		Mat[i] = atol(Cadena);
 		if((Mat = (long *) realloc((void *) Mat, (i + 2) * sizeof(long))) == (long *) 0) {
 			return (long *) 0;
@@ -593,7 +593,7 @@ double	*MatDbl(char	*Str)
 	double	*Mat;
 	size_t	i;
 
-	if (Str == (char *) 0) {
+	if (Str == NULL) {
 		return (double *) 0;
 	}
 
@@ -601,8 +601,8 @@ double	*MatDbl(char	*Str)
 		return (double *) 0;
 	}
 
-	for (i = 0; (Cadena = strtok(Str, " ,")) != (char *) 0; i++) {
-		Str = (char *) 0;	/* Para la siguiente llamada a strtok	*/
+	for (i = 0; (Cadena = strtok(Str, " ,")) != NULL; i++) {
+		Str = NULL;	/* Para la siguiente llamada a strtok	*/
 		Mat[i] = atof(Cadena);
 		if((Mat = (double *) realloc((void *) Mat, (i + 2) * sizeof(double))) == (double *) 0) {
 			return (double *) 0;
@@ -627,13 +627,13 @@ int		EsExcUdf(	char	*_Unidad,	/* Unidad a comprobar	*/
 
 	strcpy(Unidad, _Unidad);
 
-	while((Marca = strpbrk(Unidad, "_·:@'")) != (char *) 0) {
+	while((Marca = strpbrk(Unidad, "_·:@'")) != NULL) {
 		memmove(Marca, Marca + 1, strlen(Marca));
 	}
 
 	if (ExcUdf == (char **) 0) return -1;
 
-	for (Exc = 0; ExcUdf[Exc] != (char *) 0; Exc++) {
+	for (Exc = 0; ExcUdf[Exc] != NULL; Exc++) {
 		if (strcmp(Unidad, ExcUdf[Exc]) == 0) return Exc;
 	}
 
@@ -656,10 +656,10 @@ int		EsIdenUdf(	char	*_Uni1,		/* Unidad a comprobar	*/
 	strcpy(Uni1, _Uni1);
 	strcpy(Uni2, _Uni2);
 
-	while((Marca = strpbrk(Uni1, "_·:@'")) != (char *) 0) {
+	while((Marca = strpbrk(Uni1, "_·:@'")) != NULL) {
 		memmove(Marca, Marca + 1, strlen(Marca));
 	}
-	while((Marca = strpbrk(Uni2, "_·:@'")) != (char *) 0) {
+	while((Marca = strpbrk(Uni2, "_·:@'")) != NULL) {
 		memmove(Marca, Marca + 1, strlen(Marca));
 	}
 
@@ -669,15 +669,15 @@ int		EsIdenUdf(	char	*_Uni1,		/* Unidad a comprobar	*/
 
 	for (Iden = 0; IdenUdf[Iden] != (char **) 0; Iden++) {
 		EsIden1 = EsIden2 = 0;
-		for (Udf = 0; IdenUdf[Iden][Udf] != (char *) 0; Udf++) {
+		for (Udf = 0; IdenUdf[Iden][Udf] != NULL; Udf++) {
 			if (strcmp(Uni1, IdenUdf[Iden][Udf]) == 0) break;
 		}
-		if (IdenUdf[Iden][Udf] != (char *) 0) EsIden1 = 1;
+		if (IdenUdf[Iden][Udf] != NULL) EsIden1 = 1;
 
-		for (Udf = 0; IdenUdf[Iden][Udf] != (char *) 0; Udf++) {
+		for (Udf = 0; IdenUdf[Iden][Udf] != NULL; Udf++) {
 			if (strcmp(Uni2, IdenUdf[Iden][Udf]) == 0) break;
 		}
-		if (IdenUdf[Iden][Udf] != (char *) 0) EsIden2 = 1;
+		if (IdenUdf[Iden][Udf] != NULL) EsIden2 = 1;
 
 		if (EsIden1 && EsIden2) return Iden;
 	}
@@ -711,8 +711,8 @@ int		NovaIden(	char	****IdenUdf,
 	(*IdenUdf)[*NumIden-1] = MatStr(Iden);
 	(*IdenUdf)[*NumIden] = (char **) 0;
 
-	if ((*IdenUdf)[*NumIden-1][0] == (char *) 0 ||
-		(*IdenUdf)[*NumIden-1][1] == (char *) 0) {
+	if ((*IdenUdf)[*NumIden-1][0] == NULL ||
+		(*IdenUdf)[*NumIden-1][1] == NULL) {
 		(void) fprintf(stderr, "Cada identificacion fonetica debe indicarse como:\n");
 		(void) fprintf(stderr, "\t-a Udf1,Udf2[,...]\n");
 		return -1;
