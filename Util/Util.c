@@ -441,7 +441,10 @@ char	**LeeLisSen(int	*NumFic)
 		return (char **) 0;
 	}
 	for (Fic = 0; Fic < *NumFic; Fic++) {
-		scanf("%s\n", FicSen);
+		if (scanf("%s\n", FicSen) != 1) {
+			fprintf(stderr, "Error al leer la lista de senhales (%s)\n", strerror(errno));
+			return NULL;
+                }
 		LisSen[Fic] = strdup(FicSen);
 	}
 
