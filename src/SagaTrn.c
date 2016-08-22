@@ -951,7 +951,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 			}
 
 			if ((ClaveModif & VOCAL_NASAL) && EsVocal && IndexChr(ChrSig, Nasales) >= 0) {
-				if (!ChrAnt || IndexChr(ChrAnt, Nasales) >= 0 || IndexChr(ChrAnt, Letras) < 0) { 
+				if (IndexChr(ChrAnt, Nasales) >= 0 || IndexChr(ChrAnt, Letras) < 0) { 
 					strcat(TrnPal, "~");
 				}
 			}
