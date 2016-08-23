@@ -156,7 +156,7 @@ char	***ReadDicExc(char	*FicDicExc)
 
 
 int		AplDicExc(	char	***DicExc,
-					char	**TxtOrt)
+					char	**TxtOrt, char **Letras)
 
 {
 	int		LongTxt = strlen(*TxtOrt);
@@ -171,7 +171,7 @@ int		AplDicExc(	char	***DicExc,
 			/*
 			 * Cogemos el siguiente grupo ortografico de TxtOrt.
 			 */
-			if (CogeGrpOrt(*TxtOrt, PosAct, &GrpOrt) < 0) {
+			if (CogeGrpOrt(*TxtOrt, PosAct, &GrpOrt, Letras) < 0) {
 				fprintf(stderr, "Error al localizar el siguiente grupo de TxtOrt\n");
 				return -1;
 			}
@@ -193,7 +193,7 @@ int		AplDicExc(	char	***DicExc,
 
 
 int		AplDicGrp(	char	***DicExc,
-					char	**TxtOrt)
+					char	**TxtOrt, char **Fonemas)
 
 {
 	int		LongTxt = strlen(*TxtOrt);
@@ -208,7 +208,7 @@ int		AplDicGrp(	char	***DicExc,
 			/*
 			 * Cogemos el siguiente grupo ortografico de TxtOrt.
 			 */
-			if (CogeGrpFon(*TxtOrt, PosAct, &GrpOrt) < 0) {
+			if (CogeGrpFon(*TxtOrt, PosAct, &GrpOrt, Fonemas) < 0) {
 				fprintf(stderr, "Error al localizar el siguiente grupo de TxtOrt\n");
 				return -1;
 			}
@@ -229,7 +229,8 @@ int		AplDicGrp(	char	***DicExc,
 
 
 int		AplDicSust(	char	***DicSust,
-					char	**TrnFon)
+					char	**TrnFon, 
+                           char **Fonemas)
 
 {
 	int		LongFon = strlen(*TrnFon), LongIn, LongOut;
@@ -244,7 +245,7 @@ int		AplDicSust(	char	***DicSust,
 		/*
 		 * Cogemos el siguiente grupo fonetico de TrnFon.
 		 */
-		if (CogeGrpFon(*TrnFon, PosAct, &GrpAct) < 0) {
+		if (CogeGrpFon(*TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
 			return -1;
 		}
@@ -310,89 +311,7 @@ int		AplDicSust(	char	***DicSust,
 }
 
 
-/***********************************************************************
- * AplDicSust - Aplica un diccionario de substituciones.
- **********************************************************************/
 
-
-int		AplDicSustOld(	char	***DicSust,
-					char	**TrnFon)
-
-{
-	int		LongFon = strlen(*TrnFon), LongIn, LongOut;
-	int		Ind, Chr, Pos, Pos2, PosAct;
-	GRP_ORT	GrpAct;
-
-	/*
-	 * Bucle para todos los grupos foneticos.
-	 */
-	PosAct = 0;
-	while (PosAct < LongFon) {
-		/*
-		 * Cogemos el siguiente grupo fonetico de TrnFon.
-		 */
-		if (CogeGrpFon(*TrnFon, PosAct, &GrpAct) < 0) {
-			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
-			return -1;
-		}
-
-		if (GrpAct.Tipo & PAL_FON) {
-			Pos = 0;
-			while (Pos < (int) GrpAct.Long) {
-				if ((Chr = IndexChr(GrpAct.Cont+Pos, Fonemas)) >= 0) {
-					LongIn = LongOut = strlen(Fonemas[Chr]);
-					for (Ind = 0; DicSust[Ind] != (char **) 0; Ind++) {
-						if (!strcmp(Fonemas[Chr], DicSust[Ind][0])) {
-							LongOut = strlen(DicSust[Ind][1]);
-
-							LongFon += LongOut - LongIn;
-							GrpAct.Long += LongOut - LongIn;
-
-							if (LongOut > LongIn) {
-								if ((*TrnFon = (char *) realloc((void *) *TrnFon, (LongFon+1) * sizeof(char))) == (char *) 0) {
-									fprintf(stderr, "Error de memoria\n");
-									return -1;
-								}
-
-								for (Pos2 = LongFon; Pos2 > PosAct; Pos2--) {
-									(*TrnFon)[Pos2] = (*TrnFon)[Pos2+LongIn-LongOut];
-								}
-							}
-							else if (LongOut < LongIn) {
-								for (Pos2 = PosAct + 1; Pos2 <= LongFon; Pos2++) {
-									(*TrnFon)[Pos2] = (*TrnFon)[Pos2+LongIn-LongOut];
-								}
-							}
-
-							for (Pos2 = PosAct; Pos2 < PosAct + LongOut; Pos2++) {
-								(*TrnFon)[Pos2] = DicSust[Ind][1][Pos2 - PosAct];
-							}
-
-							break;
-						}
-					}
-					Pos += LongOut;
-					PosAct += LongOut;
-				}
-				else {
-					if ((Chr = IndexChr(GrpAct.Cont+Pos, InterSil)) < 0) {
-						return -1;
-					}
-					else {
-						Pos += strlen(InterSil[Chr]);
-						PosAct += strlen(Fonemas[Chr]);
-						continue;
-					}
-				}
-			}
-		}
-		else {
-			PosAct += GrpAct.Long;
-		}
-	}
-
-	return 0;
-}
 
 
 

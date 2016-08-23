@@ -72,7 +72,57 @@ typedef struct {
 #define OCLUS_EXPL	0x40000
 #define INI_FIN_PAL	0x80000
 
-extern char	**Letras;
+typedef struct struct_SagaEngine {
+  /* Argumentos de entrada (linea de comandos) */
+  int TrnPalAis; /* Palabras aisladas? */
+  int TrnLinAis; /* Lineas aisladas? */
+  int ConSil; /* Conservar los silencios */
+  char *StrIniPal; /* Marca inicio palabra */
+  char *StrFinPal; /* Marca fin de palabra */
+  char *FicDicExc; /* Nombre fichero Diccionario excepciones */
+  char *FicTrnFon; /* Nombre fichero Diccionario transcripcion de grafemas */
+  char *FicTrnPal; /* Nombre fichero Diccionario transcripcion de palabras */
+  char *FicDicSust; /* Nombre fichero Diccionario de substitucion de fonemas */
+  char *FicDicGrp; /* Nombre fichero Diccionario de substitucion de grupos foneticos */
+  char *FicNovVoc; /* Nombre fichero Lista de grafemas vocalicos introducidos */
+  char *FicNovCons; /* Nombre fichero Lista de grafemas consonanticos introducidos */
+  char *FicNovFon; /* Nombre fichero Lista de fonemas introducidos */
+  long ClaveModif; /* Incluye las opciones -M de la linea de comandos */
+
+  /* Diccionarios cargados */
+  char ***DicExc;
+  char ***DicTrnFon;
+  char ***DicTrnPal;
+  char ***DicSust;
+  char ***DicGrp;
+
+  /* Listas de nuevos fonemas */
+  char **LisNovVoc;
+  char **LisNovCons;
+  char **LisNovFon;
+  /* Contenido de las listas */
+  char **Letras;
+  char **Fonemas;
+  char **ConsTxt;
+  char **Vocales;
+
+  /* Opciones de salida */
+  int SalFon; /* Transcripcion fonetica */
+  int SalFnm; /* Transcripcion en fonemas */
+  int SalFnmPal; /* En fonemas por palabras */
+  int SalSefo; /* En semifonemas */
+  int SalSem; /* En semisilabas */
+
+  /* Salida */
+  char* TxtSalFon; /* Transcripcion fonetica */
+  char* TxtSalFnm; /* Transcripcion en fonemas */
+  char* TxtSalFnmPal; /* En fonemas por palabras */
+  char* TxtSalSefo; /* En semifonemas */
+  char* TxtSalSem; /* En semisilabas */
+
+} SagaEngine;
+
+
 static char	*_Letras[] __attribute__((unused)) = {
 	"a", "'a", "ha", "h'a", "b", "c", "ch", "d", "e", "'e", "he",
 	"á", "há", "é", "hé", "í", "hí", "ó", "hó", "ú", "hú", 
@@ -80,7 +130,6 @@ static char	*_Letras[] __attribute__((unused)) = {
 	"m", "n", "~n", "o", "'o", "ho", "h'o", "p", "qu", "r", "rr", "s",
 	"t", "u", "'u", "~u", "hu", "h'u", "v", "w", "x", "y", "z", "tl",
 	"tz", "&", (char *) 0};
-extern char	**Vocales;
 static char	*_Vocales[] __attribute__((unused)) = {
 	"a", "e", "i", "o", "u", "a_", "e_", "i_", "o_", "u_", "'a", "'e", "'i", "'o", "'u", "~u",
 	"á", "há", "é", "hé", "í", "hí", "ó", "hó", "ú", "hú", 
@@ -90,7 +139,6 @@ static char	*VocDeb[] __attribute__((unused)) = {
 static char	*VocFort[] __attribute__((unused)) = {
 	"á", "há", "é", "hé", "ó", "hó",
 	"a", "e", "o", "'a", "'e", "'i", "'o", "'u", "ha", "h'a", "he", "h'e", "h'i", "ho", "h'o", "h'u", (char *) 0};
-extern char	**ConsTxt;
 static char	*_ConsTxt[] __attribute__((unused)) = {
 	"b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "ll", "m", "n", "~n", "p", "qu", "r", "rr", "s", "t", "v", "w", "x",
 	"y", "z", "tl", "tz", (char *) 0};
@@ -112,7 +160,7 @@ static char	*EspFon[] __attribute__((unused)) = {
 	" ", "\t", "\"", (char *) 0};
 static char	*PuntFon[] __attribute__((unused)) = {
 	"\n", "\r\n", "#", (char *) 0};
-extern char	**Fonemas;
+
 static char	*_Fonemas[] __attribute__((unused)) = {
 	"a", "e", "i", "o", "u", "'a", "'e", "'i", "'o", "'u", "a_", "e_", "i_", "o_", "u_", "j", "w",
 	"b", "B", "d", "D", "g", "G", "p", "t", "k", "tS", "bcl", "dcl", "gcl", "pcl", "tcl", "kcl", "T", "f", "s", "z", "h", "x",
@@ -142,81 +190,64 @@ static char	*FonVoc[] __attribute__((unused)) = {
 
 char	*ArreglaTxt(char *TxtOrt);
 void	EmpleoSaga(char **ArgV);
-int		OpcSaga(	int		ArgC,
-					char	**ArgV,
-					char	**FicDicExc,
-					char	**FicTrnFon,
-					char	**FicTrnPal,
-					char	**FicDicSust,
-					char	**FicDicGrp,
-					char	**FicNovVoc,
-					char	**FicNovCons,
-					char	**FicNovFon,
-					int		*TrnPalAis,
-					int		*SalFon,
-					int		*SalFnm,
-					int		*SalFnmPal,
-					int		*SalSem,
-					int		*SalSefo,
-					int		*ConSil,
-					char	**StrIniPal,
-					char	**StrFinPal,
-					char	**NomOut,
-					long	*ClaveModif,
-					int		*TrnLinAis);
+int		OpcSaga(int ArgC, char	**ArgV, SagaEngine *engine, char **NomOut);
 
 char	*CargTxtOrt(int TrnLinAis);
-char	*SilaTxtOrt(char *TxtOrt, char ***DicTrnPal);
+char	*SilaTxtOrt(char	*TxtOrt, char	***DicTrnPal, SagaEngine *engine);
 int		CogeGrpOrt(	char	*TxtOrt,
 					int		PosAct,
-					GRP_ORT	*GrpAct);
+					GRP_ORT	*GrpAct, char **Letras);
 int		CogeGrpFon(char	*TrnFon,
 					int		PosAct,
-					GRP_ORT	*GrpAct);
+					GRP_ORT	*GrpAct, char **Fonemas);
 char	**CogePalExt(	char	*TxtOrt,
 						char	**PalExt,
 						char	***DicExc,
-						char	***DicTrn);
-int		EsPalExt(GRP_ORT	GrpOrt);
-char	*SilaPalOrt(GRP_ORT	GrpOrt);
-char	*AcenSilOrt(char	*SilOrt,
-					char	***DicTrnPal);
-char	*AcenPalSil(GRP_ORT	GrpOrt);
+						char	***DicTrn,
+						char **ConsTxt, 
+						char **Vocales, char **Letras);
+int		EsPalExt(GRP_ORT	GrpOrt, char ** ConstTxt, char ** Vocales);
+char	*SilaPalOrt(GRP_ORT	GrpOrt, SagaEngine *engine);
+char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal, SagaEngine *engine);
+char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine);
 int		EsExcAcc(	char	*SilOrt,
 					int		PosAct,
-					char	**ExcAcc);
-int		AcenSil(char	*Sil);
+					char	**LisExc, char **Letras);
+int		AcenSil(char *Sil, SagaEngine *engine);
 char	*TrnSilAcc(	char	*SilAcc,
 					char	***DicTrnPal,
 					char	***DicTrnFon,
 					int		TrnPalAis,
-					long	ClaveModif);
+					long	ClaveModif,
+					SagaEngine *engine);
 char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					GRP_ORT	GrpAct,
 					GRP_ORT	GrpSig,
 					char	***DicTrnFon,
 					int		TrnPalAis,
-					long	ClaveModif);
-int		IndexChr(	char	*Chr,
-					char	**VectChr);
+					long	ClaveModif,
+					SagaEngine *engine);
+int		IndexChr(	const char	* Chr,
+					char	** VectChr);
 char	*TrnFonFnm(	char	*TrnFon,
-					int		ConSil);
+					int		ConSil, char **Fonemas);
 char	*TrnFonFnmPal(	char	*TrnFon,
-					int		ConSil);
+					int		ConSil, char **Fonemas);
 char	*TrnFonSem(	char	*TrnFon,
-					int		ConSil);
+					int		ConSil, char **Fonemas);
 char	*TrnFonSefo(char *TrnFon,
 					int		ConSil,
 					char	*StrFinPal,
-					char	*StrIniPal);
+					char	*StrIniPal, char **Fonemas);
 int		EscrPalExt(char	**PalExt);
 char	***CargDicExc(const char *FicDicExc);
 int		AplDicExc(	char	***DicExc,
-					char	**TxtOrt);
+					char	**TxtOrt, char **Letras);
 int		AplDicSust(	char	***DicSust,
-					char	**TrnFon);
+					char	**TrnFon, 
+                           char **Fonemas);
 int		AplDicGrp(	char	***DicExc,
-					char	**TxtOrt);
+					char	**TxtOrt, char **Fonemas);
 
 #ifdef __cplusplus
 }

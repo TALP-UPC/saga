@@ -29,7 +29,7 @@
  **********************************************************************/
 
 
-char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal)
+char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal, SagaEngine *engine)
 
 {
 	char	*AccSil, *AcenPal;
@@ -60,7 +60,7 @@ char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal)
 		/*
 		 * Comprobamos si se trata de una excepcion.
 		 */
-		if ((Long = EsExcAcc(SilOrt, PosAct, ExcAcc)) > 0) {
+		if ((Long = EsExcAcc(SilOrt, PosAct, ExcAcc, engine->Letras)) > 0) {
 			strncat(AccSil, SilOrt+PosAct, Long);
 			PosAct += Long;
 			continue;
@@ -69,7 +69,7 @@ char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal)
 		/*
 		 * Cogemos el siguiente grupo ortografico de SilOrt.
 		 */
-		if (CogeGrpOrt(SilOrt, PosAct, &GrpAct) < 0) {
+		if (CogeGrpOrt(SilOrt, PosAct, &GrpAct, engine->Letras) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
 			free(AccSil);
 			return (char *) 0;
@@ -85,7 +85,7 @@ char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal)
 		}
 				
 		if (!Encontrada && (GrpAct.Tipo & PALABRA)) {
-			if ((AcenPal = AcenPalSil(GrpAct)) == (char *) 0) {
+			if ((AcenPal = AcenPalSil(GrpAct, engine)) == (char *) 0) {
 				strncpy(AccSil, GrpAct.Cont, GrpAct.Long);
 				AccSil[GrpAct.Long] = '\0';
 				fprintf(stderr, "Error al acentuar %s\n", AccSil);
@@ -112,7 +112,7 @@ char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal)
  **********************************************************************/
 
 
-char	*AcenPalSil(GRP_ORT	GrpOrt)
+char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine)
 
 {
 	char	*AcenPal, *PalSil;
@@ -155,7 +155,7 @@ char	*AcenPalSil(GRP_ORT	GrpOrt)
 		strcat(AcenPal, PalSil);
 	}
 	else if (strchr(PalSil, '-') == (char *) 0) {
-		if (AcenSil(PalSil) < 0) {
+		if (AcenSil(PalSil, engine) < 0) {
 			free((void *) AcenPal);
 			free((void *) PalSil);
 			return (char *) 0;
@@ -188,14 +188,14 @@ char	*AcenPalSil(GRP_ORT	GrpOrt)
 		LongPalSil = strlen(PalSil);
 		if (((LongPalSil > 0) && strchr("aeiouns", PalSil[LongPalSil-1]) != (char *) 0) ||
 			((LongPalSil > 1) && PalSil[LongPalSil-1] == 'y' && !strchr("aeiou", PalSil[LongPalSil-2]))) {
-			if (AcenSil(PenSil) < 0) {
+			if (AcenSil(PenSil, engine) < 0) {
 				free((void *) AcenPal);
 				free((void *) PalSil);
 				return (char *) 0;
 			}
 		}
 		else {
-			if (AcenSil(UltSil) < 0) {
+			if (AcenSil(UltSil, engine) < 0) {
 				free((void *) AcenPal);
 				free((void *) PalSil);
 				return (char *) 0;
@@ -223,8 +223,7 @@ char	*AcenPalSil(GRP_ORT	GrpOrt)
  **********************************************************************/
 
 
-int		AcenSil(char	*Sil)
-
+int		AcenSil(char *Sil, SagaEngine *engine)
 {
 	int		Ind, Pos, PosAcc;
 	int		Chr, Chr1, Chr2;
@@ -234,26 +233,26 @@ int		AcenSil(char	*Sil)
 	 * Todas las silabas responden a la forma [cons]*[vocs]+[cons]*.
 	 */
 	Pos = 0;
-	while ((Chr = IndexChr(Sil+Pos, ConsTxt)) >= 0) {
-		Pos += strlen(ConsTxt[Chr]);
+	while ((Chr = IndexChr(Sil+Pos, engine->ConsTxt)) >= 0) {
+		Pos += strlen(engine->ConsTxt[Chr]);
 
-		if (strcmp(ConsTxt[Chr], "g") == 0) {
+		if (strcmp(engine->ConsTxt[Chr], "g") == 0) {
 			Ind = Pos;
-			if ((Chr1 = IndexChr(Sil+Ind, Letras)) < 0) {
+			if ((Chr1 = IndexChr(Sil+Ind, engine->Letras)) < 0) {
 				return -1;
 			}
-			Ind += strlen(Letras[Chr1]);
-			Chr2 = IndexChr(Sil+Ind, Letras);
-			if (strcmp(Letras[Chr1], "u") == 0 && Chr2 >= 0 && strpbrk(Letras[Chr2], "ei") != (char *) 0) {
-				Pos += strlen(Letras[Chr1]);
+			Ind += strlen(engine->Letras[Chr1]);
+			Chr2 = IndexChr(Sil+Ind, engine->Letras);
+			if (strcmp(engine->Letras[Chr1], "u") == 0 && Chr2 >= 0 && strpbrk(engine->Letras[Chr2], "ei") != (char *) 0) {
+				Pos += strlen(engine->Letras[Chr1]);
 			}
 		}
 	}
 
 	Ind = Pos;
 	NumVocs = 0;
-	while ((Chr = IndexChr(Sil+Ind, Vocales)) >= 0) {
-		Ind += strlen(Vocales[Chr]);
+	while ((Chr = IndexChr(Sil+Ind, engine->Vocales)) >= 0) {
+		Ind += strlen(engine->Vocales[Chr]);
 		NumVocs++;
 	}
 
@@ -265,13 +264,13 @@ int		AcenSil(char	*Sil)
 		break;
 	default :
 		Ind = Pos;
-		Chr1 = IndexChr(Sil+Ind, Vocales);
-		if (IndexChr(Vocales[Chr1], VocFort) >= 0) {
+		Chr1 = IndexChr(Sil+Ind, engine->Vocales);
+		if (IndexChr(engine->Vocales[Chr1], VocFort) >= 0) {
 			PosAcc = Pos;
 			break;
 		}
 		else {
-			PosAcc = Pos + strlen(Vocales[Chr1]);
+			PosAcc = Pos + strlen(engine->Vocales[Chr1]);
 			break;
 		}
 	}
@@ -292,7 +291,7 @@ int		AcenSil(char	*Sil)
 
 int		EsExcAcc(	char	*SilOrt,
 					int		PosAct,
-					char	**LisExc)
+					char	**LisExc, char **Letras)
 
 {
 	int		Pos, Long;
@@ -312,7 +311,7 @@ int		EsExcAcc(	char	*SilOrt,
 			if ((Guion == (char *) 0 || Guion-SilOrt > PosAct+Long)) {
 				return Long;
 			}
-			CogeGrpOrt(SilOrt, PosAct+Long, &GrpOrt);
+			CogeGrpOrt(SilOrt, PosAct+Long, &GrpOrt, Letras);
 			if (GrpOrt.Tipo & ESPACIOS) {
 				return Long;
 			}

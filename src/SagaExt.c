@@ -31,7 +31,8 @@
 char	**CogePalExt(	char	*TxtOrt,
 						char	**PalExt,
 						char	***DicExc,
-						char	***DicTrn)
+						char	***DicTrn,
+						char **ConsTxt, char **Vocales, char **Letras)
 
 {
 	size_t		PosAct, LongTxt = strlen(TxtOrt);
@@ -57,7 +58,7 @@ char	**CogePalExt(	char	*TxtOrt,
 		/*
 		 * Cogemos el siguiente grupo ortografico de TxtOrt.
 		 */
-		if (CogeGrpOrt(TxtOrt, PosAct, &GrpAct) < 0) {
+		if (CogeGrpOrt(TxtOrt, PosAct, &GrpAct, Letras) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de TxtOrt\n");
 			return (char **) 0;
 		}
@@ -106,7 +107,7 @@ char	**CogePalExt(	char	*TxtOrt,
 			continue;
 		}
 
-		if (((GrpAct.Tipo & PALABRA) && EsPalExt(GrpAct)) || (GrpAct.Tipo & DESCONOCIDO)) {
+		if (((GrpAct.Tipo & PALABRA) && EsPalExt(GrpAct, ConsTxt, Vocales)) || (GrpAct.Tipo & DESCONOCIDO)) {
 			NumExt++;
 			if ((PalExt = (char **) realloc((void *) PalExt, (NumExt+1) * sizeof(char *))) == (char **) 0) {
 				fprintf(stderr, "Error al reubicar memoria para PalExt\n");
@@ -131,7 +132,7 @@ char	**CogePalExt(	char	*TxtOrt,
  **********************************************************************/
 
 
-int		EsPalExt(GRP_ORT	GrpOrt)
+int		EsPalExt(GRP_ORT	GrpOrt, char ** ConsTxt, char **Vocales)
 
 {
 	int		Pos, Ultima = -1, Chr;

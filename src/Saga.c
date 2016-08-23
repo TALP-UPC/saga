@@ -30,215 +30,265 @@
 #include	"LisUdf.h"
 #include	"Saga.h"
 
-int		AplDicGrp(	char	***DicExc,
-					char	**TxtOrt);
+int SagaEngine_Initialize(SagaEngine *engine)
+{
+	/*
+	 * Valores por defecto.
+	 */
+	engine->FicDicExc = NULL;
+	engine->FicTrnFon = NULL;
+	engine->FicTrnPal = NULL;
+	engine->FicDicSust = NULL;
+	engine->FicDicGrp = NULL;
+	engine->FicNovFon = NULL;
+	engine->FicNovVoc = NULL;
+	engine->FicNovCons = NULL;
+	engine->StrIniPal = strdup(".-");
+	if (engine->StrIniPal == NULL) {
+		return -1;
+	}
+	engine->StrFinPal = strdup("+.");
+	if (engine->StrFinPal == NULL) {
+		return -1;
+	}
+	engine->TrnPalAis = 0;
+	engine->TrnLinAis = 0;
 
-char	**Letras, **Fonemas, **ConsTxt, **Vocales;
+	engine->DicExc = NULL;
+	engine->DicTrnFon = NULL;
+	engine->DicTrnPal = NULL;
+	engine->DicSust = NULL;
+	engine->DicGrp = NULL;
 
-int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *FicTrnPal,
-                      const char *FicDicSust, const char *FicDicGrp, const char *FicNovVoc, 
-                      const char *FicNovCons, const char *FicNovFon,
-                      int TrnPalAis, int SalFon, int SalFnm, int SalFnmPal, int SalSem,
-                      int SalSefo, int ConSil, char *StrIniPal, char *StrFinPal,
-                      char *NomOut, long ClaveModif, int TrnLinAis)
+	engine->LisNovVoc = NULL;
+	engine->LisNovCons = NULL;
+	engine->LisNovFon = NULL;
+	engine->Letras = NULL;
+	engine->Fonemas = NULL;
+	engine->ConsTxt = NULL;
+	engine->Vocales = NULL;
+
+	engine->SalFon = 1;
+	engine->SalFnm = 0;
+	engine->SalFnmPal = 0;
+	engine->SalSem = 0;
+	engine->SalSefo = 0;
+	engine->ConSil = 0;
+	engine->ClaveModif = 0;
+
+	engine->TxtSalFon = NULL;
+	engine->TxtSalFnm = NULL;
+	engine->TxtSalFnmPal = NULL;
+	engine->TxtSalSefo = NULL;
+	engine->TxtSalSem = NULL;
+
+	return 0;
+}
+
+int SagaEngine_LoadDictionaries(SagaEngine *engine)
+{
+	/*
+	 * Cargamos los diccionarios de excepciones y substituciones.
+	 */
+	if (engine->FicDicExc != NULL && (engine->DicExc = CargDicExc(engine->FicDicExc)) == NULL) {
+		fprintf(stderr, "Error al cargar el diccionario de excepciones\n");
+		return -1;
+	}
+	if (engine->FicTrnFon != NULL && (engine->DicTrnFon = CargDicExc(engine->FicTrnFon)) == NULL) {
+		fprintf(stderr, "Error al cargar el diccionario de transcripcion de fonemas\n");
+		return -1;
+	}
+	if (engine->FicTrnPal != NULL && (engine->DicTrnPal = CargDicExc(engine->FicTrnPal)) == NULL) {
+		fprintf(stderr, "Error al cargar el diccionario de transcripcion de palabras\n");
+		return -1;
+	}
+	if (engine->FicDicSust != NULL && (engine->DicSust = CargDicExc(engine->FicDicSust)) == NULL) {
+		fprintf(stderr, "Error al cargar el diccionario de substituciones\n");
+		return -1;
+	}
+	if (engine->FicDicGrp != NULL && (engine->DicGrp = CargDicExc(engine->FicDicGrp)) == NULL) {
+		fprintf(stderr, "Error al cargar el diccionario de substitucion de grupos\n");
+		return -1;
+	}
+	return 0;
+}
+
+int SagaEngine_LoadCharacters(SagaEngine *engine)
+{
+	int i, NumLet, NumVoc, NumCons, NumFon;
+	size_t bytes_written;
+	char Fonema[1024];
+
+	/*
+	 * Creamos las listas de letras, consonantes y fonemas.
+	 */
+	NumLet = 0;
+	for (i = 0; _Letras[i] != NULL; i++) {
+		if (MeteLisUdf(_Letras[i], &NumLet, &engine->Letras) < 0) {
+			fprintf(stderr, "Error al crear la lista de letras\n");
+			return -1;
+		}
+	}
+
+	NumCons = 0;
+	for (i = 0; _ConsTxt[i] != NULL; i++) {
+		if (MeteLisUdf(_ConsTxt[i], &NumCons, &engine->ConsTxt) < 0) {
+			fprintf(stderr, "Error al crear la lista de consonantes\n");
+			return -1;
+		}
+	}
+
+	NumVoc = 0;
+	for (i = 0; _Vocales[i] != NULL; i++) {
+		if (MeteLisUdf(_Vocales[i], &NumVoc, &engine->Vocales) < 0) {
+			fprintf(stderr, "Error al crear la lista de vocales\n");
+			return -1;
+		}
+	}
+
+	NumFon = 0;
+	for (i = 0; _Fonemas[i] != NULL; i++) {
+		if (MeteLisUdf(_Fonemas[i], &NumFon, &engine->Fonemas) < 0) {
+			fprintf(stderr, "Error al crear la lista de fonemas\n");
+			return -1;
+		}
+	}
+	for (i = 0; FonCns[i] != NULL; i++) {
+		if (MeteLisUdf(FonCns[i], &NumFon, &engine->Fonemas) < 0) {
+			fprintf(stderr, "Error al crear la lista de fonemas\n");
+			return -1;
+		}
+	}
+	for (i = 0; FonVoc[i] != NULL; i++) {
+		if (MeteLisUdf(FonVoc[i], &NumFon, &engine->Fonemas) < 0) {
+			fprintf(stderr, "Error al crear la lista de fonemas\n");
+			return -1;
+		}
+	}
+	for (i = 0; FonSem[i] != NULL; i++) {
+		if (MeteLisUdf(FonSem[i], &NumFon, &engine->Fonemas) < 0) {
+			fprintf(stderr, "Error al crear la lista de fonemas\n");
+			return -1;
+		}
+	}
+
+	if (engine->ClaveModif & VOCAL_NASAL) {
+		for (i = 0; FonVoc[i] != NULL; i++) {
+			bytes_written = snprintf(Fonema, 1024, "%s~", FonVoc[i]);
+			if (bytes_written >= 1024) {
+				fprintf(stderr, "Buffer overflow al crear la lista de fonemas\n");
+				return -1;
+			}
+			if (MeteLisUdf(Fonema, &NumFon, &engine->Fonemas) < 0) {
+				fprintf(stderr, "Error al crear la lista de fonemas\n");
+				return -1;
+			}
+		}
+	}
+
+	for (i = 0; engine->DicTrnFon && engine->DicTrnFon[i] != NULL; i++) {
+		if (MeteLisUdf(engine->DicTrnFon[i][0], &NumLet, &engine->Letras) < 0) {
+			fprintf(stderr, "Error al crear la lista de letras\n");
+			return -1;
+		}
+		if (MeteLisUdf(engine->DicTrnFon[i][1], &NumFon, &engine->Fonemas) < 0) {
+			fprintf(stderr, "Error al crear la lista de fonemas\n");
+			return -1;
+		}
+	}
+
+	for (i = 0; engine->DicSust && engine->DicSust[i] != NULL; i++) {
+		if (MeteLisUdf(engine->DicSust[i][1], &NumFon, &engine->Fonemas) < 0) {
+			fprintf(stderr, "Error al crear la lista de fonemas\n");
+			return -1;
+		}
+	}
+
+	if (engine->FicNovFon != NULL) {
+		if (ReadLisUdf(engine->FicNovFon, &engine->LisNovFon) < 0) {
+			fprintf(stderr, "Error al leer la lista de nuevos fonemas %s\n", engine->FicNovFon);
+			return -1;
+		}
+
+		for (i = 0; engine->LisNovFon[i] != NULL; i++) {
+			if (MeteLisUdf(engine->LisNovFon[i], &NumFon, &engine->Fonemas) < 0) {
+				fprintf(stderr, "Error al anhadir la lista de fonemas nuevos\n");
+				return -1;
+			}
+		}
+	}
+
+	if (engine->FicNovVoc != NULL) {
+		if (ReadLisUdf(engine->FicNovVoc, &engine->LisNovVoc) < 0) {
+			fprintf(stderr, "Error al leer la lista de nuevas vocales %s\n", engine->FicNovVoc);
+			return -1;
+		}
+
+		for (i = 0; engine->LisNovVoc[i] != NULL; i++) {
+			if (MeteLisUdf(engine->LisNovVoc[i], &NumLet, &engine->Letras) < 0 || MeteLisUdf(engine->LisNovVoc[i], &NumVoc, &engine->Vocales) < 0) {
+				fprintf(stderr, "Error al anhadir la lista de vocales nuevas\n");
+				return -1;
+			}
+		}
+	}
+
+	if (engine->FicNovCons != NULL) {
+		if (ReadLisUdf(engine->FicNovCons, &engine->LisNovCons) < 0) {
+			fprintf(stderr, "Error al leer la lista de nuevas consonantes %s\n", engine->FicNovCons);
+			return -1;
+		}
+
+		for (i = 0; engine->LisNovCons[i] != NULL; i++) {
+			if (MeteLisUdf(engine->LisNovCons[i], &NumLet, &engine->Letras) < 0 || MeteLisUdf(engine->LisNovCons[i], &NumCons, &engine->ConsTxt) < 0) {
+				fprintf(stderr, "Error al anhadir la lista de consonantes nuevas\n");
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
+
+int MainPorArgumentos(SagaEngine *engine, char *NomOut)
 {
 	char	*TxtOrt = NULL, *TrnFon = NULL, *SilOrt = NULL, *SilAcc = NULL;
 	char	*TrnFnm = NULL, *TrnFnmPal = NULL, *TrnSem = NULL, *TrnSefo = NULL;
-	char	***DicExc, ***DicTrnFon, ***DicTrnPal, ***DicSust, ***DicGrp, **LisNovVoc, **LisNovCons, **LisNovFon;
 	char	**PalExt = NULL;
 	char	PathOut[_POSIX_PATH_MAX];
-	char	Fonema[1024];
 	FILE	*FpFon, *FpFnm, *FpFnmPal, *FpSem, *FpSefo;
-	int		i;
-	int		NumLet, NumVoc, NumCons, NumFon;
 
 	FpSem = FpFon = FpFnm = FpFnmPal = FpSefo = stdout;
 	if (strcmp(NomOut, "-") != 0) {
 		strcpy(PathOut, NomOut);
 		strcat(PathOut, ".fon");
-		if (SalFon && (FpFon = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
+		if (engine->SalFon && (FpFon = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
 
 		strcpy(PathOut, NomOut);
 		strcat(PathOut, ".fnm");
-		if (SalFnm && (FpFnm = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
+		if (engine->SalFnm && (FpFnm = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
 
 		strcpy(PathOut, NomOut);
 		strcat(PathOut, ".fnp");
-		if (SalFnmPal && (FpFnmPal = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
+		if (engine->SalFnmPal && (FpFnmPal = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
 
 		strcpy(PathOut, NomOut);
 		strcat(PathOut, ".sem");
-		if (SalSem && (FpSem = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
+		if (engine->SalSem && (FpSem = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
 
 		strcpy(PathOut, NomOut);
 		strcat(PathOut, ".sef");
-		if (SalSefo && (FpSefo = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
+		if (engine->SalSefo && (FpSefo = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
 	}
 
-	/*
-	 * Cargamos los diccionarios de excepciones y substituciones.
-	 */
-	DicExc = NULL;
-	if (FicDicExc != NULL && (DicExc = CargDicExc(FicDicExc)) == NULL) {
-		fprintf(stderr, "Error al cargar el diccionario de excepciones\n");
-		return EXIT_FAILURE;
-	}
-	DicTrnFon = NULL;
-	if (FicTrnFon != NULL && (DicTrnFon = CargDicExc(FicTrnFon)) == NULL) {
-		fprintf(stderr, "Error al cargar el diccionario de transcripcion de fonemas\n");
-		return EXIT_FAILURE;
-	}
-	DicTrnPal = NULL;
-	if (FicTrnPal != NULL && (DicTrnPal = CargDicExc(FicTrnPal)) == NULL) {
-		fprintf(stderr, "Error al cargar el diccionario de transcripcion de palabras\n");
-		return EXIT_FAILURE;
-	}
-	DicSust = NULL;
-	if (FicDicSust != NULL && (DicSust = CargDicExc(FicDicSust)) == NULL) {
-		fprintf(stderr, "Error al cargar el diccionario de substituciones\n");
-		return EXIT_FAILURE;
-	}
-	DicGrp = NULL;
-	if (FicDicGrp != NULL && (DicGrp = CargDicExc(FicDicGrp)) == NULL) {
-		fprintf(stderr, "Error al cargar el diccionario de substitucion de grupos\n");
-		return EXIT_FAILURE;
-	}
-
-	/*
-	 * Creamos las listas de letras, consonantes y fonemas.
-	 */
-	Letras = NULL;
-	NumLet = 0;
-	for (i = 0; _Letras[i] != NULL; i++) {
-		if (MeteLisUdf(_Letras[i], &NumLet, &Letras) < 0) {
-			fprintf(stderr, "Error al crear la lista de letras\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	ConsTxt = NULL;
-	NumCons = 0;
-	for (i = 0; _ConsTxt[i] != NULL; i++) {
-		if (MeteLisUdf(_ConsTxt[i], &NumCons, &ConsTxt) < 0) {
-			fprintf(stderr, "Error al crear la lista de consonantes\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	Vocales = NULL;
-	NumVoc = 0;
-	for (i = 0; _Vocales[i] != NULL; i++) {
-		if (MeteLisUdf(_Vocales[i], &NumVoc, &Vocales) < 0) {
-			fprintf(stderr, "Error al crear la lista de vocales\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	Fonemas = NULL;
-	NumFon = 0;
-	for (i = 0; _Fonemas[i] != NULL; i++) {
-		if (MeteLisUdf(_Fonemas[i], &NumFon, &Fonemas) < 0) {
-			fprintf(stderr, "Error al crear la lista de fonemas\n");
-			return EXIT_FAILURE;
-		}
-	}
-	for (i = 0; FonCns[i] != NULL; i++) {
-		if (MeteLisUdf(FonCns[i], &NumFon, &Fonemas) < 0) {
-			fprintf(stderr, "Error al crear la lista de fonemas\n");
-			return EXIT_FAILURE;
-		}
-	}
-	for (i = 0; FonVoc[i] != NULL; i++) {
-		if (MeteLisUdf(FonVoc[i], &NumFon, &Fonemas) < 0) {
-			fprintf(stderr, "Error al crear la lista de fonemas\n");
-			return EXIT_FAILURE;
-		}
-	}
-	for (i = 0; FonSem[i] != NULL; i++) {
-		if (MeteLisUdf(FonSem[i], &NumFon, &Fonemas) < 0) {
-			fprintf(stderr, "Error al crear la lista de fonemas\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	if (ClaveModif & VOCAL_NASAL) {
-		for (i = 0; FonVoc[i] != NULL; i++) {
-			sprintf(Fonema, "%s~", FonVoc[i]);
-			if (MeteLisUdf(Fonema, &NumFon, &Fonemas) < 0) {
-				fprintf(stderr, "Error al crear la lista de fonemas\n");
-				return EXIT_FAILURE;
-			}
-		}
-	}
-
-	for (i = 0; DicTrnFon && DicTrnFon[i] != NULL; i++) {
-		if (MeteLisUdf(DicTrnFon[i][0], &NumLet, &Letras) < 0) {
-			fprintf(stderr, "Error al crear la lista de letras\n");
-			return EXIT_FAILURE;
-		}
-		if (MeteLisUdf(DicTrnFon[i][1], &NumFon, &Fonemas) < 0) {
-			fprintf(stderr, "Error al crear la lista de fonemas\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	for (i = 0; DicSust && DicSust[i] != NULL; i++) {
-		if (MeteLisUdf(DicSust[i][1], &NumFon, &Fonemas) < 0) {
-			fprintf(stderr, "Error al crear la lista de fonemas\n");
-			return EXIT_FAILURE;
-		}
-	}
-
-	if (FicNovFon != NULL) {
-		if (ReadLisUdf(FicNovFon, &LisNovFon) < 0) {
-			fprintf(stderr, "Error al leer la lista de nuevos fonemas %s\n", FicNovFon);
-			return EXIT_FAILURE;
-		}
-
-		for (i = 0; LisNovFon[i] != NULL; i++) {
-			if (MeteLisUdf(LisNovFon[i], &NumFon, &Fonemas) < 0) {
-				fprintf(stderr, "Error al anhadir la lista de fonemas nuevos\n");
-				return EXIT_FAILURE;
-			}
-		}
-	}
-
-	if (FicNovVoc != NULL) {
-		if (ReadLisUdf(FicNovVoc, &LisNovVoc) < 0) {
-			fprintf(stderr, "Error al leer la lista de nuevas vocales %s\n", FicNovVoc);
-			return EXIT_FAILURE;
-		}
-
-		for (i = 0; LisNovVoc[i] != NULL; i++) {
-			if (MeteLisUdf(LisNovVoc[i], &NumLet, &Letras) < 0 || MeteLisUdf(LisNovVoc[i], &NumVoc, &Vocales) < 0) {
-				fprintf(stderr, "Error al anhadir la lista de vocales nuevas\n");
-				return EXIT_FAILURE;
-			}
-		}
-	}
-
-	if (FicNovCons != NULL) {
-		if (ReadLisUdf(FicNovCons, &LisNovCons) < 0) {
-			fprintf(stderr, "Error al leer la lista de nuevas consonantes %s\n", FicNovCons);
-			return EXIT_FAILURE;
-		}
-
-		for (i = 0; LisNovCons[i] != NULL; i++) {
-			if (MeteLisUdf(LisNovCons[i], &NumLet, &Letras) < 0 || MeteLisUdf(LisNovCons[i], &NumCons, &ConsTxt) < 0) {
-				fprintf(stderr, "Error al anhadir la lista de consonantes nuevas\n");
-				return EXIT_FAILURE;
-			}
-		}
-	}
-
+        SagaEngine_LoadDictionaries(engine);
+	SagaEngine_LoadCharacters(engine);
 	/*
 	 * Cargamos el texto ortografico.
 	 */
-	while ((TxtOrt = CargTxtOrt(TrnLinAis)) != NULL) {
+	while ((TxtOrt = CargTxtOrt(engine->TrnLinAis)) != NULL) {
 		/*
 		 * Si existe el diccionario de excepciones, lo aplicamos.
 		 */
-		if (DicExc != NULL && AplDicExc(DicExc, &TxtOrt) < 0) {
+		if (engine->DicExc != NULL && AplDicExc(engine->DicExc, &TxtOrt, engine->Letras) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de excepciones\n");
 			return EXIT_FAILURE;
 		}
@@ -248,7 +298,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 			return EXIT_FAILURE;
 		}
 		
-		if (DicExc != NULL && AplDicExc(DicExc, &TxtOrt) < 0) {
+		if (engine->DicExc != NULL && AplDicExc(engine->DicExc, &TxtOrt, engine->Letras) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de excepciones\n");
 			return EXIT_FAILURE;
 		}
@@ -256,7 +306,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Determinamos si hay alguna palabra extranha.
 		 */
-		if ((PalExt = CogePalExt(TxtOrt, PalExt, DicExc, DicTrnPal)) == NULL) {
+		if ((PalExt = CogePalExt(TxtOrt, PalExt, engine->DicExc, engine->DicTrnPal, engine->ConsTxt, engine->Vocales, engine->Letras)) == NULL) {
 			fprintf(stderr, "Error al localizar palabras extranhas\n");
 			return EXIT_FAILURE;
 		}
@@ -264,7 +314,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Silabificamos el texto ortografico.
 		 */
-		if ((SilOrt = SilaTxtOrt(TxtOrt, DicTrnPal)) == NULL) {
+		if ((SilOrt = SilaTxtOrt(TxtOrt, engine->DicTrnPal, engine)) == NULL) {
 			fprintf(stderr, "Error al silabificar %s\n", TxtOrt);
 			continue;
 		}
@@ -272,7 +322,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Colocamos tildes en la vocales acentuadas.
 		 */
-		if ((SilAcc = AcenSilOrt(SilOrt, DicTrnPal)) == NULL) {
+		if ((SilAcc = AcenSilOrt(SilOrt, engine->DicTrnPal, engine)) == NULL) {
 			fprintf(stderr, "Error al acentuar %s\n", SilOrt);
 			continue;
 		}
@@ -280,7 +330,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Realizamos la transcripcion fonetica.
 		 */
-		if ((TrnFon = TrnSilAcc(SilAcc, DicTrnPal, DicTrnFon, TrnPalAis, ClaveModif)) == NULL) {
+		if ((TrnFon = TrnSilAcc(SilAcc, engine->DicTrnPal, engine->DicTrnFon, engine->TrnPalAis, engine->ClaveModif, engine)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", SilAcc);
 			continue;
 		}
@@ -288,7 +338,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Si existe el diccionario de substituciones, lo aplicamos.
 		 */
-		if (DicSust != NULL && AplDicSust(DicSust, &TrnFon) < 0) {
+		if (engine->DicSust != NULL && AplDicSust(engine->DicSust, &TrnFon, engine->Fonemas) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de substituciones\n");
 			return EXIT_FAILURE;
 		}
@@ -296,7 +346,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Si existe el diccionario de substitucion de grupos, lo aplicamos.
 		 */
-		if (DicGrp != NULL && AplDicGrp(DicGrp, &TrnFon) < 0) {
+		if (engine->DicGrp != NULL && AplDicGrp(engine->DicGrp, &TrnFon, engine->Fonemas) < 0) {
 			fprintf(stderr, "Error al aplicar el diccionario de substitucion de grupos\n");
 			return EXIT_FAILURE;
 		}
@@ -304,7 +354,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Realizamos la transcripcion en fonemas.
 		 */
-		if (SalFnm > 0 && (TrnFnm = TrnFonFnm(TrnFon, ConSil)) == NULL) {
+		if (engine->SalFnm > 0 && (TrnFnm = TrnFonFnm(TrnFon, engine->ConSil, engine->Fonemas)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -312,7 +362,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Realizamos la transcripcion en fonemas por palabras.
 		 */
-		if (SalFnmPal > 0 && (TrnFnmPal = TrnFonFnmPal(TrnFon, ConSil)) == NULL) {
+		if (engine->SalFnmPal > 0 && (TrnFnmPal = TrnFonFnmPal(TrnFon, engine->ConSil, engine->Fonemas)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -320,7 +370,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Realizamos la transcripcion en semisilabas.
 		 */
-		if (SalSem > 0 && (TrnSem = TrnFonSem(TrnFon, ConSil)) == NULL) {
+		if (engine->SalSem > 0 && (TrnSem = TrnFonSem(TrnFon, engine->ConSil, engine->Fonemas)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -328,7 +378,7 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Realizamos la transcripcion en semifonemas.
 		 */
-		if (SalSefo > 0 && (TrnSefo = TrnFonSefo(TrnFon, ConSil, StrIniPal, StrFinPal)) == NULL) {
+		if (engine->SalSefo > 0 && (TrnSefo = TrnFonSefo(TrnFon, engine->ConSil, engine->StrIniPal, engine->StrFinPal, engine->Fonemas)) == NULL) {
 			fprintf(stderr, "Error al transcribir %s\n", TrnFon);
 			continue;
 		}
@@ -336,27 +386,27 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		/*
 		 * Escribimos el texto de salida.
 		 */
-		if (SalFon > 0 && fprintf(FpFon, "%s", TrnFon) < 0) {
+		if (engine->SalFon > 0 && fprintf(FpFon, "%s", TrnFon) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito\n");
 			continue;
 		}
 
-		if (SalFnm > 0 && fprintf(FpFnm, "%s", TrnFnm) < 0) {
+		if (engine->SalFnm > 0 && fprintf(FpFnm, "%s", TrnFnm) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en fonemas\n");
 			continue;
 		}
 
-		if (SalFnmPal > 0 && fprintf(FpFnmPal, "%s", TrnFnmPal) < 0) {
+		if (engine->SalFnmPal > 0 && fprintf(FpFnmPal, "%s", TrnFnmPal) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en fonemas\n");
 			continue;
 		}
 
-		if (SalSem > 0 && fprintf(FpSem, "%s", TrnSem) < 0) {
+		if (engine->SalSem > 0 && fprintf(FpSem, "%s", TrnSem) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en semisilabas\n");
 			continue;
 		}
 
-		if (SalSefo > 0 && fprintf(FpSefo, "%s", TrnSefo) < 0) {
+		if (engine->SalSefo > 0 && fprintf(FpSefo, "%s", TrnSefo) < 0) {
 			fprintf(stderr, "Error al escribir el texto transcrito en semifonemas\n");
 			continue;
 		}
@@ -366,10 +416,10 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 		free((void *) SilAcc);
 		free((void *) TrnFon);
 
-		if (SalFnm > 0) free((void *) TrnFnm);
-		if (SalFnmPal > 0) free((void *) TrnFnmPal);
-		if (SalSem > 0) free((void *) TrnSem);
-		if (SalSefo > 0) free((void *) TrnSefo);
+		if (engine->SalFnm > 0) free(TrnFnm);
+		if (engine->SalFnmPal > 0) free(TrnFnmPal);
+		if (engine->SalSem > 0) free(TrnSem);
+		if (engine->SalSefo > 0) free(TrnSefo);
 	}
 
 	/*
@@ -385,27 +435,16 @@ int MainPorArgumentos(const char *FicDicExc, const char *FicTrnFon, const char *
 
 int main(int ArgC, char *ArgV[])
 {
-	char	*FicDicExc, *FicTrnFon, *FicTrnPal, *FicDicSust, *FicDicGrp, *FicNovVoc, *FicNovCons, *FicNovFon;
-	int		SalFon, SalFnm, SalFnmPal, SalSem, SalSefo;
-	int		ConSil;
-	int		TrnPalAis;
-	int		TrnLinAis;
-	char	*StrIniPal, *StrFinPal;
 	char	*NomOut;
-	long	ClaveModif = 0;
-
+	SagaEngine engine;
 	/*
 	 * Analizamos la linea de comandos.
 	 */
-	if (OpcSaga(ArgC, ArgV, &FicDicExc, &FicTrnFon, &FicTrnPal, &FicDicSust, &FicDicGrp, &FicNovVoc, &FicNovCons,
-			&FicNovFon, &TrnPalAis, &SalFon, &SalFnm, &SalFnmPal, &SalSem, &SalSefo, &ConSil, &StrIniPal, &StrFinPal, &NomOut,
-			&ClaveModif, &TrnLinAis) < 0) {
+	if (OpcSaga(ArgC, ArgV, &engine, &NomOut) < 0) {
 		EmpleoSaga(ArgV);
 		return EXIT_FAILURE;
 	}
-        return MainPorArgumentos(FicDicExc, FicTrnFon, FicTrnPal, FicDicSust, FicDicGrp, FicNovVoc, FicNovCons,
-			FicNovFon, TrnPalAis, SalFon, SalFnm, SalFnmPal, SalSem, SalSefo, ConSil, StrIniPal, StrFinPal, NomOut,
-			ClaveModif, TrnLinAis);
+        return MainPorArgumentos(&engine, NomOut);
 }
 
 
@@ -511,29 +550,11 @@ char	*ArreglaTxt(char *TxtOrt)
  * OpcSaga - Analiza las opciones de la linea de comandos
  **********************************************************************/
 
-int		OpcSaga(
+int OpcSaga(
 	int		ArgC,			/* No. argumentos linea de comandos		*/
 	char	**ArgV,			/* Argumentos linea de comandos			*/
-	char	**FicDicExc,	/* Diccionario de excepciones			*/
-	char	**FicTrnFon,
-	char	**FicTrnPal,
-	char	**FicDicSust,	/* Diccionario de substituciones		*/
-	char	**FicDicGrp,	/* Diccionario de substituciones		*/
-	char	**FicNovVoc,
-	char	**FicNovCons,
-	char	**FicNovFon,
-	int		*TrnPalAis,		/* Flag de trans. palabras aisladas		*/
-	int		*SalFon,		/* Transcripcion fonetica				*/
-	int		*SalFnm,		/* Transcripcion en fonemas				*/
-	int		*SalFnmPal,
-	int		*SalSem,		/* Transcripcion en semisilabas			*/
-	int		*SalSefo,
-	int		*ConSil,		/* Conservar los silencios				*/
-	char	**StrIniPal,
-	char	**StrFinPal,
-	char	**NomOut,		/* Nombre de los ficheros de salida		*/
-	long	*ClaveModif,
-	int		*TrnLinAis		/* Flag de trans. lineas aisladas		*/
+        SagaEngine *engine,
+	char	**NomOut		/* Nombre de los ficheros de salida		*/
 	)
 
 {
@@ -545,113 +566,99 @@ int		OpcSaga(
 	/*
 	 * Valores por defecto.
 	 */
-	*FicDicExc = NULL;
-	*FicTrnFon = NULL;
-	*FicTrnPal = NULL;
-	*FicDicSust = NULL;
-	*FicDicGrp = NULL;
-	*FicNovFon = NULL;
-	*FicNovVoc = NULL;
-	*FicNovCons = NULL;
-	*StrIniPal = strdup(".-");
-	*StrFinPal = strdup("+.");
-	*TrnPalAis = 0;
-	*TrnLinAis = 0;
-	*SalFon = 0;
-	*SalFnm = 0;
-	*SalFnmPal = 0;
-	*SalSem = 0;
-	*SalSefo = 0;
-	*ConSil = 0;
+	SagaEngine_Initialize(engine);
+	/* Por defecto se hara la transcripcion fonetica si no se especifica
+	   otra. Dejamos todas las Sal* a 0 para ver si hay alguna especificada
+	   o no. */
+	engine->SalFon = 0;
 	*NomOut = NULL;
-	*ClaveModif = 0;
 	FicErr = NULL;
 
 	while ((Opcion = getopt(ArgC, ArgV, "abd:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1) {
 		switch (Opcion) {
-		case 'a' :	*TrnPalAis = 1;
-					*TrnLinAis = 1;
+		case 'a' :	engine->TrnPalAis = 1;
+					engine->TrnLinAis = 1;
 					break;
-		case 'b' :	*TrnLinAis = 1;
+		case 'b' :	engine->TrnLinAis = 1;
 					break;
-		case 'd' :	*FicDicExc = optarg;
+		case 'd' :	engine->FicDicExc = optarg;
 					break;
-		case 't' :	*FicTrnFon = optarg;
+		case 't' :	engine->FicTrnFon = optarg;
 					break;
-		case 'T' :	*FicTrnPal = optarg;
+		case 'T' :	engine->FicTrnPal = optarg;
 					break;
-		case 'x' :	*FicDicSust = optarg;
+		case 'x' :	engine->FicDicSust = optarg;
 					break;
-		case 'g' :	*FicDicGrp = optarg;
+		case 'g' :	engine->FicDicGrp = optarg;
 					break;
-		case 'v' :	*FicNovVoc = optarg;
+		case 'v' :	engine->FicNovVoc = optarg;
 					break;
-		case 'c' :	*FicNovCons = optarg;
+		case 'c' :	engine->FicNovCons = optarg;
 					break;
-		case 'l' :	*FicNovFon = optarg;
+		case 'l' :	engine->FicNovFon = optarg;
 					break;
 		case 'e' :	FicErr = optarg;
 					break;
-		case 'f' :	*SalFon = 1;
+		case 'f' :	engine->SalFon = 1;
 					break;
-		case 'F' :	*SalFnm = 1;
+		case 'F' :	engine->SalFnm = 1;
 					break;
-		case 'p' :	*SalFnmPal = 1;
+		case 'p' :	engine->SalFnmPal = 1;
 					break;
-		case 'y' :	*SalSefo = 1;
+		case 'y' :	engine->SalSefo = 1;
 					break;
 		case 'Y' :	Matriz = MatStr(optarg);
-					*StrIniPal = *StrFinPal = Matriz[0];
-					if (Matriz[1] != NULL) *StrFinPal = Matriz[1];
+					engine->StrIniPal = engine->StrFinPal = Matriz[0];
+					if (Matriz[1] != NULL) engine->StrFinPal = Matriz[1];
 					break;
-		case 's' :	*SalSem = 1;
+		case 's' :	engine->SalSem = 1;
 					break;
-		case 'S' :	*ConSil = 1;
+		case 'S' :	engine->ConSil = 1;
 					break;
 		case 'M' :	for (i = 0; i < strlen(optarg); i++) {
 						switch (optarg[i]) {
 						case ' '	:	
 										continue;
-						case 'S'	:	*ClaveModif |= SESEO;
+						case 'S'	:	engine->ClaveModif |= SESEO;
 										break;
-						case 'X'	:	*ClaveModif |= EQUIS_KS;
+						case 'X'	:	engine->ClaveModif |= EQUIS_KS;
 										break;
-						case 'H'	:	*ClaveModif |= ESE_ASP_INC;
+						case 'H'	:	engine->ClaveModif |= ESE_ASP_INC;
 										break;
-						case 'h'	:	*ClaveModif |= ESE_ASP_CON;
+						case 'h'	:	engine->ClaveModif |= ESE_ASP_CON;
 										break;
-						case 'K'	:	*ClaveModif |= SC_KS;
+						case 'K'	:	engine->ClaveModif |= SC_KS;
 										break;
-						case 'A'	:	*ClaveModif |= BDG_ANDES;
+						case 'A'	:	engine->ClaveModif |= BDG_ANDES;
 										break;
-						case 'N'	:	*ClaveModif |= ENE_VELAR;
+						case 'N'	:	engine->ClaveModif |= ENE_VELAR;
 										break;
-						case 'M'	:	*ClaveModif |= NAS_VELAR;
+						case 'M'	:	engine->ClaveModif |= NAS_VELAR;
 										break;
-						case 'P'	:	*ClaveModif |= ARCHI_IMPL;
+						case 'P'	:	engine->ClaveModif |= ARCHI_IMPL;
 										break;
-						case 'y'	:	*ClaveModif |= Y_VOCAL;
+						case 'y'	:	engine->ClaveModif |= Y_VOCAL;
 										break;
-						case 'R'	:	*ClaveModif |= ERRE_IMPL;
+						case 'R'	:	engine->ClaveModif |= ERRE_IMPL;
 										break;
-						case '@'	:	*ClaveModif |= GRUPO_SIL;
+						case '@'	:	engine->ClaveModif |= GRUPO_SIL;
 										break;
-						case ':'	:	*ClaveModif |= MARCA_IMPL;
+						case ':'	:	engine->ClaveModif |= MARCA_IMPL;
 										break;
-						case '_'	:	*ClaveModif |= VOCAL_PTON;
+						case '_'	:	engine->ClaveModif |= VOCAL_PTON;
 										break;
-						case '.'	:	*ClaveModif |= INI_FIN_PAL;
+						case '.'	:	engine->ClaveModif |= INI_FIN_PAL;
 										break;
-						case '~'	:	*ClaveModif |= VOCAL_NASAL;
+						case '~'	:	engine->ClaveModif |= VOCAL_NASAL;
 										break;
-						case 'C'	:	*ClaveModif |= OCLUS_EXPL;
+						case 'C'	:	engine->ClaveModif |= OCLUS_EXPL;
 										break;
 						case 'E'	:	switch (optarg[++i]) {
-										case 'b'	:	*ClaveModif |= ELIM_B;
+										case 'b'	:	engine->ClaveModif |= ELIM_B;
 														break;
-										case 'd'	:	*ClaveModif |= ELIM_D;
+										case 'd'	:	engine->ClaveModif |= ELIM_D;
 														break;
-										case 'g'	:	*ClaveModif |= ELIM_G;
+										case 'g'	:	engine->ClaveModif |= ELIM_G;
 														break;
 										default		:	fprintf(stderr, "Clave desconocida \"%c\"\n", optarg[i + 1]);
 														return -1;
@@ -697,8 +704,8 @@ int		OpcSaga(
 	/*
 	 * La transcripcion por defecto es en alofonos (.fon);
 	 */
-	if (!*SalFon && !*SalFnm && !*SalFnmPal && !*SalSem && !*SalSefo) {
-		*SalFon = 1;
+	if (!engine->SalFon && !engine->SalFnm && !engine->SalFnmPal && !engine->SalSem && !engine->SalSefo) {
+		engine->SalFon = 1;
 	}
 
 	return 0;

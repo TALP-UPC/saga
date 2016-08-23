@@ -30,7 +30,7 @@
 
 int		CogeGrpOrt(	char	*TxtOrt,
 					int		PosAct,
-					GRP_ORT	*GrpAct)
+					GRP_ORT	*GrpAct, char **Letras)
 
 {
 	int		Long, Chr;
@@ -109,7 +109,7 @@ int		CogeGrpOrt(	char	*TxtOrt,
 
 int		CogeGrpFon(char	*TrnFon,
 					int		PosAct,
-					GRP_ORT	*GrpAct)
+					GRP_ORT	*GrpAct, char **Fonemas)
 
 {
 	int		Long, Chr;
@@ -208,8 +208,8 @@ int		CogeGrpFon(char	*TrnFon,
  **********************************************************************/
 
 
-int		IndexChr(	char	*Chr,
-					char	**VectChr)
+int		IndexChr(const char	* Chr,
+					char ** VectChr)
 
 {
 	int		Pos, Long;

@@ -34,7 +34,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 					char	***DicTrnPal,
 					char	***DicTrnFon,
 					int		TrnPalAis,
-					long	ClaveModif)
+					long	ClaveModif, SagaEngine *engine)
 
 {
 	char	*TrnFon, *TrnPal;
@@ -59,7 +59,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 	/*
 	 * Cogemos el primer grupo ortografico.
 	 */
-	if (CogeGrpOrt(SilAcc, 0, &GrpAct) < 0) {
+	if (CogeGrpOrt(SilAcc, 0, &GrpAct, engine->Letras) < 0) {
 		free(TrnFon);
 		return NULL;
 	}
@@ -75,7 +75,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 		/*
 		 * Cogemos el siguiente grupo ortografico de SilAcc.
 		 */
-		if (CogeGrpOrt(SilAcc, PosAct, &GrpAct) < 0) {
+		if (CogeGrpOrt(SilAcc, PosAct, &GrpAct, engine->Letras) < 0) {
 			free(TrnFon);
 			return NULL;
 		}
@@ -85,7 +85,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 		 */
 		PosSig = PosAct + GrpAct.Long;
 		if (PosSig < LongTxt) {
-			CogeGrpOrt(SilAcc, PosSig, &GrpSig);
+			CogeGrpOrt(SilAcc, PosSig, &GrpSig, engine->Letras);
 			if (GrpSig.Tipo == LITERAL) {
 				GrpSig.Tipo = PALABRA;
 				GrpSig.Cont++;
@@ -98,7 +98,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 		if (GrpSig.Tipo == ESPACIOS) {
 			PosSig = PosSig + GrpSig.Long;
 			if (PosSig < LongTxt) {
-				CogeGrpOrt(SilAcc, PosSig, &GrpSig);
+				CogeGrpOrt(SilAcc, PosSig, &GrpSig, engine->Letras);
 				if (GrpSig.Tipo == LITERAL) {
 					GrpSig.Tipo = PALABRA;
 					GrpSig.Cont++;
@@ -121,7 +121,7 @@ char	*TrnSilAcc(	char	*SilAcc,
 		}
 				
 		if (!Encontrada && (GrpAct.Tipo & PALABRA)) {
-			if ((TrnPal = TrnPalSil(GrpAnt, GrpAct, GrpSig, DicTrnFon, TrnPalAis, ClaveModif)) == NULL) {
+			if ((TrnPal = TrnPalSil(GrpAnt, GrpAct, GrpSig, DicTrnFon, TrnPalAis, ClaveModif, engine)) == NULL) {
 				free(TrnFon);
 				return NULL;
 			}
@@ -160,7 +160,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					GRP_ORT	GrpSig,
 					char	***DicTrnFon,
 					int		TrnPalAis,
-					long	ClaveModif)
+					long	ClaveModif, SagaEngine *engine)
 {
 	char	*TrnPal, *Sil, *Pointer;
 	char	CntAnt[128], CntSig[128];
@@ -201,10 +201,10 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 		Sil = GrpAnt.Cont + Pos;
 		Pos = 0;
 		strcpy(CntAnt, "");
-		while ((Chr = IndexChr(Sil+Pos, Letras)) >= 0) {
-			Pos += strlen(Letras[Chr]);
-			strcat(CntAnt, Letras[Chr]);
-			strcpy(ChrAnt, Letras[Chr]);
+		while ((Chr = IndexChr(Sil+Pos, engine->Letras)) >= 0) {
+			Pos += strlen(engine->Letras[Chr]);
+			strcat(CntAnt, engine->Letras[Chr]);
+			strcpy(ChrAnt, engine->Letras[Chr]);
 		}
 	}
 	if (TrnPalAis == 1 || GrpSig.Tipo != PALABRA) {
@@ -213,9 +213,9 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 	else {
 		Pos = 0;
 		strcpy(CntSig, "");
-		while ((Chr = IndexChr(GrpSig.Cont+Pos, Letras)) >= 0) {
-			Pos += strlen(Letras[Chr]);
-			strcat(CntSig, Letras[Chr]);
+		while ((Chr = IndexChr(GrpSig.Cont+Pos, engine->Letras)) >= 0) {
+			Pos += strlen(engine->Letras[Chr]);
+			strcat(CntSig, engine->Letras[Chr]);
 		}
 	}
 
@@ -234,8 +234,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 			 * Empezamos el procesado de la <x> porque afecta a la
 			 * silabificacion. Lo que queda es siempre <s>.
 			 */
-			Chr1 = IndexChr(GrpAct.Cont+Pos, Letras);
-			if (Chr1 >= 0 && strcmp(Letras[Chr1], "x") == 0) {
+			Chr1 = IndexChr(GrpAct.Cont+Pos, engine->Letras);
+			if (Chr1 >= 0 && strcmp(engine->Letras[Chr1], "x") == 0) {
 				if (ClaveModif & EQUIS_KS) {
 					if (ClaveModif & OCLUS_EXPL) {
 						strcat(TrnPal, "kcl");
@@ -252,17 +252,17 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 			strcat(TrnPal, InterSil[Chr]);
 		}
 		
-		while ((Chr = IndexChr(GrpAct.Cont+Pos, Letras)) >= 0) {
-			Pos += strlen(Letras[Chr]);
-			strcat(SilAct, Letras[Chr]);
+		while ((Chr = IndexChr(GrpAct.Cont+Pos, engine->Letras)) >= 0) {
+			Pos += strlen(engine->Letras[Chr]);
+			strcat(SilAct, engine->Letras[Chr]);
 		}
 
 		if ((Chr = IndexChr(GrpAct.Cont+Pos, InterSil)) >= 0) {
 			Ind = Pos + strlen(InterSil[Chr]);
 			strcpy(SilSig, "");
-			while ((Chr = IndexChr(GrpAct.Cont+Ind, Letras)) >= 0) {
-				Ind += strlen(Letras[Chr]);
-				strcat(SilSig, Letras[Chr]);
+			while ((Chr = IndexChr(GrpAct.Cont+Ind, engine->Letras)) >= 0) {
+				Ind += strlen(engine->Letras[Chr]);
+				strcat(SilSig, engine->Letras[Chr]);
 			}
 		}
 		else {
@@ -271,9 +271,9 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 
 		Ind = 0;
 		strcpy(ChrAnt, "");
-		while ((Chr = IndexChr(SilAnt+Ind, Letras)) >= 0) {
-			Ind += strlen(Letras[Chr]);
-			strcpy(ChrAnt, Letras[Chr]);
+		while ((Chr = IndexChr(SilAnt+Ind, engine->Letras)) >= 0) {
+			Ind += strlen(engine->Letras[Chr]);
+			strcpy(ChrAnt, engine->Letras[Chr]);
 		}
 
 		if (Pos == (int) GrpAct.Long) FinPal = 1;
@@ -281,22 +281,22 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 		IniSil = 1;
 		FinSil = 0;
 		Ind = 0;
-		while ((Chr = IndexChr(SilAct+Ind, Letras)) >= 0) {
+		while ((Chr = IndexChr(SilAct+Ind, engine->Letras)) >= 0) {
 			if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil) strcat(TrnPal, ".");
 
 			EsVocal = 0;
 			EsSemi = 0;
-			strcpy(ChrAct, Letras[Chr]);
+			strcpy(ChrAct, engine->Letras[Chr]);
 			Ind += strlen(ChrAct);
 			strcpy(ChrSig, "");
 			if (Ind == (int) strlen(SilAct)) {
 				FinSil = 1;
-				Chr = IndexChr(SilSig, Letras);
-				if (Chr >= 0) strcpy(ChrSig, Letras[Chr]);
+				Chr = IndexChr(SilSig, engine->Letras);
+				if (Chr >= 0) strcpy(ChrSig, engine->Letras[Chr]);
 			}
 			else {
-				Chr = IndexChr(SilAct+Ind, Letras);
-				if (Chr >= 0) strcpy(ChrSig, Letras[Chr]);
+				Chr = IndexChr(SilAct+Ind, engine->Letras);
+				if (Chr >= 0) strcpy(ChrSig, engine->Letras[Chr]);
 			}
 
 			Encontrada = 0;
@@ -332,10 +332,10 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					EsVocal = 1;
 				}
 				else if (!strcmp(ChrAct, "hi") && IniSil && !FinSil &&
-					(Chr = IndexChr(SilAct+Ind, Letras)) >= 0 && strchr(Letras[Chr], 'e')) {
+					(Chr = IndexChr(SilAct+Ind, engine->Letras)) >= 0 && strchr(engine->Letras[Chr], 'e')) {
 					strcat(TrnPal, "jj");
 				}
-				else if ((!FinSil && IndexChr(ChrSig, Vocales) >= 0) || (!IniSil && IndexChr(ChrAnt, VocFort) >= 0)) {
+				else if ((!FinSil && IndexChr(ChrSig, engine->Vocales) >= 0) || (!IniSil && IndexChr(ChrAnt, VocFort) >= 0)) {
 					strcat(TrnPal, "j");
 					EsSemi = 1;
 				}
@@ -367,8 +367,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					EsVocal = 1;
 				}
 				else if (!strcmp(ChrAct, "u") && IniSil && IniPal && FinSil && FinPal) {
-					Chr1 = IndexChr(ChrSig, Vocales);
-					if (Chr1 >= 0 && strchr(Vocales[Chr1], 'o')) {
+					Chr1 = IndexChr(ChrSig, engine->Vocales);
+					if (Chr1 >= 0 && strchr(engine->Vocales[Chr1], 'o')) {
 						strcat(TrnPal, "w");
 						EsSemi = 1;
 					}
@@ -379,11 +379,11 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 				}
 				else if (!strcmp(ChrAct, "hu") &&
 					IniSil && !FinSil &&
-					(Chr = IndexChr(SilAct+Ind, Letras)) >= 0 &&
-					strchr(Letras[Chr], 'e')) {
+					(Chr = IndexChr(SilAct+Ind, engine->Letras)) >= 0 &&
+					strchr(engine->Letras[Chr], 'e')) {
 					strcat(TrnPal, "Gw");
 				}
-				else if ((!FinSil && IndexChr(ChrSig, Vocales) >= 0) ||
+				else if ((!FinSil && IndexChr(ChrSig, engine->Vocales) >= 0) ||
 					(!IniSil && IndexChr(ChrAnt, VocFort) >= 0)) {
 					strcat(TrnPal, "w");
 					EsSemi = 1;
@@ -396,11 +396,11 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 
 			else if (!strcmp(ChrAct, "y")) {
 				if (IniSil && IniPal && FinSil && FinPal) {
-					Chr1 = IndexChr(ChrAnt, Vocales);
-					Chr2 = IndexChr(ChrSig, Vocales);
+					Chr1 = IndexChr(ChrAnt, engine->Vocales);
+					Chr2 = IndexChr(ChrSig, engine->Vocales);
 
 					if (!strcmp(ChrSig, "hi") || !strcmp(ChrSig, "hu")) {
-						if (Chr1 >= 0 && !strchr(Vocales[Chr1], 'i')) {
+						if (Chr1 >= 0 && !strchr(engine->Vocales[Chr1], 'i')) {
 							strcat(TrnPal, "j");
 							EsSemi = 1;
 						}
@@ -410,20 +410,20 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 						}
 					}
 					else if (!(ClaveModif & Y_VOCAL) &&
-						Chr1 >= 0 && !strchr(Vocales[Chr1], 'i') &&
-						Chr2 >= 0 && !strchr(Vocales[Chr2], 'i')) {
+						Chr1 >= 0 && !strchr(engine->Vocales[Chr1], 'i') &&
+						Chr2 >= 0 && !strchr(engine->Vocales[Chr2], 'i')) {
 						strcat(TrnPal, "jj");
 					}
-					else if ((Chr1 >= 0 && strchr(Vocales[Chr1], 'i')) ||
-						(Chr2 >= 0 && strchr(Vocales[Chr2], 'i'))) {
+					else if ((Chr1 >= 0 && strchr(engine->Vocales[Chr1], 'i')) ||
+						(Chr2 >= 0 && strchr(engine->Vocales[Chr2], 'i'))) {
 						strcat(TrnPal, "i");
 						EsVocal = 1;
 					}
-					else if (Chr1 >= 0 && !strchr(Vocales[Chr1], 'i')) {
+					else if (Chr1 >= 0 && !strchr(engine->Vocales[Chr1], 'i')) {
 						strcat(TrnPal, "j");
 						EsSemi = 1;
 					}
-					else if (Chr2 >= 0 && !strchr(Vocales[Chr2], 'i')) {
+					else if (Chr2 >= 0 && !strchr(engine->Vocales[Chr2], 'i')) {
 						strcat(TrnPal, "j");
 						EsSemi = 1;
 					}
@@ -432,14 +432,14 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 						EsVocal = 1;
 					}
 				}
-				else if ((IniSil && IniPal && IndexChr(ChrSig, Vocales) >= 0) ||
-					(IniSil && IndexChr(ChrAnt, ConsTxt) >= 0)) {
+				else if ((IniSil && IniPal && IndexChr(ChrSig, engine->Vocales) >= 0) ||
+					(IniSil && IndexChr(ChrAnt, engine->ConsTxt) >= 0)) {
 					strcat(TrnPal, "jj");
 				}
-				else if (IniSil && IndexChr(ChrSig, Vocales) >= 0) {
+				else if (IniSil && IndexChr(ChrSig, engine->Vocales) >= 0) {
 					strcat(TrnPal, "jj");
 				}
-				else if (IndexChr(ChrSig, Vocales) >= 0) {
+				else if (IndexChr(ChrSig, engine->Vocales) >= 0) {
 					strcat(TrnPal, "j");
 					EsSemi = 1;
 				}
@@ -463,7 +463,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 
 			else if (!strcmp(ChrAct, "b") || !strcmp(ChrAct, "v") || !strcmp(ChrAct, "w")) {
 				if ((ClaveModif & ELIM_B) && !IniPal && FinPal && 
-					strchr(ChrSig, '\'') == (char *) 0 && EraVocal && IndexChr(ChrSig, Vocales) >= 0) {
+					strchr(ChrSig, '\'') == (char *) 0 && EraVocal && IndexChr(ChrSig, engine->Vocales) >= 0) {
 				}
 				else if ((ClaveModif & ELIM_B) && FinPal && FinSil && EraVocal) {
 				}
@@ -506,8 +506,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					strcat(TrnPal, "G");
 				}
 				else if (!strcmp(ChrSig, "g")) {
-					Chr = IndexChr(SilSig+1, Letras);
-					if (Chr >= 0 && (strchr(Letras[Chr], 'e') || strchr(Letras[Chr], 'i'))) {
+					Chr = IndexChr(SilSig+1, engine->Letras);
+					if (Chr >= 0 && (strchr(engine->Letras[Chr], 'e') || strchr(engine->Letras[Chr], 'i'))) {
 						strcat(TrnPal, "G");
 					}
 					else {
@@ -543,7 +543,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 
 			else if (!strcmp(ChrAct, "d")) {
 				if ((ClaveModif & ELIM_D) && !IniPal && FinPal && 
-					strchr(ChrSig, '\'') == (char *) 0 && EraVocal && IndexChr(ChrSig, Vocales) >= 0) {
+					strchr(ChrSig, '\'') == (char *) 0 && EraVocal && IndexChr(ChrSig, engine->Vocales) >= 0) {
 				}
 				else if ((ClaveModif & ELIM_D) && FinPal && FinSil && EraVocal) {
 				}
@@ -583,7 +583,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					strcat(TrnPal, "x");
 				}
 				else if ((ClaveModif & ELIM_G) && !IniPal && FinPal && 
-					strchr(ChrSig, '\'') == (char *) 0 && EraVocal && IndexChr(ChrSig, Vocales) >= 0) {
+					strchr(ChrSig, '\'') == (char *) 0 && EraVocal && IndexChr(ChrSig, engine->Vocales) >= 0) {
 				}
 				else if ((ClaveModif & ELIM_G) && FinPal && FinSil && EraVocal) {
 				}
@@ -612,9 +612,9 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					strcat(TrnPal, "G");
 				}
 				if (FinSil == 0 && !strcmp(ChrSig, "u")) {
-					Chr = IndexChr(SilAct+Ind+1, Letras);
-					if (Chr >= 0 && (strchr(Letras[Chr], 'e') || strchr(Letras[Chr], 'i'))) {
-						strcpy(ChrAct, Letras[Chr]);
+					Chr = IndexChr(SilAct+Ind+1, engine->Letras);
+					if (Chr >= 0 && (strchr(engine->Letras[Chr], 'e') || strchr(engine->Letras[Chr], 'i'))) {
+						strcpy(ChrAct, engine->Letras[Chr]);
 						Ind++;
 					}
 				}
@@ -635,7 +635,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 
 			else if (!strcmp(ChrAct, "l")) {
 				if ((ClaveModif & GRUPO_SIL) &&
-					(!IniSil && !FinSil && IndexChr(ChrSig, Vocales) >= 0)) {
+					(!IniSil && !FinSil && IndexChr(ChrSig, engine->Vocales) >= 0)) {
 					strcat(TrnPal, "@l");
 				}
 				else {
@@ -670,8 +670,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					strcat(TrnPal, "N");
 				}
 				else if (!strcmp(ChrSig, "c")) {
-					Chr = IndexChr(SilSig+1, Letras);
-					if (Chr >= 0 && !strchr(Letras[Chr], 'e') && !strchr(Letras[Chr], 'i')) {
+					Chr = IndexChr(SilSig+1, engine->Letras);
+					if (Chr >= 0 && !strchr(engine->Letras[Chr], 'e') && !strchr(engine->Letras[Chr], 'i')) {
 						strcat(TrnPal, "N");
 					}
 					else {
@@ -679,8 +679,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					}
 				}
 				else if (FinSil && !strcmp(ChrSig, "hu")) {
-					Chr = IndexChr(SilSig+2, Letras);
-					if (Chr >= 0 && strchr(Letras[Chr], 'e')) {
+					Chr = IndexChr(SilSig+2, engine->Letras);
+					if (Chr >= 0 && strchr(engine->Letras[Chr], 'e')) {
 						strcat(TrnPal, "N");
 					}
 					else {
@@ -706,14 +706,14 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 			}
 
 			else if (!strcmp(ChrAct, "r")) {
-				if ((ClaveModif & ERRE_IMPL) && IndexChr(ChrSig, Vocales) < 0) {
+				if ((ClaveModif & ERRE_IMPL) && IndexChr(ChrSig, engine->Vocales) < 0) {
 					strcat(TrnPal, "R");
 				}
-				else if ((ClaveModif & ERRE_IMPL) && FinSil && (!strcmp(ChrSig, "hu") || !strcmp(ChrSig, "hi")) && (Chr = IndexChr(SilSig+2, Letras)) >= 0 && IndexChr(Letras[Chr], Vocales) >= 0) {
+				else if ((ClaveModif & ERRE_IMPL) && FinSil && (!strcmp(ChrSig, "hu") || !strcmp(ChrSig, "hi")) && (Chr = IndexChr(SilSig+2, engine->Letras)) >= 0 && IndexChr(engine->Letras[Chr], engine->Vocales) >= 0) {
 					strcat(TrnPal, "R");
 				}
 				else if ((ClaveModif & GRUPO_SIL) &&
-					(!IniSil && !FinSil && IndexChr(ChrSig, Vocales) >= 0)) {
+					(!IniSil && !FinSil && IndexChr(ChrSig, engine->Vocales) >= 0)) {
 					strcat(TrnPal, "@r");
 				}
 				else if ((IniPal && IniSil) || !strcmp(ChrAnt, "l") ||
@@ -737,8 +737,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 				if (FinSil && !FinPal && !strcmp(ChrSig, "s")) SigueEse = 1;
 				else if (FinSil && !FinPal && (ClaveModif & SESEO) && !strcmp(ChrSig, "z")) SigueEse = 1;
 				else if (FinSil && !FinPal && (ClaveModif & SESEO) && !strcmp(ChrSig, "c")) {
-					Chr = IndexChr(SilSig+strlen(ChrSig), Letras);
-					if (Chr >= 0 && (strchr(Letras[Chr], 'e') || strchr(Letras[Chr], 'i'))) SigueEse = 1;
+					Chr = IndexChr(SilSig+strlen(ChrSig), engine->Letras);
+					if (Chr >= 0 && (strchr(engine->Letras[Chr], 'e') || strchr(engine->Letras[Chr], 'i'))) SigueEse = 1;
 				}
 
 				if (!(IniPal && IniSil) && strcmp(ChrAct, "x") == 0 && (ClaveModif & EQUIS_KS)) {
@@ -774,7 +774,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 				}
 				else if ((ClaveModif & ESE_ASP_CON) && FinSil) {
 					if (FinPal && FinSil && 
-						(IndexChr(ChrSig, Vocales) >= 0 || IndexChr(ChrSig, Letras) < 0 ||
+						(IndexChr(ChrSig, engine->Vocales) >= 0 || IndexChr(ChrSig, engine->Letras) < 0 ||
 						(!strcmp(ChrSig, "y") && GrpSig.Long == 1))) {
 						strcat(TrnPal, "s");
 					}
@@ -793,8 +793,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					strcat(TrnPal, "z");
 				}
 				else if (!strcmp(ChrSig, "hu") || !strcmp(ChrSig, "hi")) { 
-					Chr = IndexChr(SilSig+strlen(ChrSig), Letras);
-					if (Chr >= 0 && strchr(Letras[Chr], 'e')) {
+					Chr = IndexChr(SilSig+strlen(ChrSig), engine->Letras);
+					if (Chr >= 0 && strchr(engine->Letras[Chr], 'e')) {
 						strcat(TrnPal, "z");
 					}
 					else {
@@ -802,8 +802,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					}
 				}
 				else if (!strcmp(ChrSig, "hu")) { 
-					Chr = IndexChr(SilSig+strlen(ChrSig), Letras);
-					if (Chr >= 0 && strchr(Letras[Chr], 'a')) {
+					Chr = IndexChr(SilSig+strlen(ChrSig), engine->Letras);
+					if (Chr >= 0 && strchr(engine->Letras[Chr], 'a')) {
 						strcat(TrnPal, "z");
 					}
 					else {
@@ -811,8 +811,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					}
 				}
 				else if (!strcmp(ChrSig, "g")) {
-					Chr = IndexChr(SilSig+1, Letras);
-					if (Chr >= 0 && (strchr(Letras[Chr], 'e') || strchr(Letras[Chr], 'i'))) {
+					Chr = IndexChr(SilSig+1, engine->Letras);
+					if (Chr >= 0 && (strchr(engine->Letras[Chr], 'e') || strchr(engine->Letras[Chr], 'i'))) {
 						strcat(TrnPal, "s");
 					}
 					else {
@@ -863,7 +863,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 					}
 					else if ((ClaveModif & ESE_ASP_CON) && FinSil) {
 						if (FinPal && FinSil && 
-							(IndexChr(ChrSig, Vocales) >= 0 || IndexChr(ChrSig, Letras) < 0 ||
+							(IndexChr(ChrSig, engine->Vocales) >= 0 || IndexChr(ChrSig, engine->Letras) < 0 ||
 							(!strcmp(ChrSig, "y") && GrpSig.Long == 1))) {
 							strcat(TrnPal, "s");
 						}
@@ -882,8 +882,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 						strcat(TrnPal, "z");
 					}
 					else if (!strcmp(ChrSig, "hu")) { 
-						Chr = IndexChr(SilSig+strlen(ChrSig), Letras);
-						if (Chr >= 0 && strchr(Letras[Chr], 'e')) {
+						Chr = IndexChr(SilSig+strlen(ChrSig), engine->Letras);
+						if (Chr >= 0 && strchr(engine->Letras[Chr], 'e')) {
 							strcat(TrnPal, "z");
 						}
 						else {
@@ -891,8 +891,8 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 						}
 					}
 					else if (!strcmp(ChrSig, "g")) {
-						Chr = IndexChr(SilSig+1, Letras);
-						if (Chr >= 0 && (strchr(Letras[Chr], 'e') || strchr(Letras[Chr], 'i'))) {
+						Chr = IndexChr(SilSig+1, engine->Letras);
+						if (Chr >= 0 && (strchr(engine->Letras[Chr], 'e') || strchr(engine->Letras[Chr], 'i'))) {
 							strcat(TrnPal, "s");
 						}
 						else {
@@ -938,22 +938,22 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
 			}
 					
 			if ((ClaveModif & MARCA_IMPL) && !EsVocal && !IniSil && (EraVocal || EraSemi || FinSil) && (strlen(TrnPal) > 0) && TrnPal[strlen(TrnPal) - 1] != ':') {
-				if (IndexChr(ChrSig, Vocales) < 0) { 
+				if (IndexChr(ChrSig, engine->Vocales) < 0) { 
 					strcat(TrnPal, ":");
 				}
 				else if (EraVocal && strchr("jw", TrnPal[strlen(TrnPal) - 1]) && strcmp("jj", TrnPal + strlen(TrnPal) - 2)) { 
 					strcat(TrnPal, ":");
 				}
 				else if (FinSil && (!strcmp(ChrSig, "hu") || !strcmp(ChrSig, "hi"))) {
-					Chr = IndexChr(SilSig+2, Letras);
-					if (Chr >= 0 && IndexChr(Letras[Chr], Vocales) >= 0) {
+					Chr = IndexChr(SilSig+2, engine->Letras);
+					if (Chr >= 0 && IndexChr(engine->Letras[Chr], engine->Vocales) >= 0) {
 						strcat(TrnPal, ":");
 					}
 				}
 			}
 
 			if ((ClaveModif & VOCAL_NASAL) && EsVocal && IndexChr(ChrSig, Nasales) >= 0) {
-				if (IndexChr(ChrAnt, Nasales) >= 0 || IndexChr(ChrAnt, Letras) < 0) { 
+				if (IndexChr(ChrAnt, Nasales) >= 0 || IndexChr(ChrAnt, engine->Letras) < 0) { 
 					strcat(TrnPal, "~");
 				}
 			}
@@ -983,7 +983,7 @@ char	*TrnPalSil(	GRP_ORT	GrpAnt,
  **********************************************************************/
 
 char	*TrnFonFnm(	char	*TrnFon,
-					int		ConSil)
+					int		ConSil, char **Fonemas)
 {
 	char	*TrnFnm, *Pointer;
 	int		LongFon = strlen(TrnFon);
@@ -1008,7 +1008,7 @@ char	*TrnFonFnm(	char	*TrnFon,
 		/*
 		 * Cogemos el siguiente grupo fonetico de TrnFon.
 		 */
-		if (CogeGrpFon(TrnFon, PosAct, &GrpAct) < 0) {
+		if (CogeGrpFon(TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
 			return (char *) 0;
 		}
@@ -1069,7 +1069,7 @@ char	*TrnFonFnm(	char	*TrnFon,
  **********************************************************************/
 
 char	*TrnFonFnmPal(	char	*TrnFon,
-					int		ConSil)
+					int		ConSil, char **Fonemas)
 {
 	char	*TrnFnm, *Pointer;
 	int		LongFon = strlen(TrnFon);
@@ -1094,7 +1094,7 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 		/*
 		 * Cogemos el siguiente grupo fonetico de TrnFon.
 		 */
-		if (CogeGrpFon(TrnFon, PosAct, &GrpAct) < 0) {
+		if (CogeGrpFon(TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
 			return (char *) 0;
 		}
@@ -1161,7 +1161,7 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 char	*TrnFonSefo(char	*TrnFon,
 					int		ConSil,
 					char	*StrIniPal,
-					char	*StrFinPal)
+					char	*StrFinPal, char **Fonemas)
 {
 	char	*TrnSefo, *Pointer;
 	int		LongFon = strlen(TrnFon);
@@ -1186,7 +1186,7 @@ char	*TrnFonSefo(char	*TrnFon,
 		/*
 		 * Cogemos el siguiente grupo fonetico de TrnFon.
 		 */
-		if (CogeGrpFon(TrnFon, PosAct, &GrpAct) < 0) {
+		if (CogeGrpFon(TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
 			return (char *) 0;
 		}
@@ -1260,7 +1260,7 @@ char	*TrnFonSefo(char	*TrnFon,
  **********************************************************************/
 
 char	*TrnFonSem(	char	*TrnFon,
-					int		ConSil)
+					int		ConSil, char **Fonemas)
 
 {
 	char	*TrnSem, *Pointer;
@@ -1288,7 +1288,7 @@ char	*TrnFonSem(	char	*TrnFon,
 		/*
 		 * Cogemos el siguiente grupo fonetico de TrnFon.
 		 */
-		if (CogeGrpFon(TrnFon, PosAct, &GrpAct) < 0) {
+		if (CogeGrpFon(TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			free((void *) TrnSem);
 			return (char *) 0;
 		}
