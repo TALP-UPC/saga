@@ -41,6 +41,18 @@ int		AplDicPal(
 	int		LongPal,
 	char	***DicExc);
 
+void BorraDicExc(char ***DicExc) {
+	if (DicExc == NULL) {
+		return;
+	}
+	for (size_t i=0; DicExc[i] != NULL; i++) {
+		free(DicExc[i][0]);
+		free(DicExc[i][1]);
+		free(DicExc[i]);
+	}
+	free(DicExc);
+}
+
 /***********************************************************************
  * CargDicExc - Carga un diccionario de excepciones.
  **********************************************************************/
@@ -54,9 +66,9 @@ char	***CargDicExc(const char	*FicDic)
 	int		Pal, TamDic;
 
 
-	if ((LisFic = MatStrChr(FicDic, "+")) == (char **) 0) {
+	if ((LisFic = MatStrChr(FicDic, "+")) == NULL) {
 		fprintf(stderr, "ERROR al procesar el nombre del diccionario %s\n", FicDic);
-		return (char ***) 0;
+		return NULL;
 	}
 
 	for (NumFic = 0; LisFic[NumFic] != (char *) 0; NumFic++) ;
@@ -89,7 +101,7 @@ char	***CargDicExc(const char	*FicDic)
 
 		free((void *) OtroDic);
 	}
-
+	LiberaMatStr(LisFic);
 	return DicExc;
 }
 

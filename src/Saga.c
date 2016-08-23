@@ -43,14 +43,8 @@ int SagaEngine_Initialize(SagaEngine *engine)
 	engine->FicNovFon = NULL;
 	engine->FicNovVoc = NULL;
 	engine->FicNovCons = NULL;
-	engine->StrIniPal = strdup(".-");
-	if (engine->StrIniPal == NULL) {
-		return -1;
-	}
-	engine->StrFinPal = strdup("+.");
-	if (engine->StrFinPal == NULL) {
-		return -1;
-	}
+	engine->StrIniPal = ".-";
+	engine->StrFinPal = "+.";
 	engine->TrnPalAis = 0;
 	engine->TrnLinAis = 0;
 
@@ -82,6 +76,44 @@ int SagaEngine_Initialize(SagaEngine *engine)
 	engine->TxtSalSefo = NULL;
 	engine->TxtSalSem = NULL;
 
+	return 0;
+}
+
+/* Clean engine to make a new transcription */
+int SagaEngine_Refresh(SagaEngine *engine)
+{
+	if (engine->TxtSalFon != NULL)
+		free(engine->TxtSalFon);
+	if (engine->TxtSalFnm != NULL)
+		free(engine->TxtSalFnm);
+	if (engine->TxtSalFnmPal != NULL)
+		free(engine->TxtSalFnmPal);
+	if (engine->TxtSalSefo != NULL)
+		free(engine->TxtSalSefo);
+	if (engine->TxtSalSem != NULL)
+		free(engine->TxtSalSem);
+	/* TODO */
+	return 0;
+}
+
+/* Clean engine */
+int SagaEngine_Clear(SagaEngine *engine)
+{
+	/* TODO */
+	BorraDicExc(engine->DicExc);
+	BorraDicExc(engine->DicTrnFon);
+	BorraDicExc(engine->DicTrnPal);
+	BorraDicExc(engine->DicSust);
+	BorraDicExc(engine->DicGrp);
+
+	LiberaMatStr(engine->LisNovVoc);
+	LiberaMatStr(engine->LisNovCons);
+	LiberaMatStr(engine->LisNovFon);
+	LiberaMatStr(engine->Letras);
+	LiberaMatStr(engine->ConsTxt);
+	LiberaMatStr(engine->Fonemas);
+	LiberaMatStr(engine->Vocales);
+	SagaEngine_Initialize(engine);
 	return 0;
 }
 
@@ -427,15 +459,17 @@ int MainPorArgumentos(SagaEngine *engine, char *NomOut)
 	 */
 	if (EscrPalExt(PalExt) < 0) {
 		fprintf(stderr, "Error al escribir las palabras extranhas\n");
+		free(PalExt);
 		return EXIT_FAILURE;
 	}
-
+	free(PalExt);
 	return EXIT_SUCCESS;
 }
 
 int main(int ArgC, char *ArgV[])
 {
 	char	*NomOut;
+	int ret_code;
 	SagaEngine engine;
 	/*
 	 * Analizamos la linea de comandos.
@@ -444,7 +478,11 @@ int main(int ArgC, char *ArgV[])
 		EmpleoSaga(ArgV);
 		return EXIT_FAILURE;
 	}
-        return MainPorArgumentos(&engine, NomOut);
+	ret_code = MainPorArgumentos(&engine, NomOut);
+	free(NomOut);
+	SagaEngine_Refresh(&engine);
+	SagaEngine_Clear(&engine);
+        return ret_code;
 }
 
 
@@ -493,8 +531,11 @@ char	*CargTxtOrt(int TrnLinAis)
 	}
 
 	Txt[Long-1] = '\0';
-
-	return (Long > 1) ? Txt : NULL;
+	if (Long == 1) {
+		free(Txt);
+		return NULL;
+	}
+	return Txt;
 }
 
 /***********************************************************************
@@ -542,7 +583,6 @@ char	*ArreglaTxt(char *TxtOrt)
 	}
 
 	free((void *) TxtOrt);
-
 	return Txt;
 }
 
@@ -688,7 +728,7 @@ int OpcSaga(
 
 	optind++;
 	if (ArgC > optind) {
-		*NomOut = ArgV[optind];
+		*NomOut = strdup(ArgV[optind]);
 	}
 	else {
 		*NomOut = strdup("-");
@@ -697,6 +737,7 @@ int OpcSaga(
 	if (FicErr != NULL) {
 		if (freopen(FicErr, "wt", stderr) == (FILE *) 0) {
 			fprintf(stderr, "Error al abrir %s\n", FicErr);
+			free(NomOut);
 			return -1;
 		}
 	}

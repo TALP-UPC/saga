@@ -77,16 +77,16 @@ typedef struct struct_SagaEngine {
   int TrnPalAis; /* Palabras aisladas? */
   int TrnLinAis; /* Lineas aisladas? */
   int ConSil; /* Conservar los silencios */
-  char *StrIniPal; /* Marca inicio palabra */
-  char *StrFinPal; /* Marca fin de palabra */
-  char *FicDicExc; /* Nombre fichero Diccionario excepciones */
-  char *FicTrnFon; /* Nombre fichero Diccionario transcripcion de grafemas */
-  char *FicTrnPal; /* Nombre fichero Diccionario transcripcion de palabras */
-  char *FicDicSust; /* Nombre fichero Diccionario de substitucion de fonemas */
-  char *FicDicGrp; /* Nombre fichero Diccionario de substitucion de grupos foneticos */
-  char *FicNovVoc; /* Nombre fichero Lista de grafemas vocalicos introducidos */
-  char *FicNovCons; /* Nombre fichero Lista de grafemas consonanticos introducidos */
-  char *FicNovFon; /* Nombre fichero Lista de fonemas introducidos */
+  const char *StrIniPal; /* Marca inicio palabra */
+  const char *StrFinPal; /* Marca fin de palabra */
+  const char *FicDicExc; /* Nombre fichero Diccionario excepciones */
+  const char *FicTrnFon; /* Nombre fichero Diccionario transcripcion de grafemas */
+  const char *FicTrnPal; /* Nombre fichero Diccionario transcripcion de palabras */
+  const char *FicDicSust; /* Nombre fichero Diccionario de substitucion de fonemas */
+  const char *FicDicGrp; /* Nombre fichero Diccionario de substitucion de grupos foneticos */
+  const char *FicNovVoc; /* Nombre fichero Lista de grafemas vocalicos introducidos */
+  const char *FicNovCons; /* Nombre fichero Lista de grafemas consonanticos introducidos */
+  const char *FicNovFon; /* Nombre fichero Lista de fonemas introducidos */
   long ClaveModif; /* Incluye las opciones -M de la linea de comandos */
 
   /* Diccionarios cargados */
@@ -237,10 +237,11 @@ char	*TrnFonSem(	char	*TrnFon,
 					int		ConSil, char **Fonemas);
 char	*TrnFonSefo(char *TrnFon,
 					int		ConSil,
-					char	*StrFinPal,
-					char	*StrIniPal, char **Fonemas);
+					const char	*StrFinPal,
+					const char	*StrIniPal, char **Fonemas);
 int		EscrPalExt(char	**PalExt);
 char	***CargDicExc(const char *FicDicExc);
+void BorraDicExc(char ***DicExc);
 int		AplDicExc(	char	***DicExc,
 					char	**TxtOrt, char **Letras);
 int		AplDicSust(	char	***DicSust,

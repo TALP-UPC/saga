@@ -18,37 +18,18 @@
 */
 
 #ifndef	UTIL_H
-#	define	UTIL_H
+#define	UTIL_H
 
-#	include <time.h>
-
-#	if !defined(_UNISTD_H) && !defined(_MSC_VER)
-#		include	<unistd.h>
-#	endif
-
+#include <time.h>
 #include	<limits.h>
 #include	<math.h>
 #include	<values.h>
 #include	<errno.h>
 
-#	ifndef	CLOCKS_PER_SEC
-#		ifdef	CLK_TCK
-#			define CLOCKS_PER_SEC	CLK_TCK
-#		else
-#			define CLOCKS_PER_SEC	1000000
-#		endif
-#	endif
-
 #define	Min(a, b)	(((a) > (b)) ? (b) : (a))
 #define	Max(a, b)	(((a) > (b)) ? (a) : (b))
 #define	Abs(a)		((a) * Sign(a))
 #define	Sign(a)		(((a) > 0.0) ? 1 : -1)
-
-/*****************************************************************
-/ LA DEFINICON DE LAS FUNCIONES HAN DE ENTRARSE USANDO EL MACRO  /
-/ EXTERN_FUNCTION DE FORMA QUE PUEDAN UTILIZARSE DESDE DISTINTOS /
-/ COMPILADORES. VEASE c_varieties.h                              /
- ****************************************************************/
 
 
 char	**MatStr(const char *);

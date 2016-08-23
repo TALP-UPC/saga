@@ -27,6 +27,7 @@
 #include	<math.h>
 #include	<limits.h>
 #include	<time.h>
+#include <unistd.h>
 #include	"Util.h"
 
 /***********************************************************************
@@ -373,10 +374,14 @@ char	**CreaLisSen(
 void	LiberaMatStr(
 	char	**matStr)
 {
-	int i;
-	for (i=0; matStr[i]!=0; i++)
+	size_t i;
+	if (matStr == NULL) {
+		return;
+	}
+	for (i=0; matStr[i] != NULL; i++)
 		free(matStr[i]);
 	free(matStr);
+	return;
 }
 
 /***********************************************************************
@@ -483,7 +488,8 @@ char	**MatStrChr(
 	const char	*Delim)
 
 {
-	char	**Mat, *Str = strdup(_Str);
+	char	**Mat, **Mat2 = NULL, *Str = strdup(_Str);
+	char *token;
 	char	*fStr = Str;
 	size_t	i;
 
@@ -491,18 +497,33 @@ char	**MatStrChr(
 		return NULL;
 	}
 
-	if((Mat = (char **) malloc(sizeof(char *))) == NULL) {
+	/* Allocate space for the final NULL */
+	if ((Mat = malloc(sizeof(char *))) == NULL) {
 		free(fStr);
 		return NULL;
 	}
 
-	for (i = 0; (Mat[i] = strtok(Str, Delim)) != NULL; i++) {
-		Mat[i] = strdup(Mat[i]);
-		Str = NULL;	/* Para la siguiente llamada a strtok	*/
-		if((Mat = realloc(Mat, (i + 2) * sizeof(char *))) == NULL) {
+	for (i = 0; (token = strtok(Str, Delim)) != NULL; i++) {
+		token = strdup(token);
+		if (token == NULL) {
+			free(Mat);
 			free(fStr);
 			return NULL;
 		}
+		/* We have a new token. Allocate space for it */
+		Mat2 = realloc(Mat, (i + 2) * sizeof(char *));
+		if (Mat2 == NULL) {
+			free(fStr);
+			free(Mat);
+			return NULL;
+		} else { /* realloc successful */
+			Mat = Mat2;
+			Mat2 = NULL;
+		}
+		/* Store the token */
+		Mat[i] = token;
+		/* All the following calls to strtok continue on the same str */
+		Str = NULL;	/* Para la siguiente llamada a strtok	*/
 	}
 
 	Mat[i] = NULL;

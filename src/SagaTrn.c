@@ -1160,8 +1160,8 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 
 char	*TrnFonSefo(char	*TrnFon,
 					int		ConSil,
-					char	*StrIniPal,
-					char	*StrFinPal, char **Fonemas)
+					const char	*StrIniPal,
+					const char	*StrFinPal, char **Fonemas)
 {
 	char	*TrnSefo, *Pointer;
 	int		LongFon = strlen(TrnFon);
