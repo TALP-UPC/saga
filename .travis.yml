@@ -5,7 +5,7 @@ script:
   - ./autogen.sh
   - mkdir build
   - cd build
-  - ../configure --prefix="$PWD/install"
+  - ../configure CPPFLAGS="-Wall -Werror --std=c99" --prefix="$PWD/install"
   - make
   - make check
   - make install
