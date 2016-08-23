@@ -1,7 +1,7 @@
-/* Saga - Un transcriptor fonético para el idioma español
+/* Saga - Un transcriptor fonÃ©tico para el idioma espaÃ±ol
  *
- * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
- *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
+ * Copyright (C) 1993-2009  Albino Nogueiras RodrÃ­guez y JosÃ© B. MariÃ±o
+ *       TALP - Universitat PolitÃ¨cnica de Catalunya, ESPAÃ‘A
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ int		ReadLisUdf(
 	/*
 	 * Abrimos el fichero de la lista.
 	 */
-	if ((FpLis = fopen(FicLisUdf, "rt")) == (FILE *) 0) {
+	if ((FpLis = fopen(FicLisUdf, "rt")) == NULL) {
 		return -1;
 	}
 
