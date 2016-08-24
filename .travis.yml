@@ -9,8 +9,23 @@ script:
   - make
   - make check
   - make install
+  - cd ..
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "sv8yElN3h+ZaivMLyY4CMz6ZXLRCDABxnkiKdmJGzPKClpLSpXf7vzFqwWRN3G9hDvVzPsO9uEPXhx8RRn2dK8HSbWOsHc9H3KNejLmK/UgPR9pcmcP3FBUOq3y3q8hHJwQjsfbgjfaYjpca0fo/l3i5q58xBEsPcp6uxrMKAoE9y14K7T2PYQGT20JMoMeUekgnPyrwBNIOzTPv1EacTnN3q2D6A5xU5RTyQKnp+NP9K1G4vUjg5c/58/GwGqjiXuHFMb8WqEYly4LZnUZ9m52/85ZGF2aGm9RT55y+VRvsSdmlZKnUbFXNP/IUr7FzC5JlXtz58VqC8Ipkqx1/MEVB5pvtha27oK27ZTWfAmv+T8Dy2U5u1YO+jnp1mbWg/bVN500D2IBTNNsROxicTsDLYNvo4tTixHVFaiZ8F5/tulirGOrtRwTnYMWRgT0s47N1ln56DCsJirOKPqGK1QZrhYDR1l4h7421fHuNljrQ56MT/Ew3Olu9ss/WBo8Hhz64+cxdiBGlPtUeB8etdhNDzASgk8DIrP7DFZ9RMSbcJWPUpbHZBKEX287LhqNkzN+Yt/zbg5JrcMz97Fgd9SGjD4dQFLSjc6c5/9CuY0CkqCRQhXUe31nNV5v0Gxnd0WNgyWMPDJWybugh91gCnrAUty8WyLtkMl91sNeg+DA="
 
 addons:
+  coverity_scan:
+    project:
+      name: "zeehio/saga"
+      description: "<Your project description here>"
+    notification_email: sergioller@gmail.com
+    build_command_prepend: "./autogen.sh; ./configure; make clean"
+    build_command:   "make"
+    branch_pattern: coverity_scan
   apt:
     packages:
     - autotools-dev
