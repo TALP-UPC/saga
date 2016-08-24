@@ -92,14 +92,12 @@ int SagaEngine_Refresh(SagaEngine *engine)
 		free(engine->TxtSalSefo);
 	if (engine->TxtSalSem != NULL)
 		free(engine->TxtSalSem);
-	/* TODO */
 	return 0;
 }
 
 /* Clean engine */
 int SagaEngine_Clear(SagaEngine *engine)
 {
-	/* TODO */
 	BorraDicExc(engine->DicExc);
 	BorraDicExc(engine->DicTrnFon);
 	BorraDicExc(engine->DicTrnPal);

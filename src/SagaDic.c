@@ -42,10 +42,11 @@ int		AplDicPal(
 	char	***DicExc);
 
 void BorraDicExc(char ***DicExc) {
+	size_t i;
 	if (DicExc == NULL) {
 		return;
 	}
-	for (size_t i=0; DicExc[i] != NULL; i++) {
+	for (i=0; DicExc[i] != NULL; i++) {
 		free(DicExc[i][0]);
 		free(DicExc[i][1]);
 		free(DicExc[i]);
