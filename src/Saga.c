@@ -278,13 +278,21 @@ int SagaEngine_LoadCharacters(SagaEngine *engine)
 	return 0;
 }
 
-int MainPorArgumentos(SagaEngine *engine, char *NomOut)
+int MainPorArgumentos(SagaEngine *engine, char *NomIn, char *NomOut)
 {
 	char	*TxtOrt = NULL, *TrnFon = NULL, *SilOrt = NULL, *SilAcc = NULL;
 	char	*TrnFnm = NULL, *TrnFnmPal = NULL, *TrnSem = NULL, *TrnSefo = NULL;
 	char	**PalExt = NULL;
 	char	PathOut[_POSIX_PATH_MAX];
 	FILE	*FpFon, *FpFnm, *FpFnmPal, *FpSem, *FpSefo;
+	
+	if (strcmp(NomIn, "-") != 0) {
+		if (freopen(NomIn, "rt", stdin) == NULL) {
+			fprintf(stderr, "Error al abrir %s\n", NomIn);
+			return -1;
+		}
+	}
+
 
 	FpSem = FpFon = FpFnm = FpFnmPal = FpSefo = stdout;
 	if (strcmp(NomOut, "-") != 0) {
@@ -309,7 +317,7 @@ int MainPorArgumentos(SagaEngine *engine, char *NomOut)
 		if (engine->SalSefo && (FpSefo = fopen(PathOut, "wt")) == (FILE *) 0) return EXIT_FAILURE;
 	}
 
-        SagaEngine_LoadDictionaries(engine);
+	SagaEngine_LoadDictionaries(engine);
 	SagaEngine_LoadCharacters(engine);
 	/*
 	 * Cargamos el texto ortografico.
@@ -467,16 +475,18 @@ int MainPorArgumentos(SagaEngine *engine, char *NomOut)
 int main(int ArgC, char *ArgV[])
 {
 	char	*NomOut;
+	char  *NomIn;
 	int ret_code;
 	SagaEngine engine;
 	/*
 	 * Analizamos la linea de comandos.
 	 */
-	if (OpcSaga(ArgC, ArgV, &engine, &NomOut) < 0) {
+	if (OpcSaga(ArgC, ArgV, &engine, &NomIn, &NomOut) < 0) {
 		EmpleoSaga(ArgV);
 		return EXIT_FAILURE;
 	}
-	ret_code = MainPorArgumentos(&engine, NomOut);
+	ret_code = MainPorArgumentos(&engine, NomIn, NomOut);
+        free(NomIn);
 	free(NomOut);
 	SagaEngine_Refresh(&engine);
 	SagaEngine_Clear(&engine);
@@ -592,6 +602,7 @@ int OpcSaga(
 	int		ArgC,			/* No. argumentos linea de comandos		*/
 	char	**ArgV,			/* Argumentos linea de comandos			*/
         SagaEngine *engine,
+  char **NomIn, /* Nombre del fichero de entrada */
 	char	**NomOut		/* Nombre de los ficheros de salida		*/
 	)
 
@@ -610,6 +621,7 @@ int OpcSaga(
 	   o no. */
 	engine->SalFon = 0;
 	*NomOut = NULL;
+	*NomIn = NULL;
 	FicErr = NULL;
 
 	while ((Opcion = getopt(ArgC, ArgV, "abd:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1) {
@@ -717,12 +729,7 @@ int OpcSaga(
 		return -1;
 	}
 
-	if (strcmp(ArgV[optind], "-") != 0) {
-		if (freopen(ArgV[optind], "rt", stdin) == (FILE *) 0) {
-			fprintf(stderr, "Error al abrir %s\n", ArgV[optind]);
-			return -1;
-		}
-	}
+	*NomIn = strdup(ArgV[optind]);
 
 	optind++;
 	if (ArgC > optind) {

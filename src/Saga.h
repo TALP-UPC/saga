@@ -190,7 +190,7 @@ static char	*FonVoc[] __attribute__((unused)) = {
 
 char	*ArreglaTxt(char *TxtOrt);
 void	EmpleoSaga(char **ArgV);
-int		OpcSaga(int ArgC, char	**ArgV, SagaEngine *engine, char **NomOut);
+int		OpcSaga(int ArgC, char	**ArgV, SagaEngine *engine, char **NomIn, char **NomOut);
 
 char	*CargTxtOrt(int TrnLinAis);
 char	*SilaTxtOrt(char	*TxtOrt, char	***DicTrnPal, SagaEngine *engine);
