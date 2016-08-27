@@ -3,13 +3,10 @@ os: linux
 
 script: 
   - ./autogen.sh
-  - mkdir build
-  - cd build
-  - ../configure CPPFLAGS="-Wall -Werror --std=c99" --prefix="$PWD/install"
+  - ./configure CPPFLAGS="-Wall -Werror --std=c99" --prefix="$PWD/install"
   - make
   - make check
   - make install
-  - cd ..
 
 env:
   global:
