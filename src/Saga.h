@@ -17,40 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _MAX_PATH
-#define _MAX_PATH	16000
-#endif
+#ifndef SAGA_H
+#define SAGA_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <stdio.h>
+
 #if defined(_WIN32) && !defined(__attribute__)
 #define __attribute__(A)
 #endif
 
-typedef struct {
-	size_t	Long;
-	int		Tipo;
-	char	*Cont;
-} GRP_ORT;
-
-#define PALABRA		0x0001
-#define LITERAL		0x0002
-#define SILABA		0x0004
-#define	SILENCIO	0x0008
-#define	INTER_PAL	0x0010
-#define	INTER_SIL	0x0020
-#define	FIN_FRASE	0x0040
-#define	LETRAS		0x0080
-#define	ACENTOS		0X0100
-#define	ESPACIOS	0X0200
-#define	DESCONOCIDO	0X0400
-#define	PAL_FON		0X0800
-#define	SIL_FON		0X1000
-#define	ESP_FON		0X2000
-#define	PUNT_FON	0X4000
-
+/* Accessor methods instead of defines could be used */
 #define SESEO		0x00001
 #define EQUIS_KS	0x00002
 #define SC_KS		0x00004
@@ -113,144 +93,87 @@ typedef struct struct_SagaEngine {
   int SalSefo; /* En semifonemas */
   int SalSem; /* En semisilabas */
 
+  /* Entrada */
+  const char *FicInName; /* Si la entrada es de un fichero */
+  FILE *FpIn; /* Si la entrada es de un fichero */
+  int close_in; /* Si FpIn debe cerrarse */
+  
+  char* TxtOrt; /* Texto de entrada a transcribir */
+  
+  /* Lista de palabras extranhas en TxtOrt. Usado para reportar errores */
+  char	**PalExt; /* Lista de palabras extranhas */
+  size_t NumPalExt; /* Número de palabras extranhas */
+  
   /* Salida */
-  char* TxtSalFon; /* Transcripcion fonetica */
-  char* TxtSalFnm; /* Transcripcion en fonemas */
-  char* TxtSalFnmPal; /* En fonemas por palabras */
-  char* TxtSalSefo; /* En semifonemas */
-  char* TxtSalSem; /* En semisilabas */
+  char* TrnFon; /* Transcripcion fonetica */
+  char* TrnFnm; /* Transcripcion en fonemas */
+  char* TrnFnmPal; /* En fonemas por palabras */
+  char* TrnSem; /* En semisilabas */
+  char* TrnSefo; /* En semifonemas */
 
+  /* Ficheros de Salida */
+  FILE *FpFon;
+  FILE *FpFnm;
+  FILE *FpFnmPal;
+  FILE *FpSem;
+  FILE *FpSefo;
+  
+  /* Error stream */
+  FILE* FpErr;
+  int close_err;
+  
 } SagaEngine;
 
+/** Initializes engine. Has to be called after the engine is allocated
+ * 
+ * @param[in,out] engine The engine to initialize
+ *  */
+int SagaEngine_Initialize(SagaEngine *engine);
 
-static char	*_Letras[] __attribute__((unused)) = {
-	"a", "'a", "ha", "h'a", "b", "c", "ch", "d", "e", "'e", "he",
-	"á", "há", "é", "hé", "í", "hí", "ó", "hó", "ú", "hú", 
-	"h'e", "f", "g", "h", "i", "'i", "hi", "h'i", "j", "k", "l", "ll",
-	"m", "n", "~n", "o", "'o", "ho", "h'o", "p", "qu", "r", "rr", "s",
-	"t", "u", "'u", "~u", "hu", "h'u", "v", "w", "x", "y", "z", "tl",
-	"tz", "&", (char *) 0};
-static char	*_Vocales[] __attribute__((unused)) = {
-	"a", "e", "i", "o", "u", "a_", "e_", "i_", "o_", "u_", "'a", "'e", "'i", "'o", "'u", "~u",
-	"á", "há", "é", "hé", "í", "hí", "ó", "hó", "ú", "hú", 
-	"ha", "h'a", "he", "h'e", "hi", "h'i", "ho", "h'o", "hu", "h'u", (char *) 0};
-static char	*VocDeb[] __attribute__((unused)) = {
-	"í", "hí", "ú", "hú", "i", "u", "~u", "hi", "hu", (char *) 0};
-static char	*VocFort[] __attribute__((unused)) = {
-	"á", "há", "é", "hé", "ó", "hó",
-	"a", "e", "o", "'a", "'e", "'i", "'o", "'u", "ha", "h'a", "he", "h'e", "h'i", "ho", "h'o", "h'u", (char *) 0};
-static char	*_ConsTxt[] __attribute__((unused)) = {
-	"b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "ll", "m", "n", "~n", "p", "qu", "r", "rr", "s", "t", "v", "w", "x",
-	"y", "z", "tl", "tz", (char *) 0};
-static char	*Nasales[] __attribute__((unused)) = { 
-	"m", "n", "~n", (char *) 0};
-static char	*ConsL[] __attribute__((unused)) = {
-	"b", "c", "k", "f", "g", "p", "t", (char *) 0};
-static char	*ConsR[] __attribute__((unused)) = {
-	"b", "c", "k", "d", "f", "g", "p", "t", (char *) 0};
-static char	*Silen[] __attribute__((unused)) = {
-	",", ";", ".", "...", ":", "(", ")", "!", "¡", "'!", "?", "¿", "'?", "#", ";", "*", "~", (char *) 0};
-static char	*Espacios[] __attribute__((unused)) = {
-	" ", "\t", "\"", "\n", "\r\n", (char *) 0};
-static char	*InterSil[] __attribute__((unused)) = {
-	"-", (char *) 0};
-static char	*SilFon[] __attribute__((unused)) = {
-	",", ";", ".", "...", ":", "(", ")", "!", "¡", "'!", "?", "¿", "'?", "~", "*", (char *) 0};
-static char	*EspFon[] __attribute__((unused)) = {
-	" ", "\t", "\"", (char *) 0};
-static char	*PuntFon[] __attribute__((unused)) = {
-	"\n", "\r\n", "#", (char *) 0};
+/** Opens `NomErr` as the file for error output. 
+ * 
+ * @param[in] NomErr The file name, or "-" for stderr or NULL for no error output. */
+int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr);
 
-static char	*_Fonemas[] __attribute__((unused)) = {
-	"a", "e", "i", "o", "u", "'a", "'e", "'i", "'o", "'u", "a_", "e_", "i_", "o_", "u_", "j", "w",
-	"b", "B", "d", "D", "g", "G", "p", "t", "k", "tS", "bcl", "dcl", "gcl", "pcl", "tcl", "kcl", "T", "f", "s", "z", "h", "x",
-	"m", "n", "J", "N", "l", "@l", "L", "r", "rr", "R", "@r", "jj", "tL", "ts", (char *) 0};
-static char	*FonCns[] __attribute__((unused)) = {
-	"b", "B", "d", "D", "g", "G", "p", "t", "k", "bcl", "dcl", "gcl", "pcl", "tcl", "kcl", "tS",
-	"B:.", "D:.", "G:.", "p:.", "t:.", "tS:.", "k:.", "pcl:.", "tcl:.", "kcl:.",
-	"B.", "D.", "G.", "p.", "t.", "k.", "pcl.", "tcl.", "kcl.",
-	"b:", "B:", "d:", "D:", "g:", "G:", "p:", "t:", "tS:", "k:", "bcl:", "dcl:", "gcl:", "pcl:", "tcl:", "kcl:",
-	".b", ".B", ".d", ".D", ".g", ".G", ".p", ".t", ".k", ".bcl", ".dcl", ".gcl", ".pcl", ".tcl", ".kcl", ".tS",
-	"T", "f", "s", "z", "h", "x", ".T", ".f", ".s", ".z", ".h", ".x",
-	"T.", "f.", "s.", "z.", "h.", "x.", "T:.", "f:.", "s:.", "z:.", "h:.", "x:.",
-	"T:", "f:", "s:", "z:", "h:", "x:", ".jj.",
-	".m", ".n", ".J", ".l", ".L", ".rr", ".jj", ".ts",
-	"m:", "n:", "N:", "l:", "r:", "R:", "jj:", "tL:", "ts:", "L:", "L:.", "tS:.",
-	"m:.", "n:.", "N:.", "l:.", "r:.", "R:.", "jj:.", "tL:.", "ts:.",
-	"m.", "n.", "N.", "l.", "r.", "R.", "jj.", "tL.", "ts.",
-	"m", "n", "J", "N", "l", "@l", "L", "r", "rr", "R", "@r", "jj", "tL", "ts", (char *) 0};
-static char	*FonSem[] __attribute__((unused)) = {
-	"j", "j:", ".j", "j:.", ".j:.", ".j.", "j.", "w", "w:", ".w", "w:.", ".w:.", ".w.", "w.", (char *) 0};
-static char	*FonVoc[] __attribute__((unused)) = {
-	"a", "e", "i", "o", "u", "'a", "'e", "'i", "'o", "'u",
-	".a.", ".e.", ".i.", ".o.", ".u.", ".'a.", ".'e.", ".'i.", ".'o.", ".'u.",
-	".a", ".e", ".i", ".o", ".u", ".'a", ".'e", ".'i", ".'o", ".'u",
-	"a.", "e.", "i.", "o.", "u.", "'a.", "'e.", "'i.", "'o.", "'u.",
-	"a_", "e_", "i_", "o_", "u_", "a_.", "e_.", "i_.", "o_.", "u_.", (char *) 0};
+/** Opens `NomIn` to transcribe its contents. Use "-" for `stdin` */
+int SagaEngine_InputFromFileName(SagaEngine *engine, const char *NomIn);
 
-char	*ArreglaTxt(char *TxtOrt);
-void	EmpleoSaga(char **ArgV);
-int		OpcSaga(int ArgC, char	**ArgV, SagaEngine *engine, char **NomIn, char **NomOut);
+/** Sets `text` encoded in `encoding` to be transcribed by `engine`.
+ * 
+ * @param[in] text The text to transcribe
+ * @param[in] encoding `text` encoding. Has to be ISO-8859-15 for now.
+ * 
+ */
+int SagaEngine_InputFromText(SagaEngine *engine, const char *text, const char *encoding);
 
-char	*CargTxtOrt(int TrnLinAis);
-char	*SilaTxtOrt(char	*TxtOrt, char	***DicTrnPal, SagaEngine *engine);
-int		CogeGrpOrt(	char	*TxtOrt,
-					int		PosAct,
-					GRP_ORT	*GrpAct, char **Letras);
-int		CogeGrpFon(char	*TrnFon,
-					int		PosAct,
-					GRP_ORT	*GrpAct, char **Fonemas);
-char	**CogePalExt(	char	*TxtOrt,
-						char	**PalExt,
-						char	***DicExc,
-						char	***DicTrn,
-						char **ConsTxt, 
-						char **Vocales, char **Letras);
-int		EsPalExt(GRP_ORT	GrpOrt, char ** ConstTxt, char ** Vocales);
-char	*SilaPalOrt(GRP_ORT	GrpOrt, SagaEngine *engine);
-char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal, SagaEngine *engine);
-char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine);
-int		EsExcAcc(	char	*SilOrt,
-					int		PosAct,
-					char	**LisExc, char **Letras);
-int		AcenSil(char *Sil, SagaEngine *engine);
-char	*TrnSilAcc(	char	*SilAcc,
-					char	***DicTrnPal,
-					char	***DicTrnFon,
-					int		TrnPalAis,
-					long	ClaveModif,
-					SagaEngine *engine);
-char	*TrnPalSil(	GRP_ORT	GrpAnt,
-					GRP_ORT	GrpAct,
-					GRP_ORT	GrpSig,
-					char	***DicTrnFon,
-					int		TrnPalAis,
-					long	ClaveModif,
-					SagaEngine *engine);
-int		IndexChr(	const char	* Chr,
-					char	** VectChr);
-char	*TrnFonFnm(	char	*TrnFon,
-					int		ConSil, char **Fonemas);
-char	*TrnFonFnmPal(	char	*TrnFon,
-					int		ConSil, char **Fonemas);
-char	*TrnFonSem(	char	*TrnFon,
-					int		ConSil, char **Fonemas);
-char	*TrnFonSefo(char *TrnFon,
-					int		ConSil,
-					const char	*StrFinPal,
-					const char	*StrIniPal, char **Fonemas);
-int		EscrPalExt(char	**PalExt);
-char	***CargDicExc(const char *FicDicExc);
-void BorraDicExc(char ***DicExc);
-int		AplDicExc(	char	***DicExc,
-					char	**TxtOrt, char **Letras);
-int		AplDicSust(	char	***DicSust,
-					char	**TrnFon, 
-                           char **Fonemas);
-int		AplDicGrp(	char	***DicExc,
-					char	**TxtOrt, char **Fonemas);
+/** Opens Files for output
+ *  * @param[in] NomOut The file name, or "-" for stdout or NULL for no output.
+ */
+int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut);
+/** Loads the dictionaries and builds the characters list */
+int SagaEngine_LoadData(SagaEngine *engine);
+/** Reads / Points to the next piece of text for transcription */
+int SagaEngine_ReadText(SagaEngine *engine);
+/** Transcribes the text */
+int SagaEngine_Transcribe(SagaEngine *engine);
+/** Writes the transcription output to the output files */
+int SagaEngine_WriteOutputFiles(SagaEngine *engine);
+/** Writes the words that have invalid characters */
+int SagaEngine_WriteErrorWords(SagaEngine *engine);
+/** Closes the input file, if given */
+int SagaEngine_CloseInputFile(SagaEngine *engine);
+/** Closes all the output files, if given */
+int SagaEngine_CloseOutputFiles(SagaEngine *engine);
+/** Closes the error file, if given */
+int SagaEngine_CloseErrorFile(SagaEngine *engine);
+/** Clears the engine for another transcription */
+int SagaEngine_Refresh(SagaEngine *engine);
+/** Clears the engine to load other dictionaries */
+int SagaEngine_Clear(SagaEngine *engine);
+
 
 #ifdef __cplusplus
 }
 #endif
 
+#endif /* SAGA_H */

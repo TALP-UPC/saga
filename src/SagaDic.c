@@ -23,7 +23,7 @@
 #include	<string.h>
 #include	<stdlib.h>
 #include	<limits.h>
-#include	"Saga.h"
+#include	"SagaInternal.h"
 #include	"Util.h"
 
 #ifndef _POSIX_PATH_MAX
