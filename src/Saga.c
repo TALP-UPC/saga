@@ -38,7 +38,7 @@ static int OpcSaga(int ArgC,	char	**ArgV,
 
 int main(int ArgC, char *ArgV[])
 {
-	char *NomIn, *NomOut, *NomErr;
+	char *NomIn = NULL, *NomOut = NULL, *NomErr = NULL;
 	SagaEngine engine;
 
 	SagaEngine_Initialize(&engine);
@@ -47,36 +47,67 @@ int main(int ArgC, char *ArgV[])
 	 */
 	if (OpcSaga(ArgC, ArgV, &engine, &NomIn, &NomOut, &NomErr) < 0) {
 		EmpleoSaga(ArgV);
+    SagaEngine_Clear(&engine);
+    if (NomIn != NULL) free(NomIn);
+    if (NomOut != NULL) free(NomOut);
+    if (NomErr != NULL) free(NomErr);
 		return EXIT_FAILURE;
 	}
 	
 	if (SagaEngine_OpenErrorFile(&engine, NomErr) < 0) {
+    SagaEngine_Clear(&engine);
+    if (NomIn != NULL) free(NomIn);
+    if (NomOut != NULL) free(NomOut);
+    if (NomErr != NULL) free(NomErr);
 		return EXIT_FAILURE;
 	}
 
 	if (SagaEngine_InputFromFileName(&engine, NomIn) < 0) {
+    SagaEngine_Clear(&engine);
+    if (NomIn != NULL) free(NomIn);
+    if (NomOut != NULL) free(NomOut);
+    if (NomErr != NULL) free(NomErr);
 		return EXIT_FAILURE;
 	}
 
   if (SagaEngine_OpenOutputFiles(&engine, NomOut) < 0) {
+    SagaEngine_Clear(&engine);
+    if (NomIn != NULL) free(NomIn);
+    if (NomOut != NULL) free(NomOut);
+    if (NomErr != NULL) free(NomErr);
 		return EXIT_FAILURE;
 	}
 
   if (SagaEngine_LoadData(&engine) < 0) {
+    SagaEngine_Clear(&engine);
+    if (NomIn != NULL) free(NomIn);
+    if (NomOut != NULL) free(NomOut);
+    if (NomErr != NULL) free(NomErr);
 		return EXIT_FAILURE;
 	}
 	
 	while ( ! SagaEngine_ReadText(&engine) < 0) {
 		
     if (SagaEngine_Transcribe(&engine) < 0) {
+			SagaEngine_Refresh(&engine);
+      SagaEngine_Clear(&engine);
+      if (NomIn != NULL) free(NomIn);
+      if (NomOut != NULL) free(NomOut);
+      if (NomErr != NULL) free(NomErr);
 			return EXIT_FAILURE;
 		}
 		
 		if (SagaEngine_WriteOutputFiles(&engine) < 0) {
+			SagaEngine_Refresh(&engine);
 			continue;
 		}
 
     if (SagaEngine_WriteErrorWords(&engine) < 0) {
+			SagaEngine_Refresh(&engine);
+      SagaEngine_Clear(&engine);
+      if (NomIn != NULL) free(NomIn);
+      if (NomOut != NULL) free(NomOut);
+      if (NomErr != NULL) free(NomErr);
 			return EXIT_FAILURE;
 		}
 		
@@ -84,8 +115,8 @@ int main(int ArgC, char *ArgV[])
 	}
 	
 	SagaEngine_CloseInputFile(&engine);
-  free(NomIn);
-	free(NomOut);
+  if (NomIn != NULL) free(NomIn);
+  if (NomOut != NULL) free(NomOut);
   if (NomErr != NULL) free(NomErr);
 	SagaEngine_Clear(&engine);
   return EXIT_SUCCESS;
