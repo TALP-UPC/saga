@@ -149,6 +149,7 @@ int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr)
 }
 
 int SagaEngine_ReadText(SagaEngine *engine) {
+	SagaEngine_Refresh(engine);
 	if (engine->FpIn != NULL) {
 	    engine->TxtOrt = CargTxtOrt(engine->FpIn, engine->TrnLinAis);
 	} else if (engine->TxtIn != NULL) {
@@ -192,6 +193,7 @@ int SagaEngine_Clear(SagaEngine *engine)
 	LiberaMatStr(engine->Fonemas);
 	LiberaMatStr(engine->Vocales);
 	
+	SagaEngine_CloseInput(engine);
 	SagaEngine_CloseErrorFile(engine);
 	SagaEngine_CloseOutputFiles(engine);
   
@@ -615,8 +617,18 @@ int SagaEngine_InputFromFileName(SagaEngine *engine, const char *NomIn) {
 	return 0;
 }
 
-int SagaEngine_CloseInputFile(SagaEngine *engine) {
-	if (engine->close_in) fclose(engine->FpIn);
+int SagaEngine_CloseInput(SagaEngine *engine) {
+	if (engine->close_in) {
+		if (engine->FpIn != NULL) {
+		  fclose(engine->FpIn);
+		  engine->FpIn = NULL;
+	  }
+		if (engine->TxtIn != NULL) {
+		  free(engine->TxtIn);
+		  engine->TxtIn = NULL;
+	  }
+	 }
+	 engine->close_in = 0;
 	return 0;
 }
 

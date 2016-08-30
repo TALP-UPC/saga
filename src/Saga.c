@@ -109,12 +109,10 @@ int main(int ArgC, char *ArgV[])
       if (NomOut != NULL) free(NomOut);
       if (NomErr != NULL) free(NomErr);
 			return EXIT_FAILURE;
-		}
-		
-    SagaEngine_Refresh(&engine);
+		}		
 	}
 	
-	SagaEngine_CloseInputFile(&engine);
+	SagaEngine_CloseInput(&engine);
   if (NomIn != NULL) free(NomIn);
   if (NomOut != NULL) free(NomOut);
   if (NomErr != NULL) free(NomErr);

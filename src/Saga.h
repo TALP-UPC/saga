@@ -163,8 +163,8 @@ int SagaEngine_Transcribe(SagaEngine *engine);
 int SagaEngine_WriteOutputFiles(SagaEngine *engine);
 /** Writes the words that have invalid characters */
 int SagaEngine_WriteErrorWords(SagaEngine *engine);
-/** Closes the input file, if given */
-int SagaEngine_CloseInputFile(SagaEngine *engine);
+/** Closes the input (FILE handler or char*) */
+int SagaEngine_CloseInput(SagaEngine *engine);
 /** Closes all the output files, if given */
 int SagaEngine_CloseOutputFiles(SagaEngine *engine);
 /** Closes the error file, if given */
