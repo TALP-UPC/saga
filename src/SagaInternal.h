@@ -121,6 +121,7 @@ static char	*FonVoc[] __attribute__((unused)) = {
 
 char	*ArreglaTxt(char *TxtOrt);
 
+char *CargTxtOrtChar(const char *txtin, intptr_t *TxtInOffset, int TrnLinAis);
 char	*CargTxtOrt(FILE* fpin, int TrnLinAis);
 char	*SilaTxtOrt(char	*TxtOrt, char	***DicTrnPal, SagaEngine *engine);
 int		CogeGrpOrt(	char	*TxtOrt,

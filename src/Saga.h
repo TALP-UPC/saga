@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 #include <stdio.h>
+#include <inttypes.h>
 
 #if defined(_WIN32) && !defined(__attribute__)
 #define __attribute__(A)
@@ -94,16 +95,18 @@ typedef struct struct_SagaEngine {
   int SalSem; /* En semisilabas */
 
   /* Entrada */
+  char *TxtIn; /* Si la entrada es texto */
+  intptr_t TxtInOffset; /* Si la entrada es texto, param interno */
   const char *FicInName; /* Si la entrada es de un fichero */
   FILE *FpIn; /* Si la entrada es de un fichero */
   int close_in; /* Si FpIn debe cerrarse */
-  
-  char* TxtOrt; /* Texto de entrada a transcribir */
-  
+    
   /* Lista de palabras extranhas en TxtOrt. Usado para reportar errores */
   char	**PalExt; /* Lista de palabras extranhas */
   size_t NumPalExt; /* Número de palabras extranhas */
   
+  char* TxtOrt; /* Texto de entrada a transcribir */
+
   /* Salida */
   char* TrnFon; /* Transcripcion fonetica */
   char* TrnFnm; /* Transcripcion en fonemas */

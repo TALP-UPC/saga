@@ -71,6 +71,9 @@ int SagaEngine_Initialize(SagaEngine *engine)
 	engine->ConSil = 0;
 	engine->ClaveModif = 0;
 
+  engine->TxtIn =NULL;
+  engine->TxtInOffset = 0;
+
   engine->FicInName = NULL;
 	engine->FpIn = NULL;
 
@@ -146,11 +149,11 @@ int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr)
 }
 
 int SagaEngine_ReadText(SagaEngine *engine) {
-	/* TODO: FIXME: If text is set with inputFromText this does not do anything */
 	if (engine->FpIn != NULL) {
-    engine->TxtOrt = CargTxtOrt(engine->FpIn, engine->TrnLinAis);
-	}
-	if (engine->TxtOrt == NULL) {
+	    engine->TxtOrt = CargTxtOrt(engine->FpIn, engine->TrnLinAis);
+	} else if (engine->TxtIn != NULL) {
+	    engine->TxtOrt = CargTxtOrtChar(engine->TxtIn, &engine->TxtInOffset, engine->TrnLinAis);
+	} if (engine->TxtOrt == NULL) {
 		fprintf(engine->FpErr, "%s", "");
 		return -1;
 	}
@@ -383,8 +386,8 @@ int SagaEngine_InputFromText(SagaEngine *engine, const char *text, const char *e
 		fprintf(engine->FpErr, "Error encoding %s not supported. Use ISO-8859-15.\n", encoding);
 		return -1;
 	}
-	engine->TxtOrt = strdup(text);
-	if (engine->TxtOrt == NULL) {
+	engine->TxtIn = strdup(text);
+	if (engine->TxtIn == NULL) {
 		fprintf(engine->FpErr, "Error loading text: %s\n", text);
 		return -1;
 	}
@@ -621,6 +624,37 @@ int SagaEngine_CloseInputFile(SagaEngine *engine) {
 /***********************************************************************
  * CargTxtOrt - Carga un texto ortografico.
  **********************************************************************/
+
+char *CargTxtOrtChar(const char *txtin, intptr_t *TxtInOffset, int TrnLinAis) {
+	char	*Txt;
+	size_t input_len;
+	if (txtin == NULL)
+	{
+		fprintf(stderr, "Error al leer el texto de entrada\n");
+		return NULL;
+	}
+	input_len = 0;
+        while (1) {
+	    if (TrnLinAis && txtin[*TxtInOffset + input_len] == '\n') {
+		input_len++;
+		break;
+	    }
+	    if (txtin[*TxtInOffset + input_len] == '\0') {
+                break;
+	    }
+            input_len++;
+	}
+	if (input_len == 0) return NULL;
+        Txt = malloc((input_len+1) * sizeof(char));
+	if (Txt == NULL) {
+		fprintf(stderr, "Error al reservar memoria\n");
+		return NULL;
+	}
+        memcpy(Txt, txtin + *TxtInOffset, input_len);
+        Txt[input_len] = '\0';
+	*TxtInOffset += input_len;
+	return Txt;
+}
 
 char	*CargTxtOrt(FILE *fpin, int TrnLinAis)
 
