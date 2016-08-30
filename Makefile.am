@@ -119,6 +119,14 @@ $(bin_SCRIPTS): %: %.in
 # Documentation
 dist_man1_MANS = man/man1/saga.1
 
+check_PROGRAMS = test/test_saga
+
+test_test_saga_SOURCES = test/test_saga.c
+test_test_saga_LDADD = libsaga.la 
+test_test_saga_CFLAGS = $(libsaga_la_CFLAGS)
+
+TESTS = test/test_saga
+
 EXTRA_DIST += gpl-3.0.txt Readme.txt \
  doc/Saga_man.pdf \
  doc/Saga_Reglas_Trans.pdf \
