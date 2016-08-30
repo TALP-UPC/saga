@@ -88,6 +88,19 @@ int SagaEngine_Initialize(SagaEngine *engine)
 	engine->TrnSem = NULL;
 	engine->TrnSefo = NULL;
 
+	engine->FpFon = NULL;
+	engine->FpFnm = NULL;
+	engine->FpFnmPal = NULL;
+	engine->FpSem = NULL;
+	engine->FpSefo = NULL;
+
+	engine->close_FpFon = 0;
+	engine->close_FpFnm = 0;
+	engine->close_FpFnmPal = 0;
+	engine->close_FpSem = 0;
+	engine->close_FpSefo = 0;
+
+
   engine->FpErr = stderr;
   engine->close_err = 0;
 	return 0;
@@ -162,11 +175,11 @@ int SagaEngine_ReadText(SagaEngine *engine) {
 }
 
 int SagaEngine_CloseOutputFiles(SagaEngine *engine) {
-	if (engine->FpFon != NULL) fclose(engine->FpFon);
-	if (engine->FpFnm != NULL) fclose(engine->FpFnm);
-	if (engine->FpFnmPal != NULL) fclose(engine->FpFnmPal);
-	if (engine->FpSem != NULL) fclose(engine->FpSem);
-	if (engine->FpSefo != NULL) fclose(engine->FpSefo);
+	if (engine->close_FpFon) fclose(engine->FpFon);
+	if (engine->close_FpFnm) fclose(engine->FpFnm);
+	if (engine->close_FpFnmPal) fclose(engine->FpFnmPal);
+	if (engine->close_FpSem) fclose(engine->FpSem);
+	if (engine->close_FpSefo) fclose(engine->FpSefo);
 	return 0;
 }
 
@@ -192,11 +205,9 @@ int SagaEngine_Clear(SagaEngine *engine)
 	LiberaMatStr(engine->ConsTxt);
 	LiberaMatStr(engine->Fonemas);
 	LiberaMatStr(engine->Vocales);
-	
 	SagaEngine_CloseInput(engine);
 	SagaEngine_CloseErrorFile(engine);
 	SagaEngine_CloseOutputFiles(engine);
-  
 	SagaEngine_Initialize(engine);
 	return 0;
 }
@@ -531,10 +542,15 @@ int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut) {
 		return 0;
 	} else if (strcmp(NomOut, "-") == 0) {
 		engine->FpFon = engine->SalFon ? stdout : NULL ;
+		engine->close_FpFon = 0;
 		engine->FpFnm = engine->SalFnm ? stdout : NULL ;
+		engine->close_FpFnm = 0;
 		engine->FpFnmPal = engine->SalFnmPal ? stdout : NULL ;
+		engine->close_FpFnmPal = 0;
 		engine->FpSem = engine->SalSem ? stdout : NULL ;
+		engine->close_FpSem = 0;
 		engine->FpSefo = engine->SalSefo ? stdout : NULL ;
+		engine->close_FpSefo = 0;
 		return 0;
 	}
   strcpy(PathOut, NomOut);
@@ -542,30 +558,35 @@ int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut) {
 	if (engine->SalFon && (engine->FpFon = fopen(PathOut, "wt")) == NULL) {
 		 return -1;
 	}
+	engine->close_FpFon = 1;
 
 	strcpy(PathOut, NomOut);
 	strcat(PathOut, ".fnm");
 	if (engine->SalFnm && (engine->FpFnm = fopen(PathOut, "wt")) == NULL) {
 		 return -1;
 	}
+	engine->close_FpFnm = 0;
 
 	strcpy(PathOut, NomOut);
 	strcat(PathOut, ".fnp");
 	if (engine->SalFnmPal && (engine->FpFnmPal = fopen(PathOut, "wt")) == NULL) {
 		 return -1;
 	}
+	engine->close_FpFnmPal = 0;
 
 	strcpy(PathOut, NomOut);
 	strcat(PathOut, ".sem");
 	if (engine->SalSem && (engine->FpSem = fopen(PathOut, "wt")) == NULL) {
 		 return -1;
 	}
+	engine->close_FpSem = 0;
 
 	strcpy(PathOut, NomOut);
 	strcat(PathOut, ".sef");
 	if (engine->SalSefo && (engine->FpSefo = fopen(PathOut, "wt")) == NULL) {
 		 return -1;
 	}
+	engine->close_FpSefo = 0;
 	return 0;
 }
 

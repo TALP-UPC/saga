@@ -120,6 +120,12 @@ typedef struct struct_SagaEngine {
   FILE *FpFnmPal;
   FILE *FpSem;
   FILE *FpSefo;
+
+  int close_FpFon;
+  int close_FpFnm;
+  int close_FpFnmPal;
+  int close_FpSem;
+  int close_FpSefo;
   
   /* Error stream */
   FILE* FpErr;
