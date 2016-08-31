@@ -133,3 +133,7 @@ EXTRA_DIST += gpl-3.0.txt Readme.txt \
  doc/SAMPA_Spanish_93.pdf \
  doc/SpanishDialectalVariants-ICSLP98.pdf
 
+clean-local:
+	find . -name '*.gcno' -exec rm {} \;
+	find . -name '*.gcda' -exec rm {} \;
+
