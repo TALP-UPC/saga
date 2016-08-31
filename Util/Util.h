@@ -20,26 +20,8 @@
 #ifndef	UTIL_H
 #define	UTIL_H
 
-#include <time.h>
-#include	<limits.h>
-#include	<math.h>
-#include	<values.h>
-#include	<errno.h>
-
-#define	Min(a, b)	(((a) > (b)) ? (b) : (a))
-#define	Max(a, b)	(((a) > (b)) ? (a) : (b))
-#define	Abs(a)		((a) * Sign(a))
-#define	Sign(a)		(((a) > 0.0) ? 1 : -1)
-
-
 char	**MatStr(const char *);
 char	**MatStrChr(const char *, const char *);
-int		NovaIden(char ****IdenUdf, int *NumIden, char *Iden);
-int		EsExcUdf(char *Unidad, char **ExcUdf);
-int		EsIdenUdf(char *Uni1, char *Uni2, char ***IdenUdf);
-char	**CreaLisSen(char *FicGui, char **NomFic, char *DirSen, char *ExtSen, int *NumFic);
-char	**LeeLisSen(int *NumFic);
 void LiberaMatStr(char	**MatChr);
-void LiberaLisSen(char	**NomFic, int		NumFic);
 
 #endif						/* defined (UTIL_H)					*/
