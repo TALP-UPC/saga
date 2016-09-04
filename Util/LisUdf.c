@@ -1,7 +1,7 @@
-/* Saga - Un transcriptor fonético para el idioma español
+/* Saga - Un transcriptor fonetico para el idioma espanhol
  *
- * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
- *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
+ * Copyright (C) 1993-2009  Albino Nogueiras Rodriguez y Jose B. Marinho
+ *       TALP - Universitat Politecnica de Catalunya, ESPANA
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,71 +32,88 @@
  * ReadLisUdf - Lee una lista de unidades foneticas
  **********************************************************************/
 
-int		ReadLisUdf(
+size_t		ReadLisUdf(
 	const char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
 	char	***LisUdf)	/* Lista de unidades resultante				*/
 
 {
-	char	Unidad[64000];
-	size_t		TamLis;
-	FILE	*FpLis;
+	char *Unidad = NULL;
+	size_t TamUnidad = 0;
+	char **tmplis;
+	size_t TamLis; /* Numero de unidades en la lista */
+	FILE *FpLis;
 
 	/*
 	 * Inicializamos la memoria empleada por LisUdf.
 	 */
 	if ((*LisUdf = malloc(sizeof(char *))) == NULL) {
-		return -1;
+		return LIS_UDF_ERROR;
 	}
+	*LisUdf[0] = NULL;
 
 	/*
 	 * Abrimos el fichero de la lista.
 	 */
 	if ((FpLis = fopen(FicLisUdf, "rt")) == NULL) {
 		free(*LisUdf);
-		return -1;
+		return LIS_UDF_ERROR;
 	}
 
 	/*
 	 * Bucle para todas las unidades contenidas en el fichero.
 	 */
 	TamLis = 0;
-	while (fgets(Unidad, sizeof(Unidad), FpLis) != NULL) {
+	while (getline(&Unidad, &TamUnidad, FpLis) != -1) {
 		TamLis++;
-		if (TamLis == SIZE_MAX-1)
-		{
-			fprintf(stderr, "La lista de fonemas ha alcanzado su tamanho maximo\n");
-			free((*LisUdf)[TamLis-2]);
-			(*LisUdf)[TamLis-2] = NULL;
+		tmplis = realloc(*LisUdf, (TamLis + 1) * sizeof(char *));
+		if (tmplis == NULL) {
 			LiberaMatStr(*LisUdf);
-			return -1;
+			*LisUdf = NULL;
+		  fclose(FpLis);
+      if (Unidad != NULL) free(Unidad);
+    	return LIS_UDF_ERROR;
 		}
-		if ((*LisUdf = realloc(*LisUdf, (TamLis + 1) * sizeof(char *))) == NULL) {
-			return -1;
-		}
+		*LisUdf = tmplis;
 
 		if (Unidad[strlen(Unidad) - 1] == '\n') Unidad[strlen(Unidad) - 1] = '\0';
 
 		(*LisUdf)[TamLis-1] = strdup(Unidad);
+		(*LisUdf)[TamLis] = NULL;
+
+		if (TamLis == SIZE_MAX-1)
+		{
+			/* La lista ya tiene SIZE_MAX elementos */
+			fprintf(stderr, "La lista de fonemas ha alcanzado su tamanho maximo\n");
+			LiberaMatStr(*LisUdf);
+      fclose(FpLis);
+      if (Unidad != NULL) free(Unidad);
+			return LIS_UDF_ERROR;
+		}
+
 	}
-	(*LisUdf)[TamLis] = NULL;
 
-	(void) fclose(FpLis);
-
+  fclose(FpLis);
+  if (Unidad != NULL) free(Unidad);
 	return 	TamLis;
 }
 
-/***********************************************************************
- * SeekLisUdf - Busca el indice de una unidad en una lista de unidades
- **********************************************************************/
-
-int		SeekLisUdf(
+/**
+ SeekLisUdf - Busca el indice de una unidad en una lista de unidades
+ 
+ \param Unidad Unidad a buscar
+ \param TamLis Tamanho de la lista (Usa 0 para autocalcularlo)
+ \param LisUdf Lista de unidades
+ \return El indice donde la unidad se encuentra o `LIS_UDF_UNKNOWN`
+        si no se encuentra.
+*/
+size_t		SeekLisUdf(
 	char	*Unidad,
-	int		TamLis,
+	size_t		TamLis,
 	char	**LisUdf)
 {
-	int		Udf;
+	size_t		Udf;
 
-	if (TamLis < 0) for (TamLis = 0; LisUdf[TamLis] != (char *) 0; TamLis++) ;
+	if (TamLis == 0) TamLis = MatStrLength(LisUdf);
 
 	for (Udf = 0; Udf < TamLis; Udf++) {
 		if (strcmp(Unidad, LisUdf[Udf]) == 0) {
@@ -104,38 +121,54 @@ int		SeekLisUdf(
 		}
 	}
 
-	return -1;
+	return LIS_UDF_UNKNOWN;
 }
 
 /***********************************************************************
  * MeteLisUdf - Mete una nueva unidad en una lista de unidades foneticas
  **********************************************************************/
-
-int		MeteLisUdf(
+size_t MeteLisUdf(
 	char	*Unidad,
-	int		*TamLis,
+	size_t		*TamLis,
 	char	***LisUdf)
 {
-	int		Indice;
+	size_t Indice;
+  char **tmplis;
 
-	if (*TamLis < 0) for (*TamLis = 0; *LisUdf && (*LisUdf)[*TamLis] != (char *) 0; (*TamLis)++) ;
+	if (*TamLis == LIS_UDF_UNKNOWN) *TamLis = MatStrLength(*LisUdf);
 
-	if (*TamLis == 0 || *LisUdf == (char **) 0) {
-		if ((*LisUdf = (char **) malloc(2 * sizeof(char *))) == (char **) 0) {
-			return -1;
-		}
-		Indice = 0;
-		(*TamLis) = 1;
+  if (*LisUdf == NULL)
+  {
+    if ((*LisUdf = malloc(2 * sizeof(char *))) == NULL)
+    {
+		  return LIS_UDF_ERROR;
+    }
 		(*LisUdf)[0] = strdup(Unidad);
-	}
-	else if ((Indice = SeekLisUdf(Unidad, *TamLis, *LisUdf)) < 0) {
-		Indice = (*TamLis)++;
-		if ((*LisUdf = (char **) realloc((void *) *LisUdf, (*TamLis + 1) * sizeof(char *))) == (char **) 0) {
-			return -1;
+    (*LisUdf)[1] = NULL;
+		(*TamLis) = 1;
+		return 0;
+  } else if ((Indice = SeekLisUdf(Unidad, *TamLis, *LisUdf)) == LIS_UDF_UNKNOWN)
+  {
+    Indice = *TamLis;
+    if (*TamLis == SIZE_MAX -1)
+    {
+			fprintf(stderr, "Error: La lista ha alcanzado su tamanho maximo\n");
+			LiberaMatStr(*LisUdf);
+			*LisUdf = NULL;
+			return LIS_UDF_ERROR;
 		}
+    (*TamLis)++;
+    tmplis = realloc(*LisUdf, (*TamLis + 1) * sizeof(char *));
+    if (tmplis == NULL)
+    {
+      LiberaMatStr(*LisUdf);
+      *LisUdf = NULL;
+      return LIS_UDF_ERROR;
+    }
+    *LisUdf = tmplis;
 		(*LisUdf)[Indice] = strdup(Unidad);
+  	(*LisUdf)[*TamLis] = NULL;
 	}
-	(*LisUdf)[*TamLis] = (char *) 0;
 
 	return Indice;
 }

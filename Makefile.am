@@ -123,7 +123,8 @@ check_PROGRAMS = test/test_saga
 
 test_test_saga_SOURCES = test/test_saga.c
 test_test_saga_LDADD = libsaga.la 
-test_test_saga_CFLAGS = $(libsaga_la_CFLAGS)
+test_test_saga_CFLAGS = $(libsaga_la_CFLAGS) \
+    -DTEST_FILE_DIR=\"$(top_srcdir)/test/\"
 
 TESTS = test/test_saga
 

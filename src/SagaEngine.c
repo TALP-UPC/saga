@@ -253,7 +253,7 @@ static int SagaEngine_LoadDictionaries(SagaEngine *engine)
 
 static int SagaEngine_LoadCharacters(SagaEngine *engine)
 {
-	int i, NumLet, NumVoc, NumCons, NumFon;
+	size_t i, NumLet, NumVoc, NumCons, NumFon;
 	size_t bytes_written;
 	char Fonema[1024];
 
@@ -262,7 +262,7 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 	 */
 	NumLet = 0;
 	for (i = 0; _Letras[i] != NULL; i++) {
-		if (MeteLisUdf(_Letras[i], &NumLet, &engine->Letras) < 0) {
+		if (MeteLisUdf(_Letras[i], &NumLet, &engine->Letras) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de letras\n");
 			return -1;
 		}
@@ -270,7 +270,7 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 
 	NumCons = 0;
 	for (i = 0; _ConsTxt[i] != NULL; i++) {
-		if (MeteLisUdf(_ConsTxt[i], &NumCons, &engine->ConsTxt) < 0) {
+		if (MeteLisUdf(_ConsTxt[i], &NumCons, &engine->ConsTxt) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de consonantes\n");
 			return -1;
 		}
@@ -278,7 +278,7 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 
 	NumVoc = 0;
 	for (i = 0; _Vocales[i] != NULL; i++) {
-		if (MeteLisUdf(_Vocales[i], &NumVoc, &engine->Vocales) < 0) {
+		if (MeteLisUdf(_Vocales[i], &NumVoc, &engine->Vocales) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de vocales\n");
 			return -1;
 		}
@@ -286,25 +286,25 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 
 	NumFon = 0;
 	for (i = 0; _Fonemas[i] != NULL; i++) {
-		if (MeteLisUdf(_Fonemas[i], &NumFon, &engine->Fonemas) < 0) {
+		if (MeteLisUdf(_Fonemas[i], &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de fonemas\n");
 			return -1;
 		}
 	}
 	for (i = 0; FonCns[i] != NULL; i++) {
-		if (MeteLisUdf(FonCns[i], &NumFon, &engine->Fonemas) < 0) {
+		if (MeteLisUdf(FonCns[i], &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de fonemas\n");
 			return -1;
 		}
 	}
 	for (i = 0; FonVoc[i] != NULL; i++) {
-		if (MeteLisUdf(FonVoc[i], &NumFon, &engine->Fonemas) < 0) {
+		if (MeteLisUdf(FonVoc[i], &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de fonemas\n");
 			return -1;
 		}
 	}
 	for (i = 0; FonSem[i] != NULL; i++) {
-		if (MeteLisUdf(FonSem[i], &NumFon, &engine->Fonemas) < 0) {
+		if (MeteLisUdf(FonSem[i], &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de fonemas\n");
 			return -1;
 		}
@@ -317,7 +317,7 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 				fprintf(engine->FpErr, "Buffer overflow al crear la lista de fonemas\n");
 				return -1;
 			}
-			if (MeteLisUdf(Fonema, &NumFon, &engine->Fonemas) < 0) {
+			if (MeteLisUdf(Fonema, &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 				fprintf(engine->FpErr, "Error al crear la lista de fonemas\n");
 				return -1;
 			}
@@ -325,31 +325,31 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 	}
 
 	for (i = 0; engine->DicTrnFon && engine->DicTrnFon[i] != NULL; i++) {
-		if (MeteLisUdf(engine->DicTrnFon[i][0], &NumLet, &engine->Letras) < 0) {
+		if (MeteLisUdf(engine->DicTrnFon[i][0], &NumLet, &engine->Letras) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de letras\n");
 			return -1;
 		}
-		if (MeteLisUdf(engine->DicTrnFon[i][1], &NumFon, &engine->Fonemas) < 0) {
+		if (MeteLisUdf(engine->DicTrnFon[i][1], &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de fonemas\n");
 			return -1;
 		}
 	}
 
 	for (i = 0; engine->DicSust && engine->DicSust[i] != NULL; i++) {
-		if (MeteLisUdf(engine->DicSust[i][1], &NumFon, &engine->Fonemas) < 0) {
+		if (MeteLisUdf(engine->DicSust[i][1], &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al crear la lista de fonemas\n");
 			return -1;
 		}
 	}
 
 	if (engine->FicNovFon != NULL) {
-		if (ReadLisUdf(engine->FicNovFon, &engine->LisNovFon) < 0) {
+		if (ReadLisUdf(engine->FicNovFon, &engine->LisNovFon) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al leer la lista de nuevos fonemas %s\n", engine->FicNovFon);
 			return -1;
 		}
 
 		for (i = 0; engine->LisNovFon[i] != NULL; i++) {
-			if (MeteLisUdf(engine->LisNovFon[i], &NumFon, &engine->Fonemas) < 0) {
+			if (MeteLisUdf(engine->LisNovFon[i], &NumFon, &engine->Fonemas) == LIS_UDF_ERROR) {
 				fprintf(engine->FpErr, "Error al anhadir la lista de fonemas nuevos\n");
 				return -1;
 			}
@@ -357,13 +357,14 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 	}
 
 	if (engine->FicNovVoc != NULL) {
-		if (ReadLisUdf(engine->FicNovVoc, &engine->LisNovVoc) < 0) {
+		if (ReadLisUdf(engine->FicNovVoc, &engine->LisNovVoc) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al leer la lista de nuevas vocales %s\n", engine->FicNovVoc);
 			return -1;
 		}
 
 		for (i = 0; engine->LisNovVoc[i] != NULL; i++) {
-			if (MeteLisUdf(engine->LisNovVoc[i], &NumLet, &engine->Letras) < 0 || MeteLisUdf(engine->LisNovVoc[i], &NumVoc, &engine->Vocales) < 0) {
+			if (MeteLisUdf(engine->LisNovVoc[i], &NumLet, &engine->Letras) == LIS_UDF_ERROR || \
+			    MeteLisUdf(engine->LisNovVoc[i], &NumVoc, &engine->Vocales) == LIS_UDF_ERROR) {
 				fprintf(engine->FpErr, "Error al anhadir la lista de vocales nuevas\n");
 				return -1;
 			}
@@ -371,13 +372,14 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
 	}
 
 	if (engine->FicNovCons != NULL) {
-		if (ReadLisUdf(engine->FicNovCons, &engine->LisNovCons) < 0) {
+		if (ReadLisUdf(engine->FicNovCons, &engine->LisNovCons) == LIS_UDF_ERROR) {
 			fprintf(engine->FpErr, "Error al leer la lista de nuevas consonantes %s\n", engine->FicNovCons);
 			return -1;
 		}
 
 		for (i = 0; engine->LisNovCons[i] != NULL; i++) {
-			if (MeteLisUdf(engine->LisNovCons[i], &NumLet, &engine->Letras) < 0 || MeteLisUdf(engine->LisNovCons[i], &NumCons, &engine->ConsTxt) < 0) {
+			if (MeteLisUdf(engine->LisNovCons[i], &NumLet, &engine->Letras) == LIS_UDF_ERROR || \
+			    MeteLisUdf(engine->LisNovCons[i], &NumCons, &engine->ConsTxt) == LIS_UDF_ERROR) {
 				fprintf(engine->FpErr, "Error al anhadir la lista de consonantes nuevas\n");
 				return -1;
 			}

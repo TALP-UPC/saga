@@ -20,16 +20,21 @@
 #ifndef	LIS_UDF_H
 #define	LIS_UDF_H
 
-int		ReadLisUdf(
+#include <stdint.h>
+
+#define LIS_UDF_ERROR SIZE_MAX
+#define LIS_UDF_UNKNOWN SIZE_MAX
+
+size_t		ReadLisUdf(
 	const char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
 	char	***LisUdf);	/* Lista de unidades resultante				*/
-int		SeekLisUdf(
+size_t		SeekLisUdf(
 	char	*Unidad,
-	int		TamLis,
+	size_t		TamLis,
 	char	**LisUdf);
-int		MeteLisUdf(
+size_t		MeteLisUdf(
 	char	*Unidad,
-	int		*TamLis,
+	size_t		*TamLis,
 	char	***LisUdf);
 
 #endif						/* defined (LIS_UDF_H)					*/

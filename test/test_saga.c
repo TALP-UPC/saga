@@ -22,6 +22,28 @@
 #include "cutest.h"
 #include "Saga.h"
 #include "Util.h"
+#include "LisUdf.h"
+
+#ifndef TEST_FILE_DIR
+#define TEST_FILE_DIR ""
+#endif
+
+#ifndef TEST_READLISUDF_INPUT
+#define TEST_READLISUDF_INPUT TEST_FILE_DIR "test_readlisudf.txt"
+#endif
+
+void test_lisudf(void)
+{
+	char **lisudf;
+	size_t tamlis;
+	TEST_CHECK_((tamlis = ReadLisUdf(TEST_READLISUDF_INPUT, &lisudf)) == 4,
+	            "Could not read list");
+	TEST_CHECK_(MeteLisUdf("raxacoricofallapatorius", &tamlis, &lisudf) != LIS_UDF_ERROR,
+	            "Could not append to LisUdf");
+	TEST_CHECK_(SeekLisUdf("raxacoricofallapatorius", tamlis, lisudf) == 4,
+	            "LisUdf seek failed");
+	return;
+}
 
 void test_matstr(void)
 {
@@ -52,5 +74,6 @@ void test_initialize_engine(void) {
 TEST_LIST = {
     {"Initialize engine from text", test_initialize_engine},
     {"Test Matrix of strings helpers", test_matstr},
+    {"Test ListUdf helpers", test_lisudf},
     {0}
 };
