@@ -121,27 +121,30 @@ char	***ReadDicExc(char	*FicDicExc)
 
 {
 	int		Long, NumPal;
-	char	***DicExc;
+	char	***DicExc, ***tmpDicExc;
 	char	Linea[512], PalIn[256], PalOut[256];
 	FILE	*FpDicExc;
 
 	if ((FpDicExc = fopen(FicDicExc, "rt")) == (FILE *) 0) {
 		fprintf(stderr, "Error al abrir el diccionario %s\n", FicDicExc);
-		return (char ***) 0;
+		return NULL;
 	}
 
-	DicExc = (char ***) 0;
+	DicExc = NULL;
 	Long = 0;
-	while (fgets(Linea, sizeof(Linea), FpDicExc) != (char *) 0) {
-		if ((DicExc = (char ***) realloc((void *) DicExc, (Long+2) * sizeof(char **))) == (char ***) 0) {
+	while (fgets(Linea, sizeof(Linea), FpDicExc) != NULL) {
+		if ((tmpDicExc = realloc(DicExc, (Long+2) * sizeof(char **))) == NULL) {
 			fprintf(stderr, "Error al reubicar memoria para el diccionario\n");
 			fclose(FpDicExc);
-			return (char ***) 0;
+			BorraDicExc(DicExc);
+			return NULL;
 		}
-		if ((DicExc[Long] = (char **) malloc(2*sizeof(char *))) == (char **) 0) {
+		DicExc = tmpDicExc;
+		if ((DicExc[Long] = (char **) malloc(2*sizeof(char *))) == NULL) {
 			fprintf(stderr, "Error al reubicar memoria para el diccionario\n");
 			fclose(FpDicExc);
-			return (char ***) 0;
+			BorraDicExc(DicExc);
+			return NULL;
 		}
 
 		NumPal = sscanf(Linea, "%[^ \t\n]%*[ \t]%[^\t\n]", PalIn, PalOut);
@@ -154,7 +157,8 @@ char	***ReadDicExc(char	*FicDicExc)
 		else if (NumPal != 2) {
 			fprintf(stderr, "Error de formato en el diccionario\n");
 			fclose(FpDicExc);
-			return (char ***) 0;
+			BorraDicExc(DicExc);
+			return NULL;
 		}
 
 		DicExc[Long][0] = strdup(PalIn);
@@ -178,9 +182,9 @@ char	***ReadDicExc(char	*FicDicExc)
 		}
 
 		Long++;
+		DicExc[Long] = NULL;
 	}
 
-	DicExc[Long] = NULL;
 
 	fclose(FpDicExc);
 

@@ -22,6 +22,7 @@
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	"SagaInternal.h"
+#include "Util.h"
 
 /***********************************************************************
  * CogePalExt - Localiza las palabras extranhas de un texto ortografico.
