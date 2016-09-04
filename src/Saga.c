@@ -86,7 +86,7 @@ int main(int ArgC, char *ArgV[])
 		return EXIT_FAILURE;
 	}
 	
-	while ( ! SagaEngine_ReadText(&engine) < 0) {
+	while ( ! (SagaEngine_ReadText(&engine) < 0)) {
 		
     if (SagaEngine_Transcribe(&engine) < 0) {
 			SagaEngine_Refresh(&engine);
@@ -113,7 +113,7 @@ int main(int ArgC, char *ArgV[])
 	}
 	
 	SagaEngine_CloseInput(&engine);
-  if (NomIn != NULL) free(NomIn);
+  free(NomIn);
   if (NomOut != NULL) free(NomOut);
   if (NomErr != NULL) free(NomErr);
 	SagaEngine_Clear(&engine);
