@@ -1010,7 +1010,8 @@ char	*TrnFonFnm(	char	*TrnFon,
 		 */
 		if (CogeGrpFon(TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
-			return (char *) 0;
+			free(TrnFnm);
+			return NULL;
 		}
 
 		if (GrpAct.Tipo & PAL_FON) {
@@ -1018,7 +1019,8 @@ char	*TrnFonFnm(	char	*TrnFon,
 			while (Pos < (int) GrpAct.Long) {
 				if ((Chr = IndexChr(GrpAct.Cont+Pos, Fonemas)) < 0) {
 					if ((Chr = IndexChr(GrpAct.Cont+Pos, InterSil)) < 0) {
-						return (char *) 0;
+						free(TrnFnm);
+						return NULL;
 					}
 					else {
 						Pos += strlen(InterSil[Chr]);
@@ -1082,7 +1084,7 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 	 */
 	if ((TrnFnm = (char *) calloc((size_t) 20 * LongFon, sizeof(char))) == (char *) 0) {
 		fprintf(stderr, "Error al ubicar memoria para TrnFnm\n");
-		return (char *) 0;
+		return NULL;
 	}
 
 	/*
@@ -1096,7 +1098,8 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 		 */
 		if (CogeGrpFon(TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
-			return (char *) 0;
+			free(TrnFnm);
+			return NULL;
 		}
 
 		if (PosAct > 0 && ((GrpAct.Tipo & ESP_FON) == 0 && (ConSil || (GrpAct.Tipo & (PUNT_FON | SIL_FON)) == 0))) {
@@ -1110,7 +1113,8 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 			while (Pos < (int) GrpAct.Long) {
 				if ((Chr = IndexChr(GrpAct.Cont+Pos, Fonemas)) < 0) {
 					if ((Chr = IndexChr(GrpAct.Cont+Pos, InterSil)) < 0) {
-						return (char *) 0;
+						free(TrnFnm);
+						return NULL;
 					}
 					else {
 						if (Espacio == 0) strcat(TrnFnm, " ");
@@ -1149,7 +1153,7 @@ char	*TrnFonFnmPal(	char	*TrnFon,
 
 	Pointer = TrnFnm;
 	TrnFnm = strdup(TrnFnm);
-	free((void *) Pointer);
+	free(Pointer);
 
 	return TrnFnm;
 }
@@ -1188,7 +1192,8 @@ char	*TrnFonSefo(char	*TrnFon,
 		 */
 		if (CogeGrpFon(TrnFon, PosAct, &GrpAct, Fonemas) < 0) {
 			fprintf(stderr, "Error al localizar el siguiente grupo de SilOrt\n");
-			return (char *) 0;
+			free(TrnSefo);
+			return NULL;
 		}
 
 		if (GrpAct.Tipo & PAL_FON) {
@@ -1196,7 +1201,8 @@ char	*TrnFonSefo(char	*TrnFon,
 			if (Espacio == 0) strcat(TrnSefo, " ");
 
 			if ((ChrAnt = IndexChr(GrpAct.Cont+Pos, Fonemas)) < 0) {
-				return (char *) 0;
+				free(TrnSefo);
+				return NULL;
 			}
 			strcat(TrnSefo, StrIniPal);
 			strcat(TrnSefo, Fonemas[ChrAnt]);
@@ -1206,7 +1212,7 @@ char	*TrnFonSefo(char	*TrnFon,
 			while (Pos < (int) GrpAct.Long) {
 				if ((Chr = IndexChr(GrpAct.Cont+Pos, Fonemas)) < 0) {
 					if ((Chr = IndexChr(GrpAct.Cont+Pos, InterSil)) < 0) {
-						return (char *) 0;
+						return NULL;
 					}
 					else {
 						Pos += strlen(InterSil[Chr]);

@@ -108,6 +108,7 @@ char	**MatStrChr(
 		if (Mat2 == NULL) {
 			free(fStr);
 			free(Mat);
+			free(token);
 			return NULL;
 		} else { /* realloc successful */
 			Mat = Mat2;

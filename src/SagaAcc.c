@@ -89,6 +89,7 @@ char	*AcenSilOrt(char	*SilOrt, char	***DicTrnPal, SagaEngine *engine)
 				strncpy(AccSil, GrpAct.Cont, GrpAct.Long);
 				AccSil[GrpAct.Long] = '\0';
 				fprintf(stderr, "Error al acentuar %s\n", AccSil);
+				free(AccSil);
 				return (char *) 0;
 			}
 			else {

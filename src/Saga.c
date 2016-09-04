@@ -182,6 +182,7 @@ static int OpcSaga(
 		case 'Y' :	Matriz = MatStr(optarg);
 					engine->StrIniPal = engine->StrFinPal = Matriz[0];
 					if (Matriz[1] != NULL) engine->StrFinPal = Matriz[1];
+					free(Matriz); /* I have stolen the inner pointers */
 					break;
 		case 's' :	engine->SalSem = 1;
 					break;
