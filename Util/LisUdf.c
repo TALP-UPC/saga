@@ -25,6 +25,8 @@
 #include	<stdlib.h>
 #include	<stdio.h>
 #include	"LisUdf.h"
+#include	"Util.h"
+#include <stdint.h>
 
 /***********************************************************************
  * ReadLisUdf - Lee una lista de unidades foneticas
@@ -36,7 +38,7 @@ int		ReadLisUdf(
 
 {
 	char	Unidad[64000];
-	int		TamLis;
+	size_t		TamLis;
 	FILE	*FpLis;
 
 	/*
@@ -50,6 +52,7 @@ int		ReadLisUdf(
 	 * Abrimos el fichero de la lista.
 	 */
 	if ((FpLis = fopen(FicLisUdf, "rt")) == NULL) {
+		free(*LisUdf);
 		return -1;
 	}
 
@@ -57,9 +60,17 @@ int		ReadLisUdf(
 	 * Bucle para todas las unidades contenidas en el fichero.
 	 */
 	TamLis = 0;
-	while (fgets(Unidad, sizeof(Unidad), FpLis) != (char *) 0) {
+	while (fgets(Unidad, sizeof(Unidad), FpLis) != NULL) {
 		TamLis++;
-		if ((*LisUdf = realloc(*LisUdf, (size_t) (TamLis + 1) * sizeof(char *))) == NULL) {
+		if (TamLis == SIZE_MAX-1)
+		{
+			fprintf(stderr, "La lista de fonemas ha alcanzado su tamanho maximo\n");
+			free((*LisUdf)[TamLis-2]);
+			(*LisUdf)[TamLis-2] = NULL;
+			LiberaMatStr(*LisUdf);
+			return -1;
+		}
+		if ((*LisUdf = realloc(*LisUdf, (TamLis + 1) * sizeof(char *))) == NULL) {
 			return -1;
 		}
 

@@ -42,6 +42,19 @@ void	LiberaMatStr(
 	return;
 }
 
+/*********************************************************************
+ * MatStrLength - Devuelve la longitud de la matriz de cadenas
+ *
+ *********************************************************************/
+size_t MatStrLength(char **mat)
+{
+    size_t len = 0;
+    if (mat == NULL) return 0;
+    while (mat[len] != NULL) {
+        len++;
+    }
+    return len;
+}
 
 /***********************************************************************
  * MatStr - Construye una matriz de cadenas a partir de una cadena 
@@ -63,15 +76,20 @@ char	**MatStrChr(
 	const char	*Delim)
 
 {
-	char	**Mat, **Mat2 = NULL, *Str = strdup(_Str);
+	char	**Mat, **Mat2 = NULL, *Str;
 	char *token;
-	char	*fStr = Str;
+	char	*fStr;
 	size_t	i;
 
+    if (_Str == NULL)
+    {
+        return NULL;
+    }
+    Str = strdup(_Str);
 	if (Str == NULL) {
 		return NULL;
 	}
-
+    fStr = Str;
 	/* Allocate space for the final NULL */
 	if ((Mat = malloc(sizeof(char *))) == NULL) {
 		free(fStr);

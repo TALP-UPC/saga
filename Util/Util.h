@@ -22,6 +22,7 @@
 
 char	**MatStr(const char *);
 char	**MatStrChr(const char *, const char *);
+size_t MatStrLength(char **mat);
 void LiberaMatStr(char	**MatChr);
 
 #endif						/* defined (UTIL_H)					*/

@@ -21,17 +21,36 @@
 
 #include "cutest.h"
 #include "Saga.h"
+#include "Util.h"
+
+void test_matstr(void)
+{
+  char **matstr = NULL;
+  matstr = MatStr(NULL);
+  TEST_CHECK_(matstr == NULL, "MatStr(NULL) failed");
+  LiberaMatStr(matstr);
+  matstr = MatStr("hola amigos,estoy contento");
+  TEST_CHECK_(matstr != NULL, "Error creating MatStr from text");
+  TEST_CHECK_(MatStrLength(matstr) == 4, "Test MatStrLength failed");
+  LiberaMatStr(matstr);
+}
 
 void test_initialize_engine(void) {
 	SagaEngine engine;
-	SagaEngine_Initialize(&engine);
-	SagaEngine_InputFromText(&engine, "hola", "ISO-8859-15");
-	SagaEngine_Refresh(&engine);
-	SagaEngine_Clear(&engine);
+	TEST_CHECK_(SagaEngine_Initialize(&engine) >= 0,
+                "Error in SagaEngine_Initialize");
+	TEST_CHECK_(
+        SagaEngine_InputFromText(&engine, "hola", "ISO-8859-15") >= 0,
+        "Error using InputFromText");
+	TEST_CHECK_(SagaEngine_Refresh(&engine) >= 0, "Error Refreshing engine");
+	TEST_CHECK_(SagaEngine_Clear(&engine) >= 0,"Error Clearing engine");
 	return;
 }
 
+
+
 TEST_LIST = {
     {"Initialize engine from text", test_initialize_engine},
+    {"Test Matrix of strings helpers", test_matstr},
     {0}
 };
