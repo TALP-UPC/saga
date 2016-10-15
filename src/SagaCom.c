@@ -34,18 +34,22 @@ int		CogeGrpOrt(	char	*TxtOrt,
 
 {
 	int		Long, Chr;
+	int		Chr1, Chr2;
 
 	Long = 0;
 	GrpAct->Cont = TxtOrt + PosAct;
 	if ((Chr = IndexChr(TxtOrt+PosAct+Long, Letras)) >= 0) {
 		Long += strlen(Letras[Chr]);
-		while (IndexChr(TxtOrt+PosAct+Long, Letras) >= 0 || IndexChr(TxtOrt+PosAct+Long, InterSil) >= 0) {
-			if ((Chr = IndexChr(TxtOrt+PosAct+Long, Letras)) >= 0) {
-				Long += strlen(Letras[Chr]);
+		while (1) {
+			Chr1 = IndexChr(TxtOrt+PosAct+Long, Letras);
+			Chr2 = IndexChr(TxtOrt+PosAct+Long, InterSil);
+			if (Chr1 < 0 && Chr2 < 0) {
+				break;
 			}
-			else {
-				Chr = IndexChr(TxtOrt+PosAct+Long, InterSil);
-				Long += strlen(InterSil[Chr]);
+			if (Chr1 >= 0) {
+				Long += strlen(Letras[Chr1]);
+			} else {
+				Long += strlen(InterSil[Chr2]);
 			}
 		}
 		GrpAct->Tipo = PALABRA;
@@ -113,6 +117,7 @@ int		CogeGrpFon(char	*TrnFon,
 
 {
 	int		Long, Chr;
+	int		Chr1, Chr2;
 
 	/*
 	 * Primero, miramos si es una palabra transcrita
@@ -121,13 +126,17 @@ int		CogeGrpFon(char	*TrnFon,
 	GrpAct->Cont = TrnFon + PosAct;
 	if ((Chr = IndexChr(TrnFon+PosAct+Long, Fonemas)) >= 0) {
 		Long += strlen(Fonemas[Chr]);
-		while (IndexChr(TrnFon+PosAct+Long, Fonemas) >= 0 || IndexChr(TrnFon+PosAct+Long, InterSil) >= 0) {
-			if ((Chr = IndexChr(TrnFon+PosAct+Long, Fonemas)) >= 0) {
-				Long += strlen(Fonemas[Chr]);
+		while (1) {
+			Chr1 = IndexChr(TrnFon+PosAct+Long, Fonemas);
+			Chr2 = IndexChr(TrnFon+PosAct+Long, InterSil);
+			if (Chr1 < 0 && Chr2 < 0) {
+				break;
+			}
+			if (Chr1 >= 0) {
+				Long += strlen(Fonemas[Chr1]);
 			}
 			else {
-				Chr = IndexChr(TrnFon+PosAct+Long, InterSil);
-				Long += strlen(InterSil[Chr]);
+				Long += strlen(InterSil[Chr2]);
 			}
 		}
 		if (TrnFon[PosAct+Long] == '\0' ||
