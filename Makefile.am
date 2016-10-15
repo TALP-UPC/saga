@@ -10,12 +10,13 @@ EXTRA_DIST =
 # Shared library
 lib_LTLIBRARIES += libsaga.la
 libsaga_la_SOURCES = Util/LisUdf.c Util/Util.c
-libsaga_la_CFLAGS = -I$(srcdir)/Util
+libsaga_la_CFLAGS = -I$(srcdir)/Util -DSAGA_DICCDIR=\"$(pkgdatadir)/dicc/\"
 libsaga_la_LDFLAGS = -no-undefined
 libsaga_la_LIBADD = 
 
 libsaga_la_SOURCES += src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
-                      src/SagaSil.c src/SagaTrn.c src/SagaCom.c src/SagaEngine.c
+                      src/SagaSil.c src/SagaTrn.c src/SagaCom.c \
+                      src/SagaEngine.c
 
 libsaga_la_CFLAGS += -I$(srcdir)/src
 
@@ -35,6 +36,7 @@ bin_PROGRAMS += saga
 saga_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
 saga_SOURCES = src/Saga.c
 saga_LDADD = libsaga.la
+
 
 # Data:
 datadiccdir = $(pkgdatadir)/dicc
@@ -95,7 +97,6 @@ bin_SCRIPTS =  work/saga-peru \
  work/saga-mexico \
  work/saga-argentina \
  work/saga-colombia \
- work/saga-castilla \
  work/saga-chile \
  work/saga-venezuela
 
@@ -104,7 +105,6 @@ EXTRA_DIST += work/saga-peru.in \
  work/saga-mexico.in \
  work/saga-argentina.in \
  work/saga-colombia.in \
- work/saga-castilla.in \
  work/saga-chile.in \
  work/saga-venezuela.in
 

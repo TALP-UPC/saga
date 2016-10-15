@@ -146,8 +146,18 @@ static int OpcSaga(
 	*NomIn = NULL;
 	*NomErr = NULL;
 
-	while ((Opcion = getopt(ArgC, ArgV, "abd:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1) {
+	while ((Opcion = getopt(ArgC, ArgV, "abd:L:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1) {
 		switch (Opcion) {
+		case 'L' :
+		   if (strcmp(optarg, "castilla") == 0) {
+				 if (SagaCastilla(engine) <0) {
+					 return -1;
+				 }
+			 } else {
+				 fprintf(stderr, "Variante dialectal desconocida\n");
+				 return -1;
+			 }
+			 break;
 		case 'a' :	engine->TrnPalAis = 1;
 					engine->TrnLinAis = 1;
 					break;
@@ -284,6 +294,7 @@ static void	EmpleoSaga(char	**ArgV)
 {
 	fprintf(stderr, "Empleo:\n");
 	fprintf(stderr, "    %s [opciones] (TxtIn | -) [NomOut]\n", ArgV[0]);
+	fprintf(stderr, "    %s -L castilla (TxtIn | -) [NomOut]\n", ArgV[0]);
 	fprintf(stderr, "donde:\n");
 	fprintf(stderr, "    TxtIn:    Texto ortografico de entrada\n");
 	fprintf(stderr, "    NomOut:    Nombre, sin ext., ficheros de salida\n");

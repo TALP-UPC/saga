@@ -180,6 +180,7 @@ int SagaEngine_Refresh(SagaEngine *engine);
 /** Clears the engine to load other dictionaries */
 int SagaEngine_Clear(SagaEngine *engine);
 
+int SagaCastilla(SagaEngine *engine);
 
 #ifdef __cplusplus
 }

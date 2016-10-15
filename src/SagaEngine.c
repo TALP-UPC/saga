@@ -796,3 +796,22 @@ char	*ArreglaTxt(char *TxtOrt)
 	free((void *) TxtOrt);
 	return Txt;
 }
+
+
+int SagaCastilla(SagaEngine *engine) {
+  SagaEngine_Clear(engine);
+	
+	engine->SalFon = 0;
+
+  engine->FicDicExc = SAGA_DICCDIR "/Cas/CasExc.dicc";
+	engine->FicTrnFon = SAGA_DICCDIR "/Cas/CasTrnFon.dicc";
+	engine->FicTrnPal = SAGA_DICCDIR "/Cas/CasTrnPal.dicc";
+	engine->FicDicSust = SAGA_DICCDIR "/Cas/CasDicSust.dicc";
+	engine->FicDicGrp = SAGA_DICCDIR "/Cas/CasDicGrp.dicc";
+  engine->FicNovCons = SAGA_DICCDIR "/Cas/CasNovCns.dicc";
+  if (SagaEngine_LoadData(engine) < 0) {
+    SagaEngine_Clear(engine);
+		return -1;
+	}
+	return 0;
+}
