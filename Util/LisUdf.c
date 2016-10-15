@@ -69,9 +69,9 @@ size_t		ReadLisUdf(
 		if (tmplis == NULL) {
 			LiberaMatStr(*LisUdf);
 			*LisUdf = NULL;
-		  fclose(FpLis);
-      if (Unidad != NULL) free(Unidad);
-    	return LIS_UDF_ERROR;
+			fclose(FpLis);
+			if (Unidad != NULL) free(Unidad);
+			return LIS_UDF_ERROR;
 		}
 		*LisUdf = tmplis;
 
@@ -85,8 +85,8 @@ size_t		ReadLisUdf(
 			/* La lista ya tiene SIZE_MAX elementos */
 			fprintf(stderr, "La lista de fonemas ha alcanzado su tamanho maximo\n");
 			LiberaMatStr(*LisUdf);
-      fclose(FpLis);
-      if (Unidad != NULL) free(Unidad);
+			fclose(FpLis);
+      free(Unidad);
 			return LIS_UDF_ERROR;
 		}
 

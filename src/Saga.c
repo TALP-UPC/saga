@@ -72,7 +72,7 @@ int main(int ArgC, char *ArgV[])
 
   if (SagaEngine_OpenOutputFiles(&engine, NomOut) < 0) {
     SagaEngine_Clear(&engine);
-    if (NomIn != NULL) free(NomIn);
+    free(NomIn);
     if (NomOut != NULL) free(NomOut);
     if (NomErr != NULL) free(NomErr);
 		return EXIT_FAILURE;
@@ -80,7 +80,7 @@ int main(int ArgC, char *ArgV[])
 
   if (SagaEngine_LoadData(&engine) < 0) {
     SagaEngine_Clear(&engine);
-    if (NomIn != NULL) free(NomIn);
+    free(NomIn);
     if (NomOut != NULL) free(NomOut);
     if (NomErr != NULL) free(NomErr);
 		return EXIT_FAILURE;
@@ -91,7 +91,7 @@ int main(int ArgC, char *ArgV[])
     if (SagaEngine_Transcribe(&engine) < 0) {
 			SagaEngine_Refresh(&engine);
       SagaEngine_Clear(&engine);
-      if (NomIn != NULL) free(NomIn);
+      free(NomIn);
       if (NomOut != NULL) free(NomOut);
       if (NomErr != NULL) free(NomErr);
 			return EXIT_FAILURE;
@@ -105,7 +105,7 @@ int main(int ArgC, char *ArgV[])
     if (SagaEngine_WriteErrorWords(&engine) < 0) {
 			SagaEngine_Refresh(&engine);
       SagaEngine_Clear(&engine);
-      if (NomIn != NULL) free(NomIn);
+      free(NomIn);
       if (NomOut != NULL) free(NomOut);
       if (NomErr != NULL) free(NomErr);
 			return EXIT_FAILURE;

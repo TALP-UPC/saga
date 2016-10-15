@@ -1212,6 +1212,7 @@ char	*TrnFonSefo(char	*TrnFon,
 			while (Pos < (int) GrpAct.Long) {
 				if ((Chr = IndexChr(GrpAct.Cont+Pos, Fonemas)) < 0) {
 					if ((Chr = IndexChr(GrpAct.Cont+Pos, InterSil)) < 0) {
+						free(TrnSefo);
 						return NULL;
 					}
 					else {

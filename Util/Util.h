@@ -25,4 +25,5 @@ char	**MatStrChr(const char *, const char *);
 size_t MatStrLength(char **mat);
 void LiberaMatStr(char	**MatChr);
 
+void safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_strlen);
 #endif						/* defined (UTIL_H)					*/

@@ -125,3 +125,23 @@ char	**MatStrChr(
 
 	return Mat;
 }
+
+
+void safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_strlen)
+{
+	size_t src_strlen = strlen(src);
+	char *new_dest;
+	if (*dest_size-1-*dest_strlen < src_strlen) {
+		new_dest = realloc(*dest, 2*(*dest_size+src_strlen));
+		if (new_dest == NULL) {
+			*dest = NULL;
+			return;
+		}
+		*dest = new_dest;
+		*dest_size = 2*(*dest_size+src_strlen);
+		memset(*dest + *dest_strlen, 0, *dest_size - *dest_strlen);
+	}
+	strcpy(*dest + *dest_strlen, src);
+	*dest_strlen += src_strlen;
+	return;
+}

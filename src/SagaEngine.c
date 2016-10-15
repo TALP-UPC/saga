@@ -556,6 +556,10 @@ int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut) {
 		engine->close_FpSefo = 0;
 		return 0;
 	}
+  /* Prevent buffer overflow */
+  if (strlen(NomOut) >= _POSIX_PATH_MAX -5 ) {
+    return -1;
+  }
   strcpy(PathOut, NomOut);
 	strcat(PathOut, ".fon");
 	if (engine->SalFon && (engine->FpFon = fopen(PathOut, "wt")) == NULL) {
@@ -625,6 +629,11 @@ int SagaEngine_WriteOutputFiles(SagaEngine *engine) {
 }
 
 int SagaEngine_InputFromFileName(SagaEngine *engine, const char *NomIn) {
+	if (NomIn == NULL) {
+		/* No deberia pasar */
+		fprintf(engine->FpErr, "Fichero de entrada NULL\n");
+		return -1;
+	}
 	engine->FicInName = NomIn;
 	
 	if (strcmp(engine->FicInName, "-") == 0) {
