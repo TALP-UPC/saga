@@ -56,57 +56,6 @@ size_t MatStrLength(char **mat)
     return len;
 }
 
-/** Concatenate a list of strings NULL terminated on a single string
- *  using `sep` as separator between the strings.
- * 
- *  @param mat A list of strings, NULL terminated
- *  @param sep A string to use as separator in the concatenation
- *  @return a string with the concatenated elements. NULL if error
- **/
-char *MatrStr2Str(char **mat, char *sep) {
-	size_t total_length = 0;
-	size_t i;
-	char *output = NULL;
-	if (mat == NULL) {
-		return NULL;
-	}
-	/* First we determine the size of the output string. This is the
-	 * sum of the length of each of the strings + the length of the
-	 * separators */
-	i = 0;
-	while (mat[i] != NULL) {
-		total_length += strlen(mat[i]);
-		i++;
-	}
-	if (sep != NULL) {
-		total_length += (i-1)*strlen(sep);
-	}
-	/* Plus 1 because it has to be 0 ended */
-	output = malloc((total_length+1)*sizeof(char));
-	if (output == NULL) {
-		return NULL;
-	}
-	output[0] = '\0';
-	i = 0;
-	while (mat[i] != NULL) {
-		strcat(output, mat[i]);
-		if (sep != NULL && mat[i+1] != NULL) {
-			strcat(output, sep);
-		}
-		i++;
-	}
-	return 0;
-}
-
-/** Concatenate a list of strings NULL terminated on a single string.
- * 
- *  @param mat A list of strings, NULL terminated
- *  @return a string with the concatenated elements. NULL if error
- **/
-char *MatrStr2Str0(char **mat) {
-	return MatrStr2Str(mat, NULL);
-}
-
 /***********************************************************************
  * MatStr - Construye una matriz de cadenas a partir de una cadena 
  * separada en "tokens" por comas y/o espacios.
