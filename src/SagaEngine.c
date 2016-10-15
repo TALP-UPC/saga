@@ -74,6 +74,7 @@ int SagaEngine_Initialize(SagaEngine *engine)
   engine->TxtIn =NULL;
   engine->TxtInOffset = 0;
 
+  engine->close_in = 0;
   engine->FicInName = NULL;
 	engine->FpIn = NULL;
 
