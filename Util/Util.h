@@ -26,4 +26,5 @@ size_t MatStrLength(char **mat);
 void LiberaMatStr(char	**MatChr);
 
 int safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_strlen);
+size_t utf8_to_latin9(char *const output, const char *const input, const size_t length);
 #endif						/* defined (UTIL_H)					*/

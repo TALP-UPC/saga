@@ -79,6 +79,7 @@ int SagaEngine_Initialize(SagaEngine *engine)
   engine->close_in = 0;
   engine->FicInName = NULL;
 	engine->FpIn = NULL;
+	engine->in_encoding = NULL;
 
 	engine->TxtOrt = NULL;
 
@@ -167,7 +168,7 @@ int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr)
 int SagaEngine_ReadText(SagaEngine *engine) {
 	SagaEngine_Refresh(engine);
 	if (engine->FpIn != NULL) {
-	    engine->TxtOrt = CargTxtOrt(engine->FpIn, engine->TrnLinAis);
+	    engine->TxtOrt = CargTxtOrt(engine->FpIn, engine->TrnLinAis, engine->in_encoding);
 	} else if (engine->TxtIn != NULL) {
 	    engine->TxtOrt = CargTxtOrtChar(engine->TxtIn, &engine->TxtInOffset, engine->TrnLinAis);
 	}
@@ -406,11 +407,26 @@ int SagaEngine_LoadData(SagaEngine *engine) {
 }
 
 int SagaEngine_InputFromText(SagaEngine *engine, const char *text, const char *encoding) {
-	if (strcmp(encoding, "ISO-8859-15") != 0) {
-		fprintf(engine->FpErr, "Error encoding %s not supported. Use ISO-8859-15.\n", encoding);
+	size_t text_size;
+	char *text_holder = NULL;
+	if (strcmp(encoding, "ISO-8859-15") == 0) {
+    engine->TxtIn = strdup(text);
+	} else if (strcmp(encoding, "UTF-8")) {
+		text_size = strlen(text);
+		text_holder= malloc(text_size+1);
+		if (text_holder == NULL) {
+		  fprintf(engine->FpErr, "Error loading text: (memory allocation)\n");
+		  return -1;
+		}
+		text_size = utf8_to_latin9(text_holder, text, text_size);
+		engine->TxtIn = realloc(text_holder, text_size + 1);
+		if (engine->TxtIn == NULL) {
+			engine->TxtIn = text_holder;
+		}
+	} else {
+		fprintf(engine->FpErr, "Error encoding %s not supported. Use ISO-8859-15 or UTF-8.\n", encoding);
 		return -1;
 	}
-	engine->TxtIn = strdup(text);
 	if (engine->TxtIn == NULL) {
 		fprintf(engine->FpErr, "Error loading text: %s\n", text);
 		return -1;
@@ -709,10 +725,12 @@ char *CargTxtOrtChar(const char *txtin, intptr_t *TxtInOffset, int TrnLinAis) {
 	return Txt;
 }
 
-char	*CargTxtOrt(FILE *fpin, int TrnLinAis)
+char	*CargTxtOrt(FILE *fpin, int TrnLinAis, char *encoding)
 
 {
 	char	*Txt;
+	char *txt_converted;
+	size_t txt_conv_size;
 	int		Long, AllocLong;
 	int		Final;
 
@@ -753,6 +771,22 @@ char	*CargTxtOrt(FILE *fpin, int TrnLinAis)
 	if (Long == 1) {
 		free(Txt);
 		return NULL;
+	}
+	/* Convert encoding */
+	if (encoding == NULL ||
+	    strcmp(encoding, "UTF-8") == 0) {
+		/* default assume UTF-8 */
+		txt_converted = malloc(Long+1);
+		if (txt_converted == NULL) {
+			free(Txt);
+			return NULL;
+		}
+		txt_conv_size = utf8_to_latin9(txt_converted, Txt, Long);
+		free(Txt);
+		Txt = realloc(txt_converted, txt_conv_size);
+		if (Txt == NULL) {
+			Txt = txt_converted;
+		}
 	}
 	return Txt;
 }

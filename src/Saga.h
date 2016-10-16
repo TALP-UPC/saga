@@ -100,6 +100,7 @@ typedef struct struct_SagaEngine {
   const char *FicInName; /* Si la entrada es de un fichero */
   FILE *FpIn; /* Si la entrada es de un fichero */
   int close_in; /* Si FpIn debe cerrarse */
+  char *in_encoding; /* Codificacion FpIn */ 
     
   /* Lista de palabras extranhas en TxtOrt. Usado para reportar errores */
   char	**PalExt; /* Lista de palabras extranhas */
@@ -150,7 +151,7 @@ int SagaEngine_InputFromFileName(SagaEngine *engine, const char *NomIn);
 /** Sets `text` encoded in `encoding` to be transcribed by `engine`.
  * 
  * @param[in] text The text to transcribe
- * @param[in] encoding `text` encoding. Has to be ISO-8859-15 for now.
+ * @param[in] encoding `text` encoding. Has to be "ISO-8859-15"  or "UTF-8".
  * 
  */
 int SagaEngine_InputFromText(SagaEngine *engine, const char *text, const char *encoding);
