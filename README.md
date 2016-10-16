@@ -54,6 +54,45 @@ a README file, describing the additional SAGA command line options needed.
 
 SAGA source code is available under the `src` directory.
 
+Using SAGA as a library
+------------------------
+
+This is a sample code to use SAGA in an external program:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "Saga.h"
+
+int main() {
+  const char texto[] = "hola mundo\nhola otra vez";
+  char *fon = NULL;
+  SagaEngine *engine = SagaEngine_NewFromVariant("castilla");
+  if (engine == NULL) {
+		return EXIT_FAILURE;
+	}
+  if (SagaEngine_TranscribeText(engine, texto, "ISO-8859-15",
+                            &fon, NULL, NULL, NULL, NULL) < 0) {
+    SagaEngine_Clear(engine);
+    free(engine);
+		return EXIT_FAILURE;
+	}
+  printf("%s\n", fon);
+  free(fon);
+  SagaEngine_Clear(engine);
+  free(engine);
+  return EXIT_SUCCESS;
+}
+```
+
+If Saga has been installed properly, `pkg-config` should be able to show
+the necessary compiler flags:
+
+ - `pkg-config --cflags saga`
+ - `pkg-config --libs saga`
+
+
 Further documentation
 ------------------------
 

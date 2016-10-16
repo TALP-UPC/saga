@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+Name: @PACKAGE_NAME@
+Description: A library for Spanish phonetic transcription.
+Version: @PACKAGE_VERSION@
+Cflags: -I${includedir}/saga
+Libs: -L${libdir} -lsaga

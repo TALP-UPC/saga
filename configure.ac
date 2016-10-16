@@ -27,6 +27,6 @@ dnl to build them.
 LT_INIT([disable-static])
 
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile saga.pc])
 AC_OUTPUT
 

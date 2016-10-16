@@ -5,7 +5,11 @@ pkginclude_HEADERS =
 noinst_HEADERS =
 bin_PROGRAMS =
 CLEANFILES =
-EXTRA_DIST =
+EXTRA_DIST = saga.pc.in
+
+
+pkgconfiginstalldir = $(libdir)/pkgconfig
+pkgconfiginstall_DATA = saga.pc
 
 # Shared library
 lib_LTLIBRARIES += libsaga.la
