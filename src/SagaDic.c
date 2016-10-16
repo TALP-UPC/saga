@@ -440,7 +440,11 @@ int		AplDicPal(
 	for (Ind = 0; DicExc[Ind] != (char **) 0; Ind++) {
 		Palabra = _Palabra;
 		MascaraFilled = 0;
-		safe_strcat(&Mascara, DicExc[Ind][0], &MascaraSize, &MascaraFilled);
+		if (safe_strcat(&Mascara, DicExc[Ind][0], &MascaraSize, &MascaraFilled) < 0) {
+			free(Mascara);
+			free(_Palabra);
+			return -1;
+		}
 		PalDic = Mascara;
 		LongExc = strlen(PalDic);
 		IniCom = FinCom = 0;
