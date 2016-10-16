@@ -92,29 +92,6 @@ dist_datadiccmex_DATA =  \
  work/dicc/Mex/MexExc.dicc \
  work/dicc/Mex/MexReadme.txt
 
-# Scripts, that need to be built:
-bin_SCRIPTS =  work/saga-peru \
- work/saga-mexico \
- work/saga-argentina \
- work/saga-colombia \
- work/saga-chile \
- work/saga-venezuela
-
-CLEANFILES += $(bin_SCRIPTS)
-EXTRA_DIST += work/saga-peru.in \
- work/saga-mexico.in \
- work/saga-argentina.in \
- work/saga-colombia.in \
- work/saga-chile.in \
- work/saga-venezuela.in
-
-do_subst = sed -e 's|__bindir__|$(bindir)|g' \
-               -e 's|__datadir__|$(pkgdatadir)|g'
-
-$(bin_SCRIPTS): %: %.in
-	mkdir -p work
-	$(do_subst) < $< > $@
-	chmod +x $@
 
 # Documentation
 dist_man1_MANS = man/man1/saga.1

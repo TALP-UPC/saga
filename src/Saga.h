@@ -180,7 +180,13 @@ int SagaEngine_Refresh(SagaEngine *engine);
 /** Clears the engine to load other dictionaries */
 int SagaEngine_Clear(SagaEngine *engine);
 
+int SagaArgentina(SagaEngine *engine);
 int SagaCastilla(SagaEngine *engine);
+int SagaChile(SagaEngine *engine);
+int SagaColombia(SagaEngine *engine);
+int SagaMexico(SagaEngine *engine);
+int SagaPeru(SagaEngine *engine);
+int SagaVenezuela(SagaEngine *engine);
 
 #ifdef __cplusplus
 }

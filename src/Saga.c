@@ -138,10 +138,7 @@ static int OpcSaga(
 	size_t i;
 	char	**Matriz;
 
-	/* Por defecto se hara la transcripcion fonetica si no se especifica
-	   otra. Dejamos todas las Sal* a 0 para ver si hay alguna especificada
-	   o no. */
-	engine->SalFon = 0;
+	int hay_salida = 0;
 	*NomOut = NULL;
 	*NomIn = NULL;
 	*NomErr = NULL;
@@ -149,10 +146,34 @@ static int OpcSaga(
 	while ((Opcion = getopt(ArgC, ArgV, "abd:L:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1) {
 		switch (Opcion) {
 		case 'L' :
-		   if (strcmp(optarg, "castilla") == 0) {
-				 if (SagaCastilla(engine) <0) {
+		   if (strcmp(optarg, "argentina") == 0) {
+				 if (SagaArgentina(engine) <0) {
 					 return -1;
 				 }
+			 } else if (strcmp(optarg, "castilla") == 0) {
+				 if (SagaCastilla(engine) <0) {
+					 return -1;
+				 }				 
+			 } else if (strcmp(optarg, "chile") == 0) {
+				 if (SagaChile(engine) <0) {
+					 return -1;
+				 }				 
+			 } else if (strcmp(optarg, "colombia") == 0) {
+				 if (SagaColombia(engine) <0) {
+					 return -1;
+				 }				 
+			 } else if (strcmp(optarg, "mexico") == 0) {
+				 if (SagaMexico(engine) <0) {
+					 return -1;
+				 }				 
+			 } else if (strcmp(optarg, "peru") == 0) {
+				 if (SagaPeru(engine) <0) {
+					 return -1;
+				 }				 
+			 } else if (strcmp(optarg, "venezuela") == 0) {
+				 if (SagaVenezuela(engine) <0) {
+					 return -1;
+				 }				 
 			 } else {
 				 fprintf(stderr, "Variante dialectal desconocida\n");
 				 return -1;
@@ -181,13 +202,21 @@ static int OpcSaga(
 					break;
 		case 'e' :	*NomErr = strdup(optarg);
 					break;
-		case 'f' :	engine->SalFon = 1;
+		case 'f' :	
+					engine->SalFon = 1;
+					hay_salida = 1;
 					break;
-		case 'F' :	engine->SalFnm = 1;
+		case 'F' :
+					engine->SalFnm = 1;
+					hay_salida = 1;
 					break;
-		case 'p' :	engine->SalFnmPal = 1;
+		case 'p' :	
+					engine->SalFnmPal = 1;
+					hay_salida = 1;
 					break;
-		case 'y' :	engine->SalSefo = 1;
+		case 'y' :
+					engine->SalSefo = 1;
+					hay_salida = 1;
 					break;
 		case 'Y' :	Matriz = MatStr(optarg);
 					engine->StrIniPal = engine->StrFinPal = Matriz[0];
@@ -279,7 +308,7 @@ static int OpcSaga(
 	/*
 	 * La transcripcion por defecto es en alofonos (.fon);
 	 */
-	if (!engine->SalFon && !engine->SalFnm && !engine->SalFnmPal && !engine->SalSem && !engine->SalSefo) {
+	if (!hay_salida) {
 		engine->SalFon = 1;
 	}
 

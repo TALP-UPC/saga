@@ -65,7 +65,7 @@ int SagaEngine_Initialize(SagaEngine *engine)
 	engine->ConsTxt = NULL;
 	engine->Vocales = NULL;
 
-	engine->SalFon = 1;
+	engine->SalFon = 0;
 	engine->SalFnm = 0;
 	engine->SalFnmPal = 0;
 	engine->SalSem = 0;
@@ -805,17 +805,70 @@ char	*ArreglaTxt(char *TxtOrt)
 	return Txt;
 }
 
+int SagaArgentina(SagaEngine *engine) {
+	
+  engine->FicDicExc = SAGA_DICCDIR "/Arg/ArgExc.dicc";
+	engine->FicDicSust = SAGA_DICCDIR "/Arg/ArgSust.dicc";
+	engine->FicDicGrp = SAGA_DICCDIR "/Arg/ArgDicGrp.dicc";
+  engine->FicNovFon = SAGA_DICCDIR "/Arg/ArgNovFon.dicc";
+	engine->ClaveModif = SESEO | ESE_ASP_CON;
+	return 0;
+}
+
 
 int SagaCastilla(SagaEngine *engine) {
-  SagaEngine_Clear(engine);
 	
-	engine->SalFon = 0;
-
   engine->FicDicExc = SAGA_DICCDIR "/Cas/CasExc.dicc";
 	engine->FicTrnFon = SAGA_DICCDIR "/Cas/CasTrnFon.dicc";
 	engine->FicTrnPal = SAGA_DICCDIR "/Cas/CasTrnPal.dicc";
 	engine->FicDicSust = SAGA_DICCDIR "/Cas/CasDicSust.dicc";
 	engine->FicDicGrp = SAGA_DICCDIR "/Cas/CasDicGrp.dicc";
   engine->FicNovCons = SAGA_DICCDIR "/Cas/CasNovCns.dicc";
+	return 0;
+}
+
+int SagaChile(SagaEngine *engine) {
+	
+  engine->FicNovFon = SAGA_DICCDIR "/Chl/ChlNovFon.dicc";
+  engine->FicDicExc = SAGA_DICCDIR "/Chl/ChlExc.dicc";
+	engine->FicDicSust = SAGA_DICCDIR "/Chl/ChlSust.dicc";
+	engine->FicDicGrp = SAGA_DICCDIR "/Chl/ChlGrup.dicc";
+	engine->ClaveModif = SESEO | ESE_ASP_INC;
+	return 0;
+}
+
+int SagaColombia(SagaEngine *engine) {
+	
+  engine->FicDicExc = SAGA_DICCDIR "/Col/ColExc.dicc";
+	engine->FicDicSust = SAGA_DICCDIR "/Col/ColSust.dicc";
+
+	engine->ClaveModif = SESEO | BDG_ANDES;
+	return 0;
+}
+
+int SagaMexico(SagaEngine *engine) {
+	
+  engine->FicDicExc = SAGA_DICCDIR "/Mex/MexExc.dicc";
+	engine->FicDicSust = SAGA_DICCDIR "/Mex/MexSust.dicc";
+
+	engine->ClaveModif = SESEO | EQUIS_KS;
+	return 0;
+}
+
+int SagaPeru(SagaEngine *engine) {
+	
+  engine->FicDicExc = SAGA_DICCDIR "/Per/PerExc.dicc";
+	engine->FicDicSust = SAGA_DICCDIR "/Per/PerSust.dicc";
+
+	engine->ClaveModif = SESEO | ESE_ASP_CON | NAS_VELAR | ARCHI_IMPL | ELIM_D;
+	return 0;
+}
+
+int SagaVenezuela(SagaEngine *engine) {
+	
+  engine->FicDicExc = SAGA_DICCDIR "/Ven/VenExc.dicc";
+	engine->FicDicSust = SAGA_DICCDIR "/Ven/VenSust.dicc";
+
+	engine->ClaveModif = SESEO | ESE_ASP_INC | NAS_VELAR | EQUIS_KS;
 	return 0;
 }
