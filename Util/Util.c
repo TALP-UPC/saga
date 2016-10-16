@@ -131,10 +131,14 @@ int safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_st
 {
 	size_t src_strlen = strlen(src);
 	char *new_dest;
+	if (dest == NULL) {
+		fprintf(stderr, "Error concatenating: Nothing to concatenate\n");
+		return -1;
+	}
 	if (src_strlen == 0) {
 		return 0;
 	}
-	if (*dest_size-1-*dest_strlen < src_strlen) {
+	if (*dest_size == 0 || *dest_size-1-*dest_strlen < src_strlen) {
 		new_dest = realloc(*dest, 2*(*dest_size+src_strlen));
 		if (new_dest == NULL) {
 			*dest = NULL;

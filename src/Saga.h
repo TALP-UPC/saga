@@ -180,14 +180,18 @@ int SagaEngine_Refresh(SagaEngine *engine);
 /** Clears the engine to load other dictionaries */
 int SagaEngine_Clear(SagaEngine *engine);
 
-int SagaArgentina(SagaEngine *engine);
-int SagaCastilla(SagaEngine *engine);
-int SagaChile(SagaEngine *engine);
-int SagaColombia(SagaEngine *engine);
-int SagaMexico(SagaEngine *engine);
-int SagaPeru(SagaEngine *engine);
-int SagaVenezuela(SagaEngine *engine);
+int SagaArgentinaParams(SagaEngine *engine);
+int SagaCastillaParams(SagaEngine *engine);
+int SagaChileParams(SagaEngine *engine);
+int SagaColombiaParams(SagaEngine *engine);
+int SagaMexicoParams(SagaEngine *engine);
+int SagaPeruParams(SagaEngine *engine);
+int SagaVenezuelaParams(SagaEngine *engine);
 
+int SagaEngine_SetParamsFromVariant(SagaEngine *engine, const char *variant);
+SagaEngine * SagaEngine_NewFromVariant(const char *variant);
+int SagaEngine_TranscribeText(SagaEngine *engine, const char *text, const char *encoding,
+                              char **fon, char **fnm, char **fnmpal, char **sefo, char **sem);
 #ifdef __cplusplus
 }
 #endif

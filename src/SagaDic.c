@@ -372,7 +372,6 @@ int		AplDicPal(
 	char *_Palabra = NULL;
 
 	char	*Palabra, *PalDic, *IniPal;
-	char *newfrase = NULL;
 	int		Ind, IniCom, FinCom;
 	int		Pos;
 	int		LongExc, LongFrs;

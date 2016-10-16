@@ -170,8 +170,8 @@ int SagaEngine_ReadText(SagaEngine *engine) {
 	    engine->TxtOrt = CargTxtOrt(engine->FpIn, engine->TrnLinAis);
 	} else if (engine->TxtIn != NULL) {
 	    engine->TxtOrt = CargTxtOrtChar(engine->TxtIn, &engine->TxtInOffset, engine->TrnLinAis);
-	} if (engine->TxtOrt == NULL) {
-		fprintf(engine->FpErr, "%s", "");
+	}
+	if (engine->TxtOrt == NULL) {
 		return -1;
 	}
 	return 0;
@@ -805,7 +805,7 @@ char	*ArreglaTxt(char *TxtOrt)
 	return Txt;
 }
 
-int SagaArgentina(SagaEngine *engine) {
+int SagaArgentinaParams(SagaEngine *engine) {
 	
   engine->FicDicExc = SAGA_DICCDIR "/Arg/ArgExc.dicc";
 	engine->FicDicSust = SAGA_DICCDIR "/Arg/ArgSust.dicc";
@@ -816,7 +816,7 @@ int SagaArgentina(SagaEngine *engine) {
 }
 
 
-int SagaCastilla(SagaEngine *engine) {
+int SagaCastillaParams(SagaEngine *engine) {
 	
   engine->FicDicExc = SAGA_DICCDIR "/Cas/CasExc.dicc";
 	engine->FicTrnFon = SAGA_DICCDIR "/Cas/CasTrnFon.dicc";
@@ -827,7 +827,7 @@ int SagaCastilla(SagaEngine *engine) {
 	return 0;
 }
 
-int SagaChile(SagaEngine *engine) {
+int SagaChileParams(SagaEngine *engine) {
 	
   engine->FicNovFon = SAGA_DICCDIR "/Chl/ChlNovFon.dicc";
   engine->FicDicExc = SAGA_DICCDIR "/Chl/ChlExc.dicc";
@@ -837,7 +837,7 @@ int SagaChile(SagaEngine *engine) {
 	return 0;
 }
 
-int SagaColombia(SagaEngine *engine) {
+int SagaColombiaParams(SagaEngine *engine) {
 	
   engine->FicDicExc = SAGA_DICCDIR "/Col/ColExc.dicc";
 	engine->FicDicSust = SAGA_DICCDIR "/Col/ColSust.dicc";
@@ -846,7 +846,7 @@ int SagaColombia(SagaEngine *engine) {
 	return 0;
 }
 
-int SagaMexico(SagaEngine *engine) {
+int SagaMexicoParams(SagaEngine *engine) {
 	
   engine->FicDicExc = SAGA_DICCDIR "/Mex/MexExc.dicc";
 	engine->FicDicSust = SAGA_DICCDIR "/Mex/MexSust.dicc";
@@ -855,7 +855,7 @@ int SagaMexico(SagaEngine *engine) {
 	return 0;
 }
 
-int SagaPeru(SagaEngine *engine) {
+int SagaPeruParams(SagaEngine *engine) {
 	
   engine->FicDicExc = SAGA_DICCDIR "/Per/PerExc.dicc";
 	engine->FicDicSust = SAGA_DICCDIR "/Per/PerSust.dicc";
@@ -864,11 +864,149 @@ int SagaPeru(SagaEngine *engine) {
 	return 0;
 }
 
-int SagaVenezuela(SagaEngine *engine) {
+int SagaVenezuelaParams(SagaEngine *engine) {
 	
   engine->FicDicExc = SAGA_DICCDIR "/Ven/VenExc.dicc";
 	engine->FicDicSust = SAGA_DICCDIR "/Ven/VenSust.dicc";
 
 	engine->ClaveModif = SESEO | ESE_ASP_INC | NAS_VELAR | EQUIS_KS;
 	return 0;
+}
+
+int SagaEngine_SetParamsFromVariant(SagaEngine *engine, const char *variant) {
+  if (strcmp(variant, "argentina") == 0) {
+	 if (SagaArgentinaParams(engine) <0) {
+		 return -1;
+	 }
+	} else if (strcmp(variant, "castilla") == 0) {
+	 if (SagaCastillaParams(engine) <0) {
+		 return -1;
+	 }				 
+ } else if (strcmp(variant, "chile") == 0) {
+	 if (SagaChileParams(engine) <0) {
+		 return -1;
+	 }				 
+ } else if (strcmp(variant, "colombia") == 0) {
+	 if (SagaColombiaParams(engine) <0) {
+		 return -1;
+	 }				 
+ } else if (strcmp(variant, "mexico") == 0) {
+	 if (SagaMexicoParams(engine) <0) {
+		 return -1;
+	 }				 
+ } else if (strcmp(variant, "peru") == 0) {
+	 if (SagaPeruParams(engine) <0) {
+		 return -1;
+	 }				 
+ } else if (strcmp(variant, "venezuela") == 0) {
+	 if (SagaVenezuelaParams(engine) <0) {
+		 return -1;
+	 }				 
+ } else {
+	 fprintf(stderr, "Variante dialectal desconocida: '%s'\n", variant);
+	 return -1;
+ }
+ return 0;
+}
+
+SagaEngine * SagaEngine_NewFromVariant(const char *variant) {
+	SagaEngine *engine = calloc(1, sizeof(SagaEngine));
+	if (engine == NULL) return NULL;
+	if (SagaEngine_Initialize(engine) < 0) {
+		free(engine);
+		return NULL;
+	}
+	if (SagaEngine_SetParamsFromVariant(engine, variant) < 0) {
+    SagaEngine_Clear(engine);
+		free(engine);
+		return NULL;
+	}
+  if (SagaEngine_LoadData(engine) < 0) {
+    SagaEngine_Clear(engine);
+    free(engine);
+		return NULL;
+	}
+	return engine;
+}
+
+int SagaEngine_TranscribeText(SagaEngine *engine, const char *text, const char *encoding,
+                              char **fon, char **fnm, char **fnmpal, char **sefo, char **sem) {
+	size_t fon_size=0, fnm_size=0, fnmpal_size=0, sefo_size=0, sem_size=0;
+	size_t fon_filled=0, fnm_filled=0, fnmpal_filled=0, sefo_filled=0, sem_filled=0;
+	if (fon != NULL) {
+    if (*fon != NULL) {
+		  fon_filled = strlen(*fon);
+		  fon_size = fon_filled + 1;
+	  }
+	  engine->SalFon = 1;
+  }
+  
+  if (fnm != NULL) {
+		if (*fnm != NULL) {
+		  fnm_filled = strlen(*fnm);		
+		  fnm_size = fnm_filled + 1;
+	  }
+	  engine->SalFnm = 1;
+	}
+
+	if (fnmpal != NULL) {
+		if (*fnmpal != NULL) {
+  		fnmpal_filled = strlen(*fnmpal);
+	  	fnmpal_size = fnmpal_filled + 1;
+		}
+		engine->SalFnmPal = 1;
+	}
+	
+	if (sefo != NULL) {
+		if (*sefo != NULL) {
+		  sefo_filled = strlen(*sefo);
+		  sefo_size = sefo_filled + 1;
+	  }
+	  engine->SalSefo = 1;
+	}
+	
+	if (sem != NULL) {
+		if (*sem != NULL) {
+		  sem_filled = strlen(*sem);
+		  sem_size = sem_filled + 1;
+		}
+		engine->SalSem = 1;
+	}
+
+	SagaEngine_Refresh(engine);
+	SagaEngine_InputFromText(engine, text, encoding);
+		
+	while ( ! (SagaEngine_ReadText(engine) < 0)) {
+    if (SagaEngine_Transcribe(engine) < 0) {
+			SagaEngine_Refresh(engine);
+			return -1;
+		}
+		if (engine->SalFon && fon != NULL) {
+			if (safe_strcat(fon, engine->TrnFon, &fon_size, &fon_filled) < 0) {
+				return -1;
+			}
+		}
+		if (engine->SalFnm && fnm != NULL) {
+			if (safe_strcat(fnm, engine->TrnFnm, &fnm_size, &fnm_filled) < 0) {
+				return -1;
+			}
+		}
+		if (engine->SalFnmPal && fnmpal != NULL) {
+			if (safe_strcat(fnmpal, engine->TrnFnmPal, &fnmpal_size, &fnmpal_filled) < 0) {
+				return -1;
+			}
+		}
+		if (engine->SalSefo && sefo != NULL) {
+			if (safe_strcat(sefo, engine->TrnSem, &sefo_size, &sefo_filled) < 0) {
+				return -1;
+			}
+		}
+		if (engine->SalSem && sem != NULL) {
+			if (safe_strcat(sem, engine->TrnSefo, &sem_size, &sem_filled) < 0) {
+				return -1;
+			}
+		}
+	}
+	SagaEngine_CloseInput(engine);
+  return 0;
 }

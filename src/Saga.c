@@ -146,36 +146,7 @@ static int OpcSaga(
 	while ((Opcion = getopt(ArgC, ArgV, "abd:L:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1) {
 		switch (Opcion) {
 		case 'L' :
-		   if (strcmp(optarg, "argentina") == 0) {
-				 if (SagaArgentina(engine) <0) {
-					 return -1;
-				 }
-			 } else if (strcmp(optarg, "castilla") == 0) {
-				 if (SagaCastilla(engine) <0) {
-					 return -1;
-				 }				 
-			 } else if (strcmp(optarg, "chile") == 0) {
-				 if (SagaChile(engine) <0) {
-					 return -1;
-				 }				 
-			 } else if (strcmp(optarg, "colombia") == 0) {
-				 if (SagaColombia(engine) <0) {
-					 return -1;
-				 }				 
-			 } else if (strcmp(optarg, "mexico") == 0) {
-				 if (SagaMexico(engine) <0) {
-					 return -1;
-				 }				 
-			 } else if (strcmp(optarg, "peru") == 0) {
-				 if (SagaPeru(engine) <0) {
-					 return -1;
-				 }				 
-			 } else if (strcmp(optarg, "venezuela") == 0) {
-				 if (SagaVenezuela(engine) <0) {
-					 return -1;
-				 }				 
-			 } else {
-				 fprintf(stderr, "Variante dialectal desconocida\n");
+		   if (SagaEngine_SetParamsFromVariant(engine, optarg) < 0) {
 				 return -1;
 			 }
 			 break;
