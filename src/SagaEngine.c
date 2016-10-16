@@ -1,3 +1,5 @@
+/* coding: iso-8859-15 */
+
 /* Saga - Un transcriptor fonético para el idioma español
  *
  * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
@@ -226,9 +228,15 @@ int SagaEngine_WriteErrorWords(SagaEngine *engine) {
 
 static int SagaEngine_LoadDictionaries(SagaEngine *engine)
 {
+	BorraDicExc(engine->DicExc);
+	BorraDicExc(engine->DicTrnFon);
+	BorraDicExc(engine->DicTrnPal);
+	BorraDicExc(engine->DicSust);
+	BorraDicExc(engine->DicGrp);
 	/*
 	 * Cargamos los diccionarios de excepciones y substituciones.
 	 */
+
 	if (engine->FicDicExc != NULL && (engine->DicExc = CargDicExc(engine->FicDicExc)) == NULL) {
 		fprintf(engine->FpErr, "Error al cargar el diccionario de excepciones\n");
 		return -1;
