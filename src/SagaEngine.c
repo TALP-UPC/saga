@@ -817,9 +817,5 @@ int SagaCastilla(SagaEngine *engine) {
 	engine->FicDicSust = SAGA_DICCDIR "/Cas/CasDicSust.dicc";
 	engine->FicDicGrp = SAGA_DICCDIR "/Cas/CasDicGrp.dicc";
   engine->FicNovCons = SAGA_DICCDIR "/Cas/CasNovCns.dicc";
-  if (SagaEngine_LoadData(engine) < 0) {
-    SagaEngine_Clear(engine);
-		return -1;
-	}
 	return 0;
 }
