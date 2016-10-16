@@ -23,6 +23,7 @@
 #include	<ctype.h>
 #include	"SagaInternal.h"
 #include	"ExcAcc.h"
+#include "Util.h"
 
 /***********************************************************************
  * AcenSilOrt - Acentua un texto silabificado.
@@ -117,7 +118,11 @@ char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine)
 
 {
 	char	*AcenPal, *PalSil;
-	char	UltSil[128], PenSil[128];
+	char *tmp;
+	char *UltSil = NULL;
+	size_t UltSilSize = 0, UltSilFilled = 0;
+	char *PenSil = NULL;
+	size_t PenSilSize = 0, PenSilFilled = 0;
 	int		Pos, PosUltSil, PosPenSil;
 	int		Long = GrpOrt.Long, Mente, LongPalSil;
 
@@ -128,12 +133,31 @@ char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine)
 	 */
 	if ((AcenPal = (char *) calloc((size_t) (20*Long+1), sizeof(char))) == (char *) 0) {
 		fprintf(stderr, "Error al ubicar memoria para AcenPal\n");
-		return (char *) 0;
+		return NULL;
 	}
 	if ((PalSil = (char *) calloc((size_t) (20*Long+1), sizeof(char))) == (char *) 0) {
 		fprintf(stderr, "Error al ubicar memoria para PalSil\n");
-		return (char *) 0;
+		free(AcenPal);
+		return NULL;
 	}
+
+	UltSilSize = 128;
+	if ((UltSil = calloc(UltSilSize, sizeof(char))) == NULL) {
+		fprintf(stderr, "Error al ubicar memoria para UltSil\n");
+		free(AcenPal);
+		free(PalSil);
+		return NULL;
+	}
+
+	PenSilSize = 128;
+	if ((PenSil = calloc(PenSilSize, sizeof(char))) == NULL) {
+		fprintf(stderr, "Error al ubicar memoria para PenSil\n");
+		free(AcenPal);
+		free(PalSil);
+		free(UltSil);
+		return NULL;
+	}
+
 
 	strncpy(PalSil, GrpOrt.Cont, Long);
 	PalSil[Long] = '\0';
@@ -157,8 +181,10 @@ char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine)
 	}
 	else if (strchr(PalSil, '-') == (char *) 0) {
 		if (AcenSil(PalSil, engine) < 0) {
-			free((void *) AcenPal);
-			free((void *) PalSil);
+			free(AcenPal);
+			free(PalSil);
+			free(UltSil);
+			free(PenSil);
 			return (char *) 0;
 		}
 		strcat(AcenPal, PalSil);
@@ -170,8 +196,22 @@ char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine)
 		for (PosUltSil = strlen(PalSil); PalSil[PosUltSil-1] != '-'; PosUltSil--) ;
 		for (PosPenSil = PosUltSil-1; PosPenSil > 0 && PalSil[PosPenSil-1] != '-'; PosPenSil--) ;
 
-		strcpy(UltSil, &PalSil[PosUltSil]);
-		strcpy(PenSil, &PalSil[PosPenSil]);
+		UltSilFilled = 0;
+		if (safe_strcat(&UltSil, &PalSil[PosUltSil], &UltSilSize, &UltSilFilled) < 0) {
+			free(AcenPal);
+			free(PalSil);
+			free(UltSil);
+			free(PenSil);
+			return NULL;
+		}
+		PenSilFilled = 0;
+		if (safe_strcat(&PenSil, &PalSil[PosPenSil], &PenSilSize, &PenSilFilled) < 0) {
+			free(AcenPal);
+			free(PalSil);
+			free(UltSil);
+			free(PenSil);
+			return NULL;
+		}
 		for (Pos = 0; Pos < (int) strlen(PenSil); Pos++) {
 			if (PenSil[Pos] == '-') PenSil[Pos] = '\0';
 		}
@@ -190,15 +230,19 @@ char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine)
 		if (((LongPalSil > 0) && strchr("aeiouns", PalSil[LongPalSil-1]) != (char *) 0) ||
 			((LongPalSil > 1) && PalSil[LongPalSil-1] == 'y' && !strchr("aeiou", PalSil[LongPalSil-2]))) {
 			if (AcenSil(PenSil, engine) < 0) {
-				free((void *) AcenPal);
-				free((void *) PalSil);
+				free(AcenPal);
+				free(PalSil);
+				free(UltSil);
+				free(PenSil);
 				return (char *) 0;
 			}
 		}
 		else {
 			if (AcenSil(UltSil, engine) < 0) {
-				free((void *) AcenPal);
-				free((void *) PalSil);
+				free(AcenPal);
+				free(PalSil);
+				free(UltSil);
+				free(PenSil);
 				return (char *) 0;
 			}
 		}
@@ -212,9 +256,15 @@ char	*AcenPalSil(GRP_ORT	GrpOrt, SagaEngine *engine)
 	}
 
 	free(PalSil);
+	free(UltSil);
+	free(PenSil);
 
-	AcenPal = realloc(AcenPal, strlen(AcenPal) + 1);
-
+  tmp = realloc(AcenPal, strlen(AcenPal) + 1);
+  if (tmp == NULL) {
+		return AcenPal;
+	} else {
+		AcenPal = tmp;
+	}
 	return AcenPal;
 }
 

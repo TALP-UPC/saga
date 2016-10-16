@@ -366,17 +366,37 @@ int		AplDicPal(
 	int		LongPal,
 	char	***DicExc)
 {
-	char	Mascara[_POSIX_PATH_MAX];
-	char	_Palabra[_POSIX_PATH_MAX], *Palabra, *PalDic, *IniPal;
+	char *Mascara = NULL;
+	size_t MascaraSize = 0, MascaraFilled = 0;
+
+	char *_Palabra = NULL;
+
+	char	*Palabra, *PalDic, *IniPal;
+	char *newfrase = NULL;
 	int		Ind, IniCom, FinCom;
 	int		Pos;
 	int		LongExc, LongFrs;
 	int		PosAct = _PosAct;
 
+	/* Un buffer de 256 para Mascara es suficiente */
+	MascaraSize = 256;
+	if ((Mascara = calloc(MascaraSize, sizeof(char))) == NULL) {
+		fprintf(stderr, "Error al ubicar memoria para Mascara\n");
+		return -1;
+	}
+
+	if ((_Palabra = malloc(LongPal+1)) == NULL) {
+		fprintf(stderr, "Error al ubicar memoria para _Palabra\n");
+		free(Mascara);
+		return -1;
+	}
+
+
 	LongFrs = strlen(*Frase);
 
-	*_Palabra = '\0';
-	strncat(_Palabra, (*Frase) + PosAct, LongPal);
+  
+  _Palabra[0] = '\0';
+  strncat(_Palabra, (*Frase) + PosAct, LongPal);
 	Palabra = _Palabra;
 
 	/*
@@ -399,6 +419,8 @@ int		AplDicPal(
 		if (LongPal < LongExc) {
 			if ((*Frase = (char *) realloc((void *) *Frase, (LongFrs + 1) * sizeof(char))) == (char *) 0) {
 				fprintf(stderr, "Error de memoria\n");
+				free(Mascara);
+				free(_Palabra);
 				return -1;
 			}
 
@@ -411,12 +433,15 @@ int		AplDicPal(
 			(*Frase)[Pos] = DicExc[Ind][1][Pos - PosAct];
 		}
 
+		free(Mascara);
+		free(_Palabra);
 		return Ind;
 	}
 
 	for (Ind = 0; DicExc[Ind] != (char **) 0; Ind++) {
 		Palabra = _Palabra;
-		strcpy(Mascara, DicExc[Ind][0]);
+		MascaraFilled = 0;
+		safe_strcat(&Mascara, DicExc[Ind][0], &MascaraSize, &MascaraFilled);
 		PalDic = Mascara;
 		LongExc = strlen(PalDic);
 		IniCom = FinCom = 0;
@@ -465,7 +490,12 @@ int		AplDicPal(
 			if (strncmp(Palabra + LongPal - LongExc, PalDic, LongExc) != 0) continue;
 		}
 
-		if (!IniCom && !FinCom && (LongPal != LongExc || strcmp(Palabra, PalDic) != 0)) continue;
+		/* The condition (!IniCom && !FinCom) is false, otherwise we would
+		 * have hit "continue" about 20 lines above.
+		 * Therefore here we have: if (FALSE && something) continue
+		 * This case will never be TRUE, we can remove it.
+		 *  */
+		/*if (!IniCom && !FinCom && (LongPal != LongExc || strcmp(Palabra, PalDic) != 0)) continue;*/
 
 		LongExc = strlen(DicExc[Ind][1]);
 
@@ -480,6 +510,8 @@ int		AplDicPal(
 		if (LongPal < LongExc) {
 			if ((*Frase = (char *) realloc((void *) *Frase, (LongFrs + 1) * sizeof(char))) == (char *) 0) {
 				fprintf(stderr, "Error de memoria\n");
+				free(Mascara);
+				free(_Palabra);
 				return -1;
 			}
 
@@ -492,8 +524,12 @@ int		AplDicPal(
 			(*Frase)[Pos] = DicExc[Ind][1][Pos - PosAct];
 		}
 
+		free(Mascara);
+		free(_Palabra);
 		return Ind;
 	}
 
+	free(Mascara);
+	free(_Palabra);
 	return -1;
 }
