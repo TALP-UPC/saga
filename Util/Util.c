@@ -127,15 +127,18 @@ char	**MatStrChr(
 }
 
 
-void safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_strlen)
+int safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_strlen)
 {
 	size_t src_strlen = strlen(src);
 	char *new_dest;
+	if (src_strlen == 0) {
+		return 0;
+	}
 	if (*dest_size-1-*dest_strlen < src_strlen) {
 		new_dest = realloc(*dest, 2*(*dest_size+src_strlen));
 		if (new_dest == NULL) {
 			*dest = NULL;
-			return;
+			return -1;
 		}
 		*dest = new_dest;
 		*dest_size = 2*(*dest_size+src_strlen);
@@ -143,5 +146,5 @@ void safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_s
 	}
 	strcpy(*dest + *dest_strlen, src);
 	*dest_strlen += src_strlen;
-	return;
+	return 0;
 }
