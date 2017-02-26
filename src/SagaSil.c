@@ -1,7 +1,8 @@
-/* Saga - Un transcriptor fonético para el idioma español
+/* coding: utf-8 */
+/* Saga - Un transcriptor fonÃ©tico para el idioma espaÃ±ol
  *
- * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
- *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
+ * Copyright (C) 1993-2009  Albino Nogueiras RodrÃ­guez y JosÃ© B. MariÃ±o
+ *       TALP - Universitat PolitÃ¨cnica de Catalunya, ESPAÃ‘A
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 
 #include	<stdio.h>
 #include	<string.h>
@@ -419,7 +421,7 @@ char	*SilaPalOrt(GRP_ORT	GrpOrt, SagaEngine *engine)
 		GrpCons[0] = '\0';
 		GrpConsFilled = 0;
 		while ((Chr = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt)) >= 0) {
-/* J. Adrián 21-JUN-2005
+/* J. AdriÃ¡n 21-JUN-2005
 			if (strcmp(engine->ConsTxt[Chr], "y") == 0) {
 				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), engine->ConsTxt)) >= 0 ||
 					IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), Letras) < 0) {
@@ -428,7 +430,7 @@ char	*SilaPalOrt(GRP_ORT	GrpOrt, SagaEngine *engine)
 			}
 */
 			if (strcmp(engine->ConsTxt[Chr], "h") == 0) {
-/* J. Adrián 21-JUN-2005
+/* J. AdriÃ¡n 21-JUN-2005
 				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), engine->ConsTxt)) >= 0 ||
 					IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), engine->Letras) < 0) {
 					Ind += strlen(engine->ConsTxt[Chr]);

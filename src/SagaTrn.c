@@ -1,7 +1,8 @@
-/* Saga - Un transcriptor fonético para el idioma español
+/* coding: utf-8 */
+/* Saga - Un transcriptor fonÃ©tico para el idioma espaÃ±ol
  *
- * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
- *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
+ * Copyright (C) 1993-2009  Albino Nogueiras RodrÃ­guez y JosÃ© B. MariÃ±o
+ *       TALP - Universitat PolitÃ¨cnica de Catalunya, ESPAÃ‘A
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 
 #define _POSIX_C_SOURCE 200809L
 

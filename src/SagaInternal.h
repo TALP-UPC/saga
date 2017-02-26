@@ -1,7 +1,8 @@
-/* Saga - Un transcriptor fonético para el idioma español
+/* coding: utf-8 */
+/* Saga - Un transcriptor fonÃ©tico para el idioma espaÃ±ol
  *
- * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
- *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
+ * Copyright (C) 1993-2009  Albino Nogueiras RodrÃ­guez y JosÃ© B. MariÃ±o
+ *       TALP - Universitat PolitÃ¨cnica de Catalunya, ESPAÃ‘A
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,49 +54,74 @@ typedef struct {
 #define	ESP_FON		0X2000
 #define	PUNT_FON	0X4000
 
+/* ISO-8859-15 */
+#define AACUTE '\xE1'
+#define AACUTE_STR "\xE1"
+#define EACUTE '\xE9'
+#define EACUTE_STR "\xE9"
+#define IACUTE '\xED'
+#define IACUTE_STR "\xED"
+#define OACUTE '\xF3'
+#define OACUTE_STR "\xF3"
+#define UACUTE '\xFA'
+#define UACUTE_STR "\xFA"
+#define UUMLAUT '\xFC'
+#define UUMLAUT_STR "\xFC"
+#define REV_QUESTION '\xBF'
+#define REV_QUESTION_STR "\xBF"
+#define REV_EXCLAM '\xA1'
+#define REV_EXCLAM_STR "\xA1"
+#define NTILDE '\xF1'
+#define NTILDE_STR "\xF1"
+#define CEDILLA '\xE7'
+#define CEDILLA_STR "\xE7"
+#define ALL_ACUTE "\xE1\xE9\xED\xF3\xFA"
+#define ALL_PUNCT_AND_SPACES ".,:;\xBF?()\xA1! \t\n"
 
 static char	*_Letras[] __attribute__((unused)) = {
 	"a", "'a", "ha", "h'a", "b", "c", "ch", "d", "e", "'e", "he",
-	"á", "há", "é", "hé", "í", "hí", "ó", "hó", "ú", "hú", 
-	"h'e", "f", "g", "h", "i", "'i", "hi", "h'i", "j", "k", "l", "ll",
+	AACUTE_STR, "h" AACUTE_STR, EACUTE_STR, "h" EACUTE_STR,
+    IACUTE_STR, "h" IACUTE_STR, OACUTE_STR, "h" OACUTE_STR,
+    UACUTE_STR, "h" UACUTE_STR, "h'e", "f", "g", "h", "i", "'i", "hi", "h'i", "j", "k", "l", "ll",
 	"m", "n", "~n", "o", "'o", "ho", "h'o", "p", "qu", "r", "rr", "s",
 	"t", "u", "'u", "~u", "hu", "h'u", "v", "w", "x", "y", "z", "tl",
-	"tz", "&", (char *) 0};
+	"tz", "&", NULL};
 static char	*_Vocales[] __attribute__((unused)) = {
 	"a", "e", "i", "o", "u", "a_", "e_", "i_", "o_", "u_", "'a", "'e", "'i", "'o", "'u", "~u",
-	"á", "há", "é", "hé", "í", "hí", "ó", "hó", "ú", "hú", 
-	"ha", "h'a", "he", "h'e", "hi", "h'i", "ho", "h'o", "hu", "h'u", (char *) 0};
+	AACUTE_STR, "h" AACUTE_STR, EACUTE_STR, "h" EACUTE_STR, IACUTE_STR, "h" IACUTE_STR,
+    OACUTE_STR, "h" OACUTE_STR, UACUTE_STR, "h" UACUTE_STR, 
+	"ha", "h'a", "he", "h'e", "hi", "h'i", "ho", "h'o", "hu", "h'u", NULL};
 static char	*VocDeb[] __attribute__((unused)) = {
-	"í", "hí", "ú", "hú", "i", "u", "~u", "hi", "hu", (char *) 0};
+	IACUTE_STR, "h" IACUTE_STR, UACUTE_STR, "h" UACUTE_STR, "i", "u", "~u", "hi", "hu", NULL};
 static char	*VocFort[] __attribute__((unused)) = {
-	"á", "há", "é", "hé", "ó", "hó",
-	"a", "e", "o", "'a", "'e", "'i", "'o", "'u", "ha", "h'a", "he", "h'e", "h'i", "ho", "h'o", "h'u", (char *) 0};
+	AACUTE_STR, "h" AACUTE_STR, EACUTE_STR, "h" EACUTE_STR, OACUTE_STR, "h" OACUTE_STR,
+	"a", "e", "o", "'a", "'e", "'i", "'o", "'u", "ha", "h'a", "he", "h'e", "h'i", "ho", "h'o", "h'u", NULL};
 static char	*_ConsTxt[] __attribute__((unused)) = {
 	"b", "c", "ch", "d", "f", "g", "h", "j", "k", "l", "ll", "m", "n", "~n", "p", "qu", "r", "rr", "s", "t", "v", "w", "x",
-	"y", "z", "tl", "tz", (char *) 0};
+	"y", "z", "tl", "tz", NULL};
 static char	*Nasales[] __attribute__((unused)) = { 
-	"m", "n", "~n", (char *) 0};
+	"m", "n", "~n", NULL};
 static char	*ConsL[] __attribute__((unused)) = {
-	"b", "c", "k", "f", "g", "p", "t", (char *) 0};
+	"b", "c", "k", "f", "g", "p", "t", NULL};
 static char	*ConsR[] __attribute__((unused)) = {
-	"b", "c", "k", "d", "f", "g", "p", "t", (char *) 0};
+	"b", "c", "k", "d", "f", "g", "p", "t", NULL};
 static char	*Silen[] __attribute__((unused)) = {
-	",", ";", ".", "...", ":", "(", ")", "!", "¡", "'!", "?", "¿", "'?", "#", ";", "*", "~", (char *) 0};
+	",", ";", ".", "...", ":", "(", ")", "!", REV_EXCLAM_STR, "'!", "?", REV_QUESTION_STR, "'?", "#", ";", "*", "~", NULL};
 static char	*Espacios[] __attribute__((unused)) = {
-	" ", "\t", "\"", "\n", "\r\n", (char *) 0};
+	" ", "\t", "\"", "\n", "\r\n", NULL};
 static char	*InterSil[] __attribute__((unused)) = {
-	"-", (char *) 0};
+	"-", NULL};
 static char	*SilFon[] __attribute__((unused)) = {
-	",", ";", ".", "...", ":", "(", ")", "!", "¡", "'!", "?", "¿", "'?", "~", "*", (char *) 0};
+	",", ";", ".", "...", ":", "(", ")", "!", REV_EXCLAM_STR, "'!", "?", REV_QUESTION_STR, "'?", "~", "*", NULL};
 static char	*EspFon[] __attribute__((unused)) = {
-	" ", "\t", "\"", (char *) 0};
+	" ", "\t", "\"", NULL};
 static char	*PuntFon[] __attribute__((unused)) = {
-	"\n", "\r\n", "#", (char *) 0};
+	"\n", "\r\n", "#", NULL};
 
 static char	*_Fonemas[] __attribute__((unused)) = {
 	"a", "e", "i", "o", "u", "'a", "'e", "'i", "'o", "'u", "a_", "e_", "i_", "o_", "u_", "j", "w",
 	"b", "B", "d", "D", "g", "G", "p", "t", "k", "tS", "bcl", "dcl", "gcl", "pcl", "tcl", "kcl", "T", "f", "s", "z", "h", "x",
-	"m", "n", "J", "N", "l", "@l", "L", "r", "rr", "R", "@r", "jj", "tL", "ts", (char *) 0};
+	"m", "n", "J", "N", "l", "@l", "L", "r", "rr", "R", "@r", "jj", "tL", "ts", NULL};
 static char	*FonCns[] __attribute__((unused)) = {
 	"b", "B", "d", "D", "g", "G", "p", "t", "k", "bcl", "dcl", "gcl", "pcl", "tcl", "kcl", "tS",
 	"B:.", "D:.", "G:.", "p:.", "t:.", "tS:.", "k:.", "pcl:.", "tcl:.", "kcl:.",
@@ -109,15 +135,15 @@ static char	*FonCns[] __attribute__((unused)) = {
 	"m:", "n:", "N:", "l:", "r:", "R:", "jj:", "tL:", "ts:", "L:", "L:.", "tS:.",
 	"m:.", "n:.", "N:.", "l:.", "r:.", "R:.", "jj:.", "tL:.", "ts:.",
 	"m.", "n.", "N.", "l.", "r.", "R.", "jj.", "tL.", "ts.",
-	"m", "n", "J", "N", "l", "@l", "L", "r", "rr", "R", "@r", "jj", "tL", "ts", (char *) 0};
+	"m", "n", "J", "N", "l", "@l", "L", "r", "rr", "R", "@r", "jj", "tL", "ts", NULL};
 static char	*FonSem[] __attribute__((unused)) = {
-	"j", "j:", ".j", "j:.", ".j:.", ".j.", "j.", "w", "w:", ".w", "w:.", ".w:.", ".w.", "w.", (char *) 0};
+	"j", "j:", ".j", "j:.", ".j:.", ".j.", "j.", "w", "w:", ".w", "w:.", ".w:.", ".w.", "w.", NULL};
 static char	*FonVoc[] __attribute__((unused)) = {
 	"a", "e", "i", "o", "u", "'a", "'e", "'i", "'o", "'u",
 	".a.", ".e.", ".i.", ".o.", ".u.", ".'a.", ".'e.", ".'i.", ".'o.", ".'u.",
 	".a", ".e", ".i", ".o", ".u", ".'a", ".'e", ".'i", ".'o", ".'u",
 	"a.", "e.", "i.", "o.", "u.", "'a.", "'e.", "'i.", "'o.", "'u.",
-	"a_", "e_", "i_", "o_", "u_", "a_.", "e_.", "i_.", "o_.", "u_.", (char *) 0};
+	"a_", "e_", "i_", "o_", "u_", "a_.", "e_.", "i_.", "o_.", "u_.", NULL};
 
 char	*ArreglaTxt(char *TxtOrt);
 

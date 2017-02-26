@@ -1,7 +1,8 @@
-/* Saga - Un transcriptor fonético para el idioma español
+/* coding: utf-8 */
+/* Saga - Un transcriptor fonÃ©tico para el idioma espaÃ±ol
  *
- * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
- *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
+ * Copyright (C) 1993-2009  Albino Nogueiras RodrÃ­guez y JosÃ© B. MariÃ±o
+ *       TALP - Universitat PolitÃ¨cnica de Catalunya, ESPAÃ‘A
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,7 +307,7 @@ static void	EmpleoSaga(char	**ArgV)
 	fprintf(stderr, "    -y        : Transcripcion en semifonemas (ext. .sef)\n");
 	fprintf(stderr, "\n");
 	fprintf(stderr, "    -a        : Transcribir palabras aisladas\n");
-	fprintf(stderr, "    -b        : Transcribir cada línea de forma aislada\n");
+	fprintf(stderr, "    -b        : Transcribir cada lÃ­nea de forma aislada\n");
 	fprintf(stderr, "    -S        : Conservar los silencios en la salida\n");
 	fprintf(stderr, "    -Y ExtPal[,FinPal] : Marca de inicio y/o final de palabra\n");
 	fprintf(stderr, "\n");

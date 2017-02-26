@@ -1,9 +1,8 @@
-/* coding: iso-8859-15 */
-
-/* Saga - Un transcriptor fonético para el idioma español
+/* coding: utf-8 */
+/* Saga - Un transcriptor fonÃ©tico para el idioma espaÃ±ol
  *
- * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
- *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
+ * Copyright (C) 1993-2009  Albino Nogueiras RodrÃ­guez y JosÃ© B. MariÃ±o
+ *       TALP - Universitat PolitÃ¨cnica de Catalunya, ESPAÃ‘A
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -809,26 +808,34 @@ char	*ArreglaTxt(char *TxtOrt)
 	*Txt = '\0';
 	for (Chr = 0; Chr < strlen(TxtOrt); Chr++) {
 		switch(TxtOrt[Chr]) {
-			case 'y':	if ((Chr == 0 || strchr(".,:;¿?()¿¡! \t\n", TxtOrt[Chr - 1])) && (Chr == strlen(TxtOrt) - 1 || strchr(".,:;¿?()¿¡! \t\n", TxtOrt[Chr + 1])))
-							strcat(Txt, "y");
-						else if (strchr("aeiouáéíóú'", TxtOrt[Chr + 1]) == NULL) strcat(Txt, "i");
-						else strcat(Txt, "y");
+			case 'y':
+				if ((Chr == 0 || strchr(ALL_PUNCT_AND_SPACES, TxtOrt[Chr - 1]) != NULL) && \
+					(Chr == strlen(TxtOrt) - 1 || strchr(ALL_PUNCT_AND_SPACES, TxtOrt[Chr + 1]) != NULL))
+				{
+					strcat(Txt, "y");
+				} else if (strchr("aeiou" ALL_ACUTE "'", TxtOrt[Chr + 1]) == NULL)
+				{
+					strcat(Txt, "i");
+				} else
+				{
+					strcat(Txt, "y");
+				}
+				break;
+			case AACUTE:	strcat(Txt, "'a");
 						break;
-			case 'á':	strcat(Txt, "'a");
+			case EACUTE:	strcat(Txt, "'e");
 						break;
-			case 'é':	strcat(Txt, "'e");
+			case IACUTE:	strcat(Txt, "'i");
 						break;
-			case 'í':	strcat(Txt, "'i");
+			case OACUTE:	strcat(Txt, "'o");
 						break;
-			case 'ó':	strcat(Txt, "'o");
+			case UACUTE:	strcat(Txt, "'u");
 						break;
-			case 'ú':	strcat(Txt, "'u");
+			case UUMLAUT:	strcat(Txt, "~u");
 						break;
-			case 'ü':	strcat(Txt, "~u");
+			case NTILDE:	strcat(Txt, "~n");
 						break;
-			case 'ñ':	strcat(Txt, "~n");
-						break;
-			case 'ç':	strcat(Txt, "~c");
+			case CEDILLA:	strcat(Txt, "~c");
 						break;
 			default :	strncat(Txt, TxtOrt + Chr, 1);
 						break;
