@@ -18,15 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define _POSIX_C_SOURCE 200809L
-
 #include	<stdio.h>
 #include	<string.h>
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	<limits.h>
 #include	<values.h>
-#include	<unistd.h> /* getopt family */
 #include	"Util.h"
 #include	"LisUdf.h"
 #include	"SagaInternal.h"
@@ -560,7 +557,7 @@ int SagaEngine_Transcribe(SagaEngine *engine) {
 }
 
 int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut) {
-	char	PathOut[_POSIX_PATH_MAX];
+	char	PathOut[SAGA_PATH_MAX];
 
   if (NomOut == NULL) {
 		engine->FpFon = NULL;
@@ -583,7 +580,7 @@ int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut) {
 		return 0;
 	}
   /* Prevent buffer overflow */
-  if (strlen(NomOut) >= _POSIX_PATH_MAX -5 ) {
+  if (strlen(NomOut) >= SAGA_PATH_MAX -5 ) {
     return -1;
   }
   strcpy(PathOut, NomOut);

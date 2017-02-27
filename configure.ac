@@ -25,7 +25,9 @@ dnl By default disable building static libraries.
 dnl use ./configure --enable-static
 dnl to build them.
 LT_INIT([disable-static])
-
+AC_CHECK_DECLS([strdup, getopt])
+AC_CHECK_FUNCS([strdup getopt])
+AC_TYPE_SSIZE_T
 
 AC_CONFIG_FILES([Makefile saga.pc])
 AC_OUTPUT

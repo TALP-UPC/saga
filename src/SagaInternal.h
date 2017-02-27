@@ -31,6 +31,16 @@ extern "C" {
 
 #include <stdio.h>
 #include "Saga.h"
+#include "PosixCompat.h"
+
+#if defined(_POSIX_PATH_MAX)
+#define SAGA_PATH_MAX _POSIX_PATH_MAX
+#elif defined(_MAX_PATH)
+#define SAGA_PATH_MAX _MAX_PATH
+#else
+#define SAGA_PATH_MAX 255
+#endif
+
 
 typedef struct {
 	size_t	Long;

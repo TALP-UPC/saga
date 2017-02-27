@@ -18,9 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#define _POSIX_C_SOURCE 200809L
-
 #include	<stdio.h>
 #include	<string.h>
 #include	<stdlib.h>
@@ -28,14 +25,7 @@
 #include	<errno.h>
 #include	"SagaInternal.h"
 #include	"Util.h"
-
-#ifndef _POSIX_PATH_MAX
-#ifdef _MAX_PATH
-#define _POSIX_PATH_MAX _MAX_PATH
-#else
-#error "_POSIX_PATH_MAX not defined"
-#endif
-#endif
+#include    "PosixCompat.h"
 
 char	***ReadDicExc(char	*FicDicExc);
 int		AplDicPal(

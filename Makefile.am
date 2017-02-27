@@ -13,7 +13,7 @@ pkgconfiginstall_DATA = saga.pc
 
 # Shared library
 lib_LTLIBRARIES += libsaga.la
-libsaga_la_SOURCES = Util/LisUdf.c Util/Util.c
+libsaga_la_SOURCES = Util/LisUdf.c Util/Util.c Util/PosixCompat.c
 libsaga_la_CFLAGS = -I$(srcdir)/Util -DSAGA_DICCDIR=\"$(pkgdatadir)/dicc/\"
 libsaga_la_LDFLAGS = -no-undefined
 libsaga_la_LIBADD = 
