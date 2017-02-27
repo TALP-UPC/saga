@@ -408,9 +408,10 @@ int SagaEngine_LoadData(SagaEngine *engine) {
 int SagaEngine_InputFromText(SagaEngine *engine, const char *text, const char *encoding) {
 	size_t text_size;
 	char *text_holder = NULL;
+    SagaEngine_CloseInput(engine);
 	if (strcmp(encoding, "ISO-8859-15") == 0) {
-    engine->TxtIn = strdup(text);
-    engine->TxtInOffset = 0;
+		engine->TxtIn = strdup(text);
+        engine->close_in = 1;
 	} else if (strcmp(encoding, "UTF-8") == 0) {
 		text_size = strlen(text);
 		text_holder= malloc(text_size+1);
@@ -420,10 +421,10 @@ int SagaEngine_InputFromText(SagaEngine *engine, const char *text, const char *e
 		}
 		text_size = utf8_to_latin9(text_holder, text, text_size);
 		engine->TxtIn = realloc(text_holder, text_size + 1);
-        engine->TxtInOffset = 0;
 		if (engine->TxtIn == NULL) {
             engine->TxtIn = text_holder;
 		}
+        engine->close_in = 1;
 	} else {
 		fprintf(engine->FpErr, "Error encoding %s not supported. Use ISO-8859-15 or UTF-8.\n", encoding);
 		return -1;
@@ -684,6 +685,7 @@ int SagaEngine_CloseInput(SagaEngine *engine) {
 		if (engine->TxtIn != NULL) {
 		  free(engine->TxtIn);
 		  engine->TxtIn = NULL;
+          engine->TxtInOffset = 0;
 	  }
 	 }
 	 engine->close_in = 0;
