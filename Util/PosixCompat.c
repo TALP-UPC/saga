@@ -37,12 +37,10 @@ char* strdup(const char * str) {
   size_t len;
   char *copy = NULL;
 
-  if (str != NULL) {
-    len = strlen(str) + 1;
-    if ((copy = malloc(len)) == NULL)
-      return (NULL);
-    memcpy(copy, str, len);
-  }
+ len = strlen(str);
+ copy = malloc(len + 1);
+  if (copy != NULL)
+   memcpy(copy, str, len + 1);
   return (copy);
 }
 #endif
