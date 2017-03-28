@@ -1,7 +1,7 @@
 SAGA
 =========
 
-Para leer la documentación en español consulte el fichero [README.es.md].
+Para leer la documentaciÃ³n en espaÃ±ol consulte el fichero [README.es.md].
 
 SAGA is an automatic tool for grapheme-to-allophone trasncription in Spanish,
 considering its multiple dialectal variants. It is distributed under the GNU
@@ -148,18 +148,18 @@ In the `doc` directory the following documents are available:
 - SAGA user manual (SAGA_man)
 - Phonetic transcrition rule documentation (Saga_Reglas_Trans)
 - Publications describing SAGA transcriptions:
-   * J. Llisterri, José B. Mariño, "Spanish adaptation of SAMPA and automatic
+   * J. Llisterri, JosÃ© B. MariÃ±o, "Spanish adaptation of SAMPA and automatic
      phonetic transcription", Esprit project 6819. Report  SAM-A/UPC /001/V1
      (Feb. 1993). (SAMPA-Spanish-93)
-   * A. Moreno, José B. Mariño, "Spanish dialects: phonetic transcription",
+   * A. Moreno, JosÃ© B. MariÃ±o, "Spanish dialects: phonetic transcription",
      Proc. ICSLP'98, pp. 189-192, Sydney, Australia (Nov. 1998).
      (SpanishDialectalVariants-ICSLP98)
 
 Main Authors
 --------------
 
-- José B. Mariño, Polytechnic University of Catalonia -- BarcelonaTech
-- Albino Nogueiras Rodríguez, Polytechnic University of Catalonia -- BarcelonaTech
+- JosÃ© B. MariÃ±o, Polytechnic University of Catalonia -- BarcelonaTech
+- Albino Nogueiras RodrÃ­guez, Polytechnic University of Catalonia -- BarcelonaTech
 
 Contributors
 -------------
