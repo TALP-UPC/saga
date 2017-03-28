@@ -47,9 +47,9 @@ SAGA in all the supported dialectal variants.
 Modifying SAGA
 ---------------
 
-The `work/dicc` directory contains the dictionaries that change SAGA behaviour
+The `dicc` directory contains the dictionaries that change SAGA behaviour
 for the Spanish variants. These dictionaries can be modified to customize the
-phonetic transcriptions as desired. Each of the `work/dicc` directories contains
+phonetic transcriptions as desired. Each of the `dicc` directories contains
 a README file, describing the additional SAGA command line options needed.
 
 SAGA source code is available under the `src` directory.

@@ -47,54 +47,54 @@ datadiccdir = $(pkgdatadir)/dicc
 
 datadiccargdir = $(datadiccdir)/Arg
 dist_datadiccarg_DATA =  \
- work/dicc/Arg/ArgExc.dicc \
- work/dicc/Arg/ArgDicGrp.dicc \
- work/dicc/Arg/ArgNovFon.dicc \
- work/dicc/Arg/ArgReadme.txt \
- work/dicc/Arg/ArgSust.dicc
+ dicc/Arg/ArgExc.dicc \
+ dicc/Arg/ArgDicGrp.dicc \
+ dicc/Arg/ArgNovFon.dicc \
+ dicc/Arg/ArgReadme.txt \
+ dicc/Arg/ArgSust.dicc
 
 datadicccasdir = $(datadiccdir)/Cas
 dist_datadicccas_DATA =  \
- work/dicc/Cas/CasTrnFon.dicc \
- work/dicc/Cas/CasDicSust.dicc \
- work/dicc/Cas/CasDicSustOPC.dicc \
- work/dicc/Cas/CasReadme.txt \
- work/dicc/Cas/CasDicGrp.dicc \
- work/dicc/Cas/CasTrnPal.dicc \
- work/dicc/Cas/CasExc.dicc \
- work/dicc/Cas/CasNovCns.dicc
+ dicc/Cas/CasTrnFon.dicc \
+ dicc/Cas/CasDicSust.dicc \
+ dicc/Cas/CasDicSustOPC.dicc \
+ dicc/Cas/CasReadme.txt \
+ dicc/Cas/CasDicGrp.dicc \
+ dicc/Cas/CasTrnPal.dicc \
+ dicc/Cas/CasExc.dicc \
+ dicc/Cas/CasNovCns.dicc
 
 datadiccchldir = $(datadiccdir)/Chl
 dist_datadiccchl_DATA =  \
- work/dicc/Chl/ChlNovFon.dicc \
- work/dicc/Chl/ChlGrup.dicc \
- work/dicc/Chl/ChlReadme.txt \
- work/dicc/Chl/ChlSust.dicc \
- work/dicc/Chl/ChlExc.dicc
+ dicc/Chl/ChlNovFon.dicc \
+ dicc/Chl/ChlGrup.dicc \
+ dicc/Chl/ChlReadme.txt \
+ dicc/Chl/ChlSust.dicc \
+ dicc/Chl/ChlExc.dicc
 
 datadiccperdir = $(datadiccdir)/Per
 dist_datadiccper_DATA =  \
- work/dicc/Per/PerSust.dicc \
- work/dicc/Per/PerExc.dicc \
- work/dicc/Per/PerReadme.txt
+ dicc/Per/PerSust.dicc \
+ dicc/Per/PerExc.dicc \
+ dicc/Per/PerReadme.txt
 
 datadiccvendir = $(datadiccdir)/Ven
 dist_datadiccven_DATA =  \
- work/dicc/Ven/VenExc.dicc \
- work/dicc/Ven/VenReadme.txt \
- work/dicc/Ven/VenSust.dicc
+ dicc/Ven/VenExc.dicc \
+ dicc/Ven/VenReadme.txt \
+ dicc/Ven/VenSust.dicc
 
 datadicccoldir = $(datadiccdir)/Col
 dist_datadicccol_DATA =  \
- work/dicc/Col/ColExc.dicc \
- work/dicc/Col/ColReadme.txt \
- work/dicc/Col/ColSust.dicc
+ dicc/Col/ColExc.dicc \
+ dicc/Col/ColReadme.txt \
+ dicc/Col/ColSust.dicc
 
 datadiccmexdir = $(datadiccdir)/Mex
 dist_datadiccmex_DATA =  \
- work/dicc/Mex/MexSust.dicc \
- work/dicc/Mex/MexExc.dicc \
- work/dicc/Mex/MexReadme.txt
+ dicc/Mex/MexSust.dicc \
+ dicc/Mex/MexExc.dicc \
+ dicc/Mex/MexReadme.txt
 
 
 # Documentation
