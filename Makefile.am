@@ -13,7 +13,7 @@ pkgconfiginstall_DATA = saga.pc
 
 # Shared library
 lib_LTLIBRARIES += libsaga.la
-libsaga_la_SOURCES = Util/LisUdf.c Util/Util.c Util/PosixCompat.c
+libsaga_la_SOURCES = src/utils/LisUdf.c src/utils/Util.c src/utils/PosixCompat.c
 libsaga_la_CFLAGS = -I$(srcdir)/Util -DSAGA_DICCDIR=\"$(pkgdatadir)/dicc/\"
 libsaga_la_LDFLAGS = -no-undefined
 libsaga_la_LIBADD = 
@@ -22,22 +22,23 @@ libsaga_la_SOURCES += src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
                       src/SagaSil.c src/SagaTrn.c src/SagaCom.c \
                       src/SagaEngine.c
 
-libsaga_la_CFLAGS += -I$(srcdir)/src
+libsaga_la_CFLAGS += -I$(srcdir)/src -I$(srcdir)/src/utils
 
 # Headers
 pkginclude_HEADERS += \
   src/Saga.h
 
 noinst_HEADERS += \
-  Util/LisUdf.h \
-  Util/Util.h \
+  src/utils/LisUdf.h \
+  src/utils/Util.h \
+  src/utils/PosixCompat.h \
   src/ExcAcc.h \
   src/SagaInternal.h
 
 # The main program
 bin_PROGRAMS += saga
 
-saga_CFLAGS = -I$(srcdir)/src -I$(srcdir)/Util
+saga_CFLAGS = -I$(srcdir)/src -I$(srcdir)/src/utils
 saga_SOURCES = src/Saga.c
 saga_LDADD = libsaga.la
 
