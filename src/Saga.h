@@ -54,100 +54,100 @@ extern "C" {
 #define OCLUS_EXPL	0x40000
 #define INI_FIN_PAL	0x80000
 
-typedef struct struct_SagaEngine {
-  /* Argumentos de entrada (linea de comandos) */
-  int TrnPalAis; /* Palabras aisladas? */
-  int TrnLinAis; /* Lineas aisladas? */
-  int ConSil; /* Conservar los silencios */
-  const char *StrIniPal; /* Marca inicio palabra */
-  const char *StrFinPal; /* Marca fin de palabra */
-  const char *FicDicExc; /* Nombre fichero Diccionario excepciones */
-  const char *FicTrnFon; /* Nombre fichero Diccionario transcripcion de grafemas */
-  const char *FicTrnPal; /* Nombre fichero Diccionario transcripcion de palabras */
-  const char *FicDicSust; /* Nombre fichero Diccionario de substitucion de fonemas */
-  const char *FicDicGrp; /* Nombre fichero Diccionario de substitucion de grupos foneticos */
-  const char *FicNovVoc; /* Nombre fichero Lista de grafemas vocalicos introducidos */
-  const char *FicNovCons; /* Nombre fichero Lista de grafemas consonanticos introducidos */
-  const char *FicNovFon; /* Nombre fichero Lista de fonemas introducidos */
-  long ClaveModif; /* Incluye las opciones -M de la linea de comandos */
+    typedef struct struct_SagaEngine {
+        /* Argumentos de entrada (linea de comandos) */
+        int TrnPalAis;          /* Palabras aisladas? */
+        int TrnLinAis;          /* Lineas aisladas? */
+        int ConSil;             /* Conservar los silencios */
+        const char *StrIniPal;  /* Marca inicio palabra */
+        const char *StrFinPal;  /* Marca fin de palabra */
+        const char *FicDicExc;  /* Nombre fichero Diccionario excepciones */
+        const char *FicTrnFon;  /* Nombre fichero Diccionario transcripcion de grafemas */
+        const char *FicTrnPal;  /* Nombre fichero Diccionario transcripcion de palabras */
+        const char *FicDicSust; /* Nombre fichero Diccionario de substitucion de fonemas */
+        const char *FicDicGrp;  /* Nombre fichero Diccionario de substitucion de grupos foneticos */
+        const char *FicNovVoc;  /* Nombre fichero Lista de grafemas vocalicos introducidos */
+        const char *FicNovCons; /* Nombre fichero Lista de grafemas consonanticos introducidos */
+        const char *FicNovFon;  /* Nombre fichero Lista de fonemas introducidos */
+        long ClaveModif;        /* Incluye las opciones -M de la linea de comandos */
 
-  /* Diccionarios cargados */
-  char ***DicExc;
-  char ***DicTrnFon;
-  char ***DicTrnPal;
-  char ***DicSust;
-  char ***DicGrp;
+        /* Diccionarios cargados */
+        char ***DicExc;
+        char ***DicTrnFon;
+        char ***DicTrnPal;
+        char ***DicSust;
+        char ***DicGrp;
 
-  /* Listas de nuevos fonemas */
-  char **LisNovVoc;
-  char **LisNovCons;
-  char **LisNovFon;
-  /* Contenido de las listas */
-  char **Letras;
-  char **Fonemas;
-  char **ConsTxt;
-  char **Vocales;
+        /* Listas de nuevos fonemas */
+        char **LisNovVoc;
+        char **LisNovCons;
+        char **LisNovFon;
+        /* Contenido de las listas */
+        char **Letras;
+        char **Fonemas;
+        char **ConsTxt;
+        char **Vocales;
 
-  /* Opciones de salida */
-  int SalFon; /* Transcripcion fonetica */
-  int SalFnm; /* Transcripcion en fonemas */
-  int SalFnmPal; /* En fonemas por palabras */
-  int SalSefo; /* En semifonemas */
-  int SalSem; /* En semisilabas */
+        /* Opciones de salida */
+        int SalFon;             /* Transcripcion fonetica */
+        int SalFnm;             /* Transcripcion en fonemas */
+        int SalFnmPal;          /* En fonemas por palabras */
+        int SalSefo;            /* En semifonemas */
+        int SalSem;             /* En semisilabas */
 
-  /* Entrada */
-  char *TxtIn; /* Si la entrada es texto */
-  intptr_t TxtInOffset; /* Si la entrada es texto, param interno */
-  const char *FicInName; /* Si la entrada es de un fichero */
-  FILE *FpIn; /* Si la entrada es de un fichero */
-  int close_in; /* Si FpIn debe cerrarse */
-  char *in_encoding; /* Codificacion FpIn */ 
-    
-  /* Lista de palabras extranhas en TxtOrt. Usado para reportar errores */
-  char	**PalExt; /* Lista de palabras extranhas */
-  size_t NumPalExt; /* Número de palabras extranhas */
-  
-  char* TxtOrt; /* Texto de entrada a transcribir */
+        /* Entrada */
+        char *TxtIn;            /* Si la entrada es texto */
+        intptr_t TxtInOffset;   /* Si la entrada es texto, param interno */
+        const char *FicInName;  /* Si la entrada es de un fichero */
+        FILE *FpIn;             /* Si la entrada es de un fichero */
+        int close_in;           /* Si FpIn debe cerrarse */
+        char *in_encoding;      /* Codificacion FpIn */
 
-  /* Salida */
-  char* TrnFon; /* Transcripcion fonetica */
-  char* TrnFnm; /* Transcripcion en fonemas */
-  char* TrnFnmPal; /* En fonemas por palabras */
-  char* TrnSem; /* En semisilabas */
-  char* TrnSefo; /* En semifonemas */
+        /* Lista de palabras extranhas en TxtOrt. Usado para reportar errores */
+        char **PalExt;          /* Lista de palabras extranhas */
+        size_t NumPalExt;       /* Número de palabras extranhas */
 
-  /* Ficheros de Salida */
-  FILE *FpFon;
-  FILE *FpFnm;
-  FILE *FpFnmPal;
-  FILE *FpSem;
-  FILE *FpSefo;
+        char *TxtOrt;           /* Texto de entrada a transcribir */
 
-  int close_FpFon;
-  int close_FpFnm;
-  int close_FpFnmPal;
-  int close_FpSem;
-  int close_FpSefo;
-  
-  /* Error stream */
-  FILE* FpErr;
-  int close_err;
-  
-} SagaEngine;
+        /* Salida */
+        char *TrnFon;           /* Transcripcion fonetica */
+        char *TrnFnm;           /* Transcripcion en fonemas */
+        char *TrnFnmPal;        /* En fonemas por palabras */
+        char *TrnSem;           /* En semisilabas */
+        char *TrnSefo;          /* En semifonemas */
+
+        /* Ficheros de Salida */
+        FILE *FpFon;
+        FILE *FpFnm;
+        FILE *FpFnmPal;
+        FILE *FpSem;
+        FILE *FpSefo;
+
+        int close_FpFon;
+        int close_FpFnm;
+        int close_FpFnmPal;
+        int close_FpSem;
+        int close_FpSefo;
+
+        /* Error stream */
+        FILE *FpErr;
+        int close_err;
+
+    } SagaEngine;
 
 /** Initializes engine. Has to be called after the engine is allocated
  * 
  * @param[in,out] engine The engine to initialize
  *  */
-int SagaEngine_Initialize(SagaEngine *engine);
+    int SagaEngine_Initialize(SagaEngine *engine);
 
 /** Opens `NomErr` as the file for error output. 
  * 
  * @param[in] NomErr The file name, or "-" for stderr or NULL for no error output. */
-int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr);
+    int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr);
 
 /** Opens `NomIn` to transcribe its contents. Use "-" for `stdin` */
-int SagaEngine_InputFromFileName(SagaEngine *engine, const char *NomIn);
+    int SagaEngine_InputFromFileName(SagaEngine *engine, const char *NomIn);
 
 /** Sets `text` encoded in `encoding` to be transcribed by `engine`.
  * 
@@ -155,47 +155,50 @@ int SagaEngine_InputFromFileName(SagaEngine *engine, const char *NomIn);
  * @param[in] encoding `text` encoding. Has to be "ISO-8859-15"  or "UTF-8".
  * 
  */
-int SagaEngine_InputFromText(SagaEngine *engine, const char *text, const char *encoding);
+    int SagaEngine_InputFromText(SagaEngine *engine, const char *text,
+                                 const char *encoding);
 
 /** Opens Files for output
  *  * @param[in] NomOut The file name, or "-" for stdout or NULL for no output.
  */
-int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut);
+    int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut);
 /** Loads the dictionaries and builds the characters list */
-int SagaEngine_LoadData(SagaEngine *engine);
+    int SagaEngine_LoadData(SagaEngine *engine);
 /** Reads / Points to the next piece of text for transcription */
-int SagaEngine_ReadText(SagaEngine *engine);
+    int SagaEngine_ReadText(SagaEngine *engine);
 /** Transcribes the text */
-int SagaEngine_Transcribe(SagaEngine *engine);
+    int SagaEngine_Transcribe(SagaEngine *engine);
 /** Writes the transcription output to the output files */
-int SagaEngine_WriteOutputFiles(SagaEngine *engine);
+    int SagaEngine_WriteOutputFiles(SagaEngine *engine);
 /** Writes the words that have invalid characters */
-int SagaEngine_WriteErrorWords(SagaEngine *engine);
+    int SagaEngine_WriteErrorWords(SagaEngine *engine);
 /** Closes the input (FILE handler or char*) */
-int SagaEngine_CloseInput(SagaEngine *engine);
+    int SagaEngine_CloseInput(SagaEngine *engine);
 /** Closes all the output files, if given */
-int SagaEngine_CloseOutputFiles(SagaEngine *engine);
+    int SagaEngine_CloseOutputFiles(SagaEngine *engine);
 /** Closes the error file, if given */
-int SagaEngine_CloseErrorFile(SagaEngine *engine);
+    int SagaEngine_CloseErrorFile(SagaEngine *engine);
 /** Clears the engine for another transcription */
-int SagaEngine_Refresh(SagaEngine *engine);
+    int SagaEngine_Refresh(SagaEngine *engine);
 /** Clears the engine to load other dictionaries */
-int SagaEngine_Clear(SagaEngine *engine);
+    int SagaEngine_Clear(SagaEngine *engine);
 
-int SagaArgentinaParams(SagaEngine *engine);
-int SagaCastillaParams(SagaEngine *engine);
-int SagaChileParams(SagaEngine *engine);
-int SagaColombiaParams(SagaEngine *engine);
-int SagaMexicoParams(SagaEngine *engine);
-int SagaPeruParams(SagaEngine *engine);
-int SagaVenezuelaParams(SagaEngine *engine);
+    int SagaArgentinaParams(SagaEngine *engine);
+    int SagaCastillaParams(SagaEngine *engine);
+    int SagaChileParams(SagaEngine *engine);
+    int SagaColombiaParams(SagaEngine *engine);
+    int SagaMexicoParams(SagaEngine *engine);
+    int SagaPeruParams(SagaEngine *engine);
+    int SagaVenezuelaParams(SagaEngine *engine);
 
-int SagaEngine_SetParamsFromVariant(SagaEngine *engine, const char *variant);
-SagaEngine * SagaEngine_NewFromVariant(const char *variant);
-int SagaEngine_TranscribeText(SagaEngine *engine, const char *text, const char *encoding,
-                              char **fon, char **fnm, char **fnmpal, char **sefo, char **sem);
+    int SagaEngine_SetParamsFromVariant(SagaEngine *engine,
+                                        const char *variant);
+    SagaEngine *SagaEngine_NewFromVariant(const char *variant);
+    int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
+                                  const char *encoding, char **fon,
+                                  char **fnm, char **fnmpal, char **sefo,
+                                  char **sem);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* SAGA_H */
+#endif                          /* SAGA_H */

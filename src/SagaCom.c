@@ -29,82 +29,93 @@
  **********************************************************************/
 
 
-int		CogeGrpOrt(	char	*TxtOrt,
-					int		PosAct,
-					GRP_ORT	*GrpAct, char **Letras)
-
+int CogeGrpOrt(char *TxtOrt, int PosAct, GRP_ORT *GrpAct, char **Letras)
 {
-	int		Long, Chr;
-	int		Chr1, Chr2;
+    int Long, Chr;
+    int Chr1, Chr2;
 
-	Long = 0;
-	GrpAct->Cont = TxtOrt + PosAct;
-	if ((Chr = IndexChr(TxtOrt+PosAct+Long, Letras)) >= 0) {
-		Long += strlen(Letras[Chr]);
-		while (1) {
-			Chr1 = IndexChr(TxtOrt+PosAct+Long, Letras);
-			Chr2 = IndexChr(TxtOrt+PosAct+Long, InterSil);
-			if (Chr1 < 0 && Chr2 < 0) {
-				break;
-			}
-			if (Chr1 >= 0) {
-				Long += strlen(Letras[Chr1]);
-			} else {
-				Long += strlen(InterSil[Chr2]);
-			}
-		}
-		GrpAct->Tipo = PALABRA;
-		GrpAct->Long = Long;
-		return 0;
-	}
-	else if (TxtOrt[PosAct] == '+') {
-		Long++;
-		while (TxtOrt[PosAct + Long] &&
-			IndexChr(TxtOrt+PosAct+Long, Espacios) < 0 &&
-			IndexChr(TxtOrt+PosAct+Long, Silen) < 0) {
-			Long++;
-		}
-		GrpAct->Tipo = LITERAL;
-		GrpAct->Long = Long;
-		return 0;
-	}
-	else if ((Chr = IndexChr(TxtOrt+PosAct+Long, Espacios)) >= 0) {
-		Long += strlen(Espacios[Chr]);
-		while ((Chr = IndexChr(TxtOrt+PosAct+Long, Espacios)) >= 0) {
-			Long += strlen(Espacios[Chr]);
-		}
-		GrpAct->Tipo = ESPACIOS;
-		GrpAct->Long = Long;
-		return 0;
-	}
-	else if ((Chr = IndexChr(TxtOrt+PosAct+Long, Silen)) >= 0) {
-		Long += strlen(Silen[Chr]);
-		while ((Chr = IndexChr(TxtOrt+PosAct+Long, Silen)) >= 0) {
-			Long += strlen(Silen[Chr]);
-		}
-		GrpAct->Tipo = SILENCIO;
-		GrpAct->Long = Long;
-		return 0;
-	}
+    Long = 0;
+    GrpAct->Cont = TxtOrt + PosAct;
+    if ((Chr = IndexChr(TxtOrt + PosAct + Long, Letras)) >= 0)
+    {
+        Long += strlen(Letras[Chr]);
+        while (1)
+        {
+            Chr1 = IndexChr(TxtOrt + PosAct + Long, Letras);
+            Chr2 = IndexChr(TxtOrt + PosAct + Long, InterSil);
+            if (Chr1 < 0 && Chr2 < 0)
+            {
+                break;
+            }
+            if (Chr1 >= 0)
+            {
+                Long += strlen(Letras[Chr1]);
+            }
+            else
+            {
+                Long += strlen(InterSil[Chr2]);
+            }
+        }
+        GrpAct->Tipo = PALABRA;
+        GrpAct->Long = Long;
+        return 0;
+    }
+    else if (TxtOrt[PosAct] == '+')
+    {
+        Long++;
+        while (TxtOrt[PosAct + Long] &&
+               IndexChr(TxtOrt + PosAct + Long, Espacios) < 0 &&
+               IndexChr(TxtOrt + PosAct + Long, Silen) < 0)
+        {
+            Long++;
+        }
+        GrpAct->Tipo = LITERAL;
+        GrpAct->Long = Long;
+        return 0;
+    }
+    else if ((Chr = IndexChr(TxtOrt + PosAct + Long, Espacios)) >= 0)
+    {
+        Long += strlen(Espacios[Chr]);
+        while ((Chr = IndexChr(TxtOrt + PosAct + Long, Espacios)) >= 0)
+        {
+            Long += strlen(Espacios[Chr]);
+        }
+        GrpAct->Tipo = ESPACIOS;
+        GrpAct->Long = Long;
+        return 0;
+    }
+    else if ((Chr = IndexChr(TxtOrt + PosAct + Long, Silen)) >= 0)
+    {
+        Long += strlen(Silen[Chr]);
+        while ((Chr = IndexChr(TxtOrt + PosAct + Long, Silen)) >= 0)
+        {
+            Long += strlen(Silen[Chr]);
+        }
+        GrpAct->Tipo = SILENCIO;
+        GrpAct->Long = Long;
+        return 0;
+    }
 
-	/* 
-	 * Si llegamos hasta aqui es que no podemos determinar a que tipo
-	 * de caracter pertenece la entrada, asi que es un error. Puede
-	 * ser un numero, un caracter extendido, etc.
-	 */
-	else {
-		Long++;
-		while (TxtOrt[PosAct + Long] &&
-			IndexChr(TxtOrt+PosAct+Long, Espacios) < 0 &&
-			IndexChr(TxtOrt+PosAct+Long, Silen) < 0) {
-			Long++;
-		}
-		GrpAct->Tipo = DESCONOCIDO;
-		GrpAct->Long = Long;
-		return 0;
-	}
+    /* 
+     * Si llegamos hasta aqui es que no podemos determinar a que tipo
+     * de caracter pertenece la entrada, asi que es un error. Puede
+     * ser un numero, un caracter extendido, etc.
+     */
+    else
+    {
+        Long++;
+        while (TxtOrt[PosAct + Long] &&
+               IndexChr(TxtOrt + PosAct + Long, Espacios) < 0 &&
+               IndexChr(TxtOrt + PosAct + Long, Silen) < 0)
+        {
+            Long++;
+        }
+        GrpAct->Tipo = DESCONOCIDO;
+        GrpAct->Long = Long;
+        return 0;
+    }
 
-	return -1;
+    return -1;
 }
 
 /***********************************************************************
@@ -112,105 +123,117 @@ int		CogeGrpOrt(	char	*TxtOrt,
  **********************************************************************/
 
 
-int		CogeGrpFon(char	*TrnFon,
-					int		PosAct,
-					GRP_ORT	*GrpAct, char **Fonemas)
-
+int CogeGrpFon(char *TrnFon, int PosAct, GRP_ORT *GrpAct, char **Fonemas)
 {
-	int		Long, Chr;
-	int		Chr1, Chr2;
+    int Long, Chr;
+    int Chr1, Chr2;
 
-	/*
-	 * Primero, miramos si es una palabra transcrita
-	 */
-	Long = 0;
-	GrpAct->Cont = TrnFon + PosAct;
-	if ((Chr = IndexChr(TrnFon+PosAct+Long, Fonemas)) >= 0) {
-		Long += strlen(Fonemas[Chr]);
-		while (1) {
-			Chr1 = IndexChr(TrnFon+PosAct+Long, Fonemas);
-			Chr2 = IndexChr(TrnFon+PosAct+Long, InterSil);
-			if (Chr1 < 0 && Chr2 < 0) {
-				break;
-			}
-			if (Chr1 >= 0) {
-				Long += strlen(Fonemas[Chr1]);
-			}
-			else {
-				Long += strlen(InterSil[Chr2]);
-			}
-		}
-		if (TrnFon[PosAct+Long] == '\0' ||
-			IndexChr(TrnFon+PosAct+Long, EspFon ) >= 0 ||
-			IndexChr(TrnFon+PosAct+Long, PuntFon) >= 0 ||
-			IndexChr(TrnFon+PosAct+Long, SilFon ) >= 0) {
-			GrpAct->Tipo = PAL_FON;
-			GrpAct->Long = Long;
-			return 0;
-		}
-	}
+    /*
+     * Primero, miramos si es una palabra transcrita
+     */
+    Long = 0;
+    GrpAct->Cont = TrnFon + PosAct;
+    if ((Chr = IndexChr(TrnFon + PosAct + Long, Fonemas)) >= 0)
+    {
+        Long += strlen(Fonemas[Chr]);
+        while (1)
+        {
+            Chr1 = IndexChr(TrnFon + PosAct + Long, Fonemas);
+            Chr2 = IndexChr(TrnFon + PosAct + Long, InterSil);
+            if (Chr1 < 0 && Chr2 < 0)
+            {
+                break;
+            }
+            if (Chr1 >= 0)
+            {
+                Long += strlen(Fonemas[Chr1]);
+            }
+            else
+            {
+                Long += strlen(InterSil[Chr2]);
+            }
+        }
+        if (TrnFon[PosAct + Long] == '\0' ||
+            IndexChr(TrnFon + PosAct + Long, EspFon) >= 0 ||
+            IndexChr(TrnFon + PosAct + Long, PuntFon) >= 0 ||
+            IndexChr(TrnFon + PosAct + Long, SilFon) >= 0)
+        {
+            GrpAct->Tipo = PAL_FON;
+            GrpAct->Long = Long;
+            return 0;
+        }
+    }
 
-	/*
-	 * No es una palabra
-	 */
-	Long = 0;
-	GrpAct->Cont = TrnFon + PosAct;
-	if (TrnFon[PosAct] == '+') {
-		Long++;
-		while (TrnFon[PosAct+Long] &&
-			IndexChr(TrnFon+PosAct+Long, EspFon) < 0 &&
-			IndexChr(TrnFon+PosAct+Long, PuntFon) < 0 &&
-			IndexChr(TrnFon+PosAct+Long, SilFon) < 0) {
-			Long++;
-		}
-		GrpAct->Tipo = LITERAL;
-		GrpAct->Long = Long;
-		return 0;
-	}
-	else if ((Chr = IndexChr(TrnFon+PosAct+Long, EspFon)) >= 0) {
-		Long += strlen(EspFon[Chr]);
-		while ((Chr = IndexChr(TrnFon+PosAct+Long, EspFon)) >= 0) {
-			Long += strlen(EspFon[Chr]);
-		}
-		GrpAct->Tipo = ESP_FON;
-		GrpAct->Long = Long;
-		return 0;
-	}
-	else if ((Chr = IndexChr(TrnFon+PosAct+Long, SilFon)) >= 0) {
-		Long += strlen(SilFon[Chr]);
-		while ((Chr = IndexChr(TrnFon+PosAct+Long, SilFon)) >= 0) {
-			Long += strlen(SilFon[Chr]);
-		}
-		GrpAct->Tipo = SIL_FON;
-		GrpAct->Long = Long;
-		return 0;
-	}
-	else if ((Chr = IndexChr(TrnFon+PosAct+Long, PuntFon)) >= 0) {
-		Long += strlen(PuntFon[Chr]);
-		GrpAct->Tipo = PUNT_FON;
-		GrpAct->Long = Long;
-		return 0;
-	}
+    /*
+     * No es una palabra
+     */
+    Long = 0;
+    GrpAct->Cont = TrnFon + PosAct;
+    if (TrnFon[PosAct] == '+')
+    {
+        Long++;
+        while (TrnFon[PosAct + Long] &&
+               IndexChr(TrnFon + PosAct + Long, EspFon) < 0 &&
+               IndexChr(TrnFon + PosAct + Long, PuntFon) < 0 &&
+               IndexChr(TrnFon + PosAct + Long, SilFon) < 0)
+        {
+            Long++;
+        }
+        GrpAct->Tipo = LITERAL;
+        GrpAct->Long = Long;
+        return 0;
+    }
+    else if ((Chr = IndexChr(TrnFon + PosAct + Long, EspFon)) >= 0)
+    {
+        Long += strlen(EspFon[Chr]);
+        while ((Chr = IndexChr(TrnFon + PosAct + Long, EspFon)) >= 0)
+        {
+            Long += strlen(EspFon[Chr]);
+        }
+        GrpAct->Tipo = ESP_FON;
+        GrpAct->Long = Long;
+        return 0;
+    }
+    else if ((Chr = IndexChr(TrnFon + PosAct + Long, SilFon)) >= 0)
+    {
+        Long += strlen(SilFon[Chr]);
+        while ((Chr = IndexChr(TrnFon + PosAct + Long, SilFon)) >= 0)
+        {
+            Long += strlen(SilFon[Chr]);
+        }
+        GrpAct->Tipo = SIL_FON;
+        GrpAct->Long = Long;
+        return 0;
+    }
+    else if ((Chr = IndexChr(TrnFon + PosAct + Long, PuntFon)) >= 0)
+    {
+        Long += strlen(PuntFon[Chr]);
+        GrpAct->Tipo = PUNT_FON;
+        GrpAct->Long = Long;
+        return 0;
+    }
 
-	/* 
-	 * Si llegamos hasta aqui es que no podemos determinar a que tipo
-	 * de caracter pertenece la entrada, asi que es un error. Puede
-	 * ser un numero, un caracter extendido, etc.
-	 */
-	else {
-		Long++;
-		while (TrnFon[PosAct+Long] &&
-			IndexChr(TrnFon+PosAct+Long, EspFon ) < 0 && 
-			IndexChr(TrnFon+PosAct+Long, PuntFon) < 0 && 
-			IndexChr(TrnFon+PosAct+Long, SilFon ) < 0) {
-			Long++;
-		}
-		GrpAct->Tipo = DESCONOCIDO;
-		GrpAct->Long = Long;
-		return 0;
-	}
+    /* 
+     * Si llegamos hasta aqui es que no podemos determinar a que tipo
+     * de caracter pertenece la entrada, asi que es un error. Puede
+     * ser un numero, un caracter extendido, etc.
+     */
+    else
+    {
+        Long++;
+        while (TrnFon[PosAct + Long] &&
+               IndexChr(TrnFon + PosAct + Long, EspFon) < 0 &&
+               IndexChr(TrnFon + PosAct + Long, PuntFon) < 0 &&
+               IndexChr(TrnFon + PosAct + Long, SilFon) < 0)
+        {
+            Long++;
+        }
+        GrpAct->Tipo = DESCONOCIDO;
+        GrpAct->Long = Long;
+        return 0;
+    }
 
-	return -1;
+    return -1;
 }
 
 /***********************************************************************
@@ -218,24 +241,24 @@ int		CogeGrpFon(char	*TrnFon,
  **********************************************************************/
 
 
-int		IndexChr(const char	* Chr,
-					char ** VectChr)
-
+int IndexChr(const char *Chr, char **VectChr)
 {
-	int		Pos, Long;
-	int		Ajuste, Selec;
+    int Pos, Long;
+    int Ajuste, Selec;
 
-	Ajuste = 0;
-	Selec = -1;
-	for (Pos = 0; VectChr[Pos] != (char *) 0; Pos++) {
-		Long = strlen(VectChr[Pos]);
-		if (strncmp(Chr, VectChr[Pos], Long) == 0 && Long > Ajuste) {
-			Ajuste = Long;
-			Selec = Pos;
-		}
-	}
+    Ajuste = 0;
+    Selec = -1;
+    for (Pos = 0; VectChr[Pos] != (char *) 0; Pos++)
+    {
+        Long = strlen(VectChr[Pos]);
+        if (strncmp(Chr, VectChr[Pos], Long) == 0 && Long > Ajuste)
+        {
+            Ajuste = Long;
+            Selec = Pos;
+        }
+    }
 
-	return Selec;
+    return Selec;
 }
 
 /***********************************************************************
@@ -243,18 +266,19 @@ int		IndexChr(const char	* Chr,
  **********************************************************************/
 
 
-int		EscrPalExt(char	**PalExt)
-
+int EscrPalExt(char **PalExt)
 {
-	if (*PalExt != (char *) 0) {
-		fprintf(stderr, "\n-----------------------------\n");
-		fprintf(stderr, "Palabras extranhas encontradas:\n");
-	}
+    if (*PalExt != (char *) 0)
+    {
+        fprintf(stderr, "\n-----------------------------\n");
+        fprintf(stderr, "Palabras extranhas encontradas:\n");
+    }
 
-	while (*PalExt != (char *) 0) {
-		fprintf(stderr, "%s\n", *PalExt);
-		PalExt++;
-	}
+    while (*PalExt != (char *) 0)
+    {
+        fprintf(stderr, "%s\n", *PalExt);
+        PalExt++;
+    }
 
-	return 0;
+    return 0;
 }

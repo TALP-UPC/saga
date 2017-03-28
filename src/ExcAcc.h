@@ -21,34 +21,34 @@
 /*
  * Palabras no acentuadas.
  */
-static char	*ExcAcc[] = {
-	/* articulos determinados	*/
-	"el", "la", "los", "las",
-	/* contracciones			*/
-	"del", "al",
-	/* posesivos				*/
-	"mi", "tu", "su", "mis", "tus", "sus",
-	"nues-tro", "vues-tro", "nues-tros", "vues-tros",
-	"nues-tra", "vues-tra", "nues-tras", "vues-tras",
-	/* pronombres personales	*/
-	"me", "te", "se", "nos", "os", "lo", "le", "les",
-	/* pronombres relativos		*/
-	"que", "quien", "quie-nes", "cu-yo", "cu-ya", "cu-yos", "cu-yas",
-	"cuan-to", "cuan-ta", "cuan-tos", "cuan-tas",
-	/* adverbios				*/
-	"me-dio", "co-mo", "cuan-do", "don-de", "a-don-de", "cuan", "tan",
-	/* preposiciones			*/
-	"a", "an-te", "ba-jo", "ca-be", "con", "con-for-me a", "con-tra",
-	"de", "des-de", "du-ran-te", "en", "en-tre", "fren-te a", "ha-cia",
-	"has-ta", "jun-to a", "me-dian-te", "pa-ra", "por", "res-pec-to a",
-	"sin", "so", "so-bre", "tras",
-	/* conjunciones				*/
-	"aun cuan-do", "aun-que", "co-mo que", "co-mo si", "con-for-me",
-	"con-que", "lue-go", "mas", "mien-tras", "ni", "pe-ro", "por-que",
-	"pues", "pues-to que", "que", "si-no", "si",
-	"y", "e", "o", "u",
-	/* particulas incluyentes	*/
-	 "aun", "has-ta", "in-clu-so", "ex-cep-to", "me-nos", "sal-vo",
+static char *ExcAcc[] = {
+    /* articulos determinados       */
+    "el", "la", "los", "las",
+    /* contracciones                        */
+    "del", "al",
+    /* posesivos                            */
+    "mi", "tu", "su", "mis", "tus", "sus",
+    "nues-tro", "vues-tro", "nues-tros", "vues-tros",
+    "nues-tra", "vues-tra", "nues-tras", "vues-tras",
+    /* pronombres personales        */
+    "me", "te", "se", "nos", "os", "lo", "le", "les",
+    /* pronombres relativos         */
+    "que", "quien", "quie-nes", "cu-yo", "cu-ya", "cu-yos", "cu-yas",
+    "cuan-to", "cuan-ta", "cuan-tos", "cuan-tas",
+    /* adverbios                            */
+    "me-dio", "co-mo", "cuan-do", "don-de", "a-don-de", "cuan", "tan",
+    /* preposiciones                        */
+    "a", "an-te", "ba-jo", "ca-be", "con", "con-for-me a", "con-tra",
+    "de", "des-de", "du-ran-te", "en", "en-tre", "fren-te a", "ha-cia",
+    "has-ta", "jun-to a", "me-dian-te", "pa-ra", "por", "res-pec-to a",
+    "sin", "so", "so-bre", "tras",
+    /* conjunciones                         */
+    "aun cuan-do", "aun-que", "co-mo que", "co-mo si", "con-for-me",
+    "con-que", "lue-go", "mas", "mien-tras", "ni", "pe-ro", "por-que",
+    "pues", "pues-to que", "que", "si-no", "si",
+    "y", "e", "o", "u",
+    /* particulas incluyentes       */
+    "aun", "has-ta", "in-clu-so", "ex-cep-to", "me-nos", "sal-vo",
 
-	 NULL
+    NULL
 };

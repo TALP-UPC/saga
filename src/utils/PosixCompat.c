@@ -33,15 +33,16 @@
 #include <string.h>
 #include <stdlib.h>
 
-char* strdup(const char * str) {
-  size_t len;
-  char *copy = NULL;
+char *strdup(const char *str)
+{
+    size_t len;
+    char *copy = NULL;
 
- len = strlen(str);
- copy = malloc(len + 1);
-  if (copy != NULL)
-   memcpy(copy, str, len + 1);
-  return (copy);
+    len = strlen(str);
+    copy = malloc(len + 1);
+    if (copy != NULL)
+        memcpy(copy, str, len + 1);
+    return (copy);
 }
 #endif
 
@@ -51,11 +52,11 @@ char* strdup(const char * str) {
 #include <stdlib.h>
 #include <stdio.h>
 
-int	opterr = 1,		/* if error message should be printed */
-	optind = 1,		/* index into parent argv vector */
-	optopt,			/* character checked for validity */
-	optreset;		/* reset getopt */
-char	*optarg;		/* argument associated with option */
+int opterr = 1,                 /* if error message should be printed */
+    optind = 1,                 /* index into parent argv vector */
+    optopt,                     /* character checked for validity */
+    optreset;                   /* reset getopt */
+char *optarg;                   /* argument associated with option */
 
 #define	BADCH	(int)'?'
 #define	BADARG	(int)':'
@@ -65,59 +66,66 @@ char	*optarg;		/* argument associated with option */
  * getopt --
  *	Parse argc/argv argument vector.
  */
-int getopt(int nargc, char * const *nargv, const char *ostr)
+int getopt(int nargc, char *const *nargv, const char *ostr)
 {
-	static char *place = EMSG;		/* option letter processing */
-	char *oli;				/* option letter list index */
+    static char *place = EMSG;  /* option letter processing */
+    char *oli;                  /* option letter list index */
 
-	if (optreset || !*place) {		/* update scanning pointer */
-		optreset = 0;
-		if (optind >= nargc || *(place = nargv[optind]) != '-') {
-			place = EMSG;
-			return (-1);
-		}
-		if (place[1] && *++place == '-') {	/* found "--" */
-			++optind;
-			place = EMSG;
-			return (-1);
-		}
-	}					/* option letter okay? */
-	if ((optopt = (int)*place++) == (int)':' ||
-	    !(oli = strchr(ostr, optopt))) {
-		/*
-		 * if the user didn't specify '-' as an option,
-		 * assume it means -1.
-		 */
-		if (optopt == (int)'-')
-			return (-1);
-		if (!*place)
-			++optind;
-		if (opterr && *ostr != ':')
-			(void)printf("illegal option -- %c\n", optopt);
-		return (BADCH);
-	}
-	if (*++oli != ':') {			/* don't need argument */
-		optarg = NULL;
-		if (!*place)
-			++optind;
-	}
-	else {					/* need an argument */
-		if (*place)			/* no white space */
-			optarg = place;
-		else if (nargc <= ++optind) {	/* no arg */
-			place = EMSG;
-			if (*ostr == ':')
-				return (BADARG);
-			if (opterr)
-				(void)printf("option requires an argument -- %c\n", optopt);
-			return (BADCH);
-		}
-	 	else				/* white space */
-			optarg = nargv[optind];
-		place = EMSG;
-		++optind;
-	}
-	return (optopt);			/* dump back option letter */
+    if (optreset || !*place)
+    {                           /* update scanning pointer */
+        optreset = 0;
+        if (optind >= nargc || *(place = nargv[optind]) != '-')
+        {
+            place = EMSG;
+            return (-1);
+        }
+        if (place[1] && *++place == '-')
+        {                       /* found "--" */
+            ++optind;
+            place = EMSG;
+            return (-1);
+        }
+    }                           /* option letter okay? */
+    if ((optopt = (int) *place++) == (int) ':' ||
+        !(oli = strchr(ostr, optopt)))
+    {
+        /*
+         * if the user didn't specify '-' as an option,
+         * assume it means -1.
+         */
+        if (optopt == (int) '-')
+            return (-1);
+        if (!*place)
+            ++optind;
+        if (opterr && *ostr != ':')
+            (void) printf("illegal option -- %c\n", optopt);
+        return (BADCH);
+    }
+    if (*++oli != ':')
+    {                           /* don't need argument */
+        optarg = NULL;
+        if (!*place)
+            ++optind;
+    }
+    else
+    {                           /* need an argument */
+        if (*place)             /* no white space */
+            optarg = place;
+        else if (nargc <= ++optind)
+        {                       /* no arg */
+            place = EMSG;
+            if (*ostr == ':')
+                return (BADARG);
+            if (opterr)
+                (void) printf("option requires an argument -- %c\n", optopt);
+            return (BADCH);
+        }
+        else                    /* white space */
+            optarg = nargv[optind];
+        place = EMSG;
+        ++optind;
+    }
+    return (optopt);            /* dump back option letter */
 }
 #endif
 
@@ -161,50 +169,52 @@ int getopt(int nargc, char * const *nargv, const char *ostr)
 #include <errno.h>
 #include <string.h>
 
-ssize_t
-getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
+ssize_t getdelim(char **buf, size_t * bufsiz, int delimiter, FILE * fp)
 {
-	char *ptr, *eptr;
+    char *ptr, *eptr;
 
 
-	if (*buf == NULL || *bufsiz == 0) {
-		*bufsiz = 8192;
-		if ((*buf = malloc(*bufsiz)) == NULL)
-			return -1;
-	}
+    if (*buf == NULL || *bufsiz == 0)
+    {
+        *bufsiz = 8192;
+        if ((*buf = malloc(*bufsiz)) == NULL)
+            return -1;
+    }
 
-	for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-		int c = fgetc(fp);
-		if (c == -1) {
-			if (feof(fp))
-				return ptr == *buf ? -1 : ptr - *buf;
-			else
-				return -1;
-		}
-		*ptr++ = c;
-		if (c == delimiter) {
-			*ptr = '\0';
-			return ptr - *buf;
-		}
-		if (ptr + 2 >= eptr) {
-			char *nbuf;
-			size_t nbufsiz = *bufsiz * 2;
-			ssize_t d = ptr - *buf;
-			if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
-				return -1;
-			*buf = nbuf;
-			*bufsiz = nbufsiz;
-			eptr = nbuf + nbufsiz;
-			ptr = nbuf + d;
-		}
-	}
+    for (ptr = *buf, eptr = *buf + *bufsiz;;)
+    {
+        int c = fgetc(fp);
+        if (c == -1)
+        {
+            if (feof(fp))
+                return ptr == *buf ? -1 : ptr - *buf;
+            else
+                return -1;
+        }
+        *ptr++ = c;
+        if (c == delimiter)
+        {
+            *ptr = '\0';
+            return ptr - *buf;
+        }
+        if (ptr + 2 >= eptr)
+        {
+            char *nbuf;
+            size_t nbufsiz = *bufsiz * 2;
+            ssize_t d = ptr - *buf;
+            if ((nbuf = realloc(*buf, nbufsiz)) == NULL)
+                return -1;
+            *buf = nbuf;
+            *bufsiz = nbufsiz;
+            eptr = nbuf + nbufsiz;
+            ptr = nbuf + d;
+        }
+    }
 }
 
-ssize_t
-getline(char **buf, size_t *bufsiz, FILE *fp)
+ssize_t getline(char **buf, size_t * bufsiz, FILE * fp)
 {
-	return getdelim(buf, bufsiz, '\n', fp);
+    return getdelim(buf, bufsiz, '\n', fp);
 }
 
 #endif
-

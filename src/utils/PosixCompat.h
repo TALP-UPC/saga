@@ -42,18 +42,18 @@
 
 
 #if !HAVE_DECL_STRDUP
-char* strdup(const char * str);
+char *strdup(const char *str);
 #endif
 
 #if !HAVE_DECL_GETOPT
-int getopt(int nargc, char * const *nargv, const char *ostr);
+int getopt(int nargc, char *const *nargv, const char *ostr);
 extern char *optarg;
 extern int optind, opterr, optopt;
 #endif
 
 #if !HAVE_DECL_GETLINE
 #include <stdio.h>
-ssize_t getline(char **buf, size_t *bufsiz, FILE *fp);
+ssize_t getline(char **buf, size_t * bufsiz, FILE * fp);
 #endif
 
 

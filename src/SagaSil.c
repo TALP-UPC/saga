@@ -31,72 +31,84 @@
  **********************************************************************/
 
 
-char	*SilaTxtOrt(char	*TxtOrt, char	***DicTrnPal, SagaEngine *engine)
-
+char *SilaTxtOrt(char *TxtOrt, char ***DicTrnPal, SagaEngine *engine)
 {
-	char	*SilOrt, *SilPal;
-	int		PosAct, LongTxt = strlen(TxtOrt);
-	int		Encontrada, i;
-	GRP_ORT	GrpAct;
+    char *SilOrt, *SilPal;
+    int PosAct, LongTxt = strlen(TxtOrt);
+    int Encontrada, i;
+    GRP_ORT GrpAct;
 
-	/*
-	 * Ubicamos memoria para albergar el doble mas uno de la longitud
-	 * de TxtOrt. Esto garantiza que cabra cualquier silabificacion. No
-	 * es muy elegante, pero si es eficiente.
-	 */
-	if ((SilOrt = (char *) calloc((size_t) (2*LongTxt+1), sizeof(char))) == (char *) 0) {
-		fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
-		return (char *) 0;
-	}
+    /*
+     * Ubicamos memoria para albergar el doble mas uno de la longitud
+     * de TxtOrt. Esto garantiza que cabra cualquier silabificacion. No
+     * es muy elegante, pero si es eficiente.
+     */
+    if ((SilOrt =
+         (char *) calloc((size_t) (2 * LongTxt + 1),
+                         sizeof(char))) == (char *) 0)
+    {
+        fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
+        return (char *) 0;
+    }
 
-	/*
-	 * Inicializamos SilOrt a "" para poder utilizar strcat's...
-	 */
-	strcpy(SilOrt, "");
-	
-	/*
-	 * Bucle para todos los grupos ortograficos.
-	 */
-	PosAct = 0;
-	while (PosAct < LongTxt) {
-		/*
-		 * Cogemos el siguiente grupo ortografico de TxtOrt.
-		 */
-		if (CogeGrpOrt(TxtOrt, PosAct, &GrpAct, engine->Letras) < 0) {
-			fprintf(stderr, "Error al localizar el siguiente grupo de TxtOrt\n");
-			return (char *) 0;
-		}
+    /*
+     * Inicializamos SilOrt a "" para poder utilizar strcat's...
+     */
+    strcpy(SilOrt, "");
 
-		Encontrada = 0;
-		for (i = 0; DicTrnPal != (char ***) 0 && DicTrnPal[i] != (char **) 0; i++) {
-			if (strncmp(DicTrnPal[i][0], GrpAct.Cont, GrpAct.Long) == 0) {
-				Encontrada = 1;
-				strncat(SilOrt, GrpAct.Cont, GrpAct.Long);
-				break;
-			}
-		}
-				
-		if (!Encontrada && (GrpAct.Tipo & PALABRA)) {
-			if ((SilPal = SilaPalOrt(GrpAct, engine)) == (char *) 0) {
-				strncat(SilOrt, GrpAct.Cont, GrpAct.Long);
+    /*
+     * Bucle para todos los grupos ortograficos.
+     */
+    PosAct = 0;
+    while (PosAct < LongTxt)
+    {
+        /*
+         * Cogemos el siguiente grupo ortografico de TxtOrt.
+         */
+        if (CogeGrpOrt(TxtOrt, PosAct, &GrpAct, engine->Letras) < 0)
+        {
+            fprintf(stderr,
+                    "Error al localizar el siguiente grupo de TxtOrt\n");
+            return (char *) 0;
+        }
+
+        Encontrada = 0;
+        for (i = 0; DicTrnPal != (char ***) 0 && DicTrnPal[i] != (char **) 0;
+             i++)
+        {
+            if (strncmp(DicTrnPal[i][0], GrpAct.Cont, GrpAct.Long) == 0)
+            {
+                Encontrada = 1;
+                strncat(SilOrt, GrpAct.Cont, GrpAct.Long);
+                break;
+            }
+        }
+
+        if (!Encontrada && (GrpAct.Tipo & PALABRA))
+        {
+            if ((SilPal = SilaPalOrt(GrpAct, engine)) == (char *) 0)
+            {
+                strncat(SilOrt, GrpAct.Cont, GrpAct.Long);
 /*
 				strncpy(SilOrt, GrpAct.Cont, GrpAct.Long);
 				SilOrt[GrpAct.Long] = '\0';
 */
-			}
-			else {
-				strcat(SilOrt, SilPal);
-				free((void *) SilPal);
-			}
-		}
-		else if (!Encontrada) {
-			strncat(SilOrt, GrpAct.Cont, GrpAct.Long);
-		}
+            }
+            else
+            {
+                strcat(SilOrt, SilPal);
+                free((void *) SilPal);
+            }
+        }
+        else if (!Encontrada)
+        {
+            strncat(SilOrt, GrpAct.Cont, GrpAct.Long);
+        }
 
-		PosAct += GrpAct.Long;
-	}
+        PosAct += GrpAct.Long;
+    }
 
-	return SilOrt;
+    return SilOrt;
 }
 
 /***********************************************************************
@@ -104,323 +116,418 @@ char	*SilaTxtOrt(char	*TxtOrt, char	***DicTrnPal, SagaEngine *engine)
  **********************************************************************/
 
 
-char	*SilaPalOrt(GRP_ORT	GrpOrt, SagaEngine *engine)
+char *SilaPalOrt(GRP_ORT GrpOrt, SagaEngine *engine)
 {
-	int		Pos, Ind, Chr, Chr1, Chr2, Chr3, FinSil;
-	int		NumVocs, NumCons;
-	char	*SilOrt = NULL, *GrpVocs = NULL, *GrpCons = NULL;
-	size_t SilOrtSize = 0, SilOrtFilled = 0;
-	size_t GrpVocsSize = 0, GrpVocsFilled = 0;
-	size_t GrpConsSize = 0, GrpConsFilled = 0;
+    int Pos, Ind, Chr, Chr1, Chr2, Chr3, FinSil;
+    int NumVocs, NumCons;
+    char *SilOrt = NULL, *GrpVocs = NULL, *GrpCons = NULL;
+    size_t SilOrtSize = 0, SilOrtFilled = 0;
+    size_t GrpVocsSize = 0, GrpVocsFilled = 0;
+    size_t GrpConsSize = 0, GrpConsFilled = 0;
 
-	/*
-	 * Ubicamos memoria para albergar el doble mas uno de la longitud de
-	 * GrpOrt.Long. Esto garantiza que cabra cualquier silabificacion.
-	 * No es muy elegante, pero si es eficiente.
-	 */
-	SilOrtSize = 2*GrpOrt.Long+1;
-	if ((SilOrt = calloc(SilOrtSize, sizeof(char))) == NULL) {
-		fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
-		return NULL;
-	}
+    /*
+     * Ubicamos memoria para albergar el doble mas uno de la longitud de
+     * GrpOrt.Long. Esto garantiza que cabra cualquier silabificacion.
+     * No es muy elegante, pero si es eficiente.
+     */
+    SilOrtSize = 2 * GrpOrt.Long + 1;
+    if ((SilOrt = calloc(SilOrtSize, sizeof(char))) == NULL)
+    {
+        fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
+        return NULL;
+    }
 
-	/* Un buffer de 128 para GrpVocs y GrpCons es suficiente */
-	GrpVocsSize = 128;
-	if ((GrpVocs = calloc(GrpVocsSize, sizeof(char))) == NULL) {
-		fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
-		free(SilOrt);
-		return NULL;
-	}
+    /* Un buffer de 128 para GrpVocs y GrpCons es suficiente */
+    GrpVocsSize = 128;
+    if ((GrpVocs = calloc(GrpVocsSize, sizeof(char))) == NULL)
+    {
+        fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
+        free(SilOrt);
+        return NULL;
+    }
 
-	GrpConsSize = 128;
-	if ((GrpCons = calloc(GrpConsSize, sizeof(char))) == NULL) {
-		fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
-		free(SilOrt);
-		free(GrpVocs);
-		return NULL;
-	}
+    GrpConsSize = 128;
+    if ((GrpCons = calloc(GrpConsSize, sizeof(char))) == NULL)
+    {
+        fprintf(stderr, "Error al ubicar memoria para SilOrt\n");
+        free(SilOrt);
+        free(GrpVocs);
+        return NULL;
+    }
 
 
-	/*
-	 * Todas las silabas responden a la forma [cons]*[vocs]+[cons]*.
-	 */
-	Pos = 0;
-	while (Pos < (int) GrpOrt.Long) {
-		FinSil = 0;
-		if ((Chr = IndexChr(GrpOrt.Cont+Pos, InterSil)) >= 0) {
-			if (safe_strcat(&SilOrt, InterSil[Chr], &SilOrtSize, &SilOrtFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			Pos += strlen(InterSil[Chr]);
-			continue;
-		}
+    /*
+     * Todas las silabas responden a la forma [cons]*[vocs]+[cons]*.
+     */
+    Pos = 0;
+    while (Pos < (int) GrpOrt.Long)
+    {
+        FinSil = 0;
+        if ((Chr = IndexChr(GrpOrt.Cont + Pos, InterSil)) >= 0)
+        {
+            if (safe_strcat
+                (&SilOrt, InterSil[Chr], &SilOrtSize, &SilOrtFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            Pos += strlen(InterSil[Chr]);
+            continue;
+        }
 
-		while ((Chr = IndexChr(GrpOrt.Cont+Pos, engine->ConsTxt)) >= 0) {
-			if (strcmp(engine->ConsTxt[Chr], "y") == 0) {
-				Ind = Pos + strlen(engine->ConsTxt[Chr]);
-				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt)) >= 0 ||
-					IndexChr(GrpOrt.Cont+Ind, engine->Letras) < 0) {
-					break;
-				}
-			}
-			else if (strcmp(engine->ConsTxt[Chr], "h") == 0) {
-				Ind = Pos + strlen(engine->ConsTxt[Chr]);
-				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt)) >= 0 ||
-					IndexChr(GrpOrt.Cont+Ind, engine->Letras) < 0) {
-					Pos += strlen(engine->ConsTxt[Chr]);
-					break;
-				}
-				else if ((Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->Vocales)) >= 0) {
-					break;
-				}
-			}
+        while ((Chr = IndexChr(GrpOrt.Cont + Pos, engine->ConsTxt)) >= 0)
+        {
+            if (strcmp(engine->ConsTxt[Chr], "y") == 0)
+            {
+                Ind = Pos + strlen(engine->ConsTxt[Chr]);
+                if ((Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt)) >= 0
+                    || IndexChr(GrpOrt.Cont + Ind, engine->Letras) < 0)
+                {
+                    break;
+                }
+            }
+            else if (strcmp(engine->ConsTxt[Chr], "h") == 0)
+            {
+                Ind = Pos + strlen(engine->ConsTxt[Chr]);
+                if ((Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt)) >= 0
+                    || IndexChr(GrpOrt.Cont + Ind, engine->Letras) < 0)
+                {
+                    Pos += strlen(engine->ConsTxt[Chr]);
+                    break;
+                }
+                else if ((Chr1 =
+                          IndexChr(GrpOrt.Cont + Ind, engine->Vocales)) >= 0)
+                {
+                    break;
+                }
+            }
 
-			if (safe_strcat(&SilOrt, engine->ConsTxt[Chr], &SilOrtSize, &SilOrtFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			Pos += strlen(engine->ConsTxt[Chr]);
+            if (safe_strcat
+                (&SilOrt, engine->ConsTxt[Chr], &SilOrtSize,
+                 &SilOrtFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            Pos += strlen(engine->ConsTxt[Chr]);
 
-			if (strcmp(engine->ConsTxt[Chr], "g") == 0) {
-				Ind = Pos;
-				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->Letras)) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Ind += strlen(engine->Letras[Chr1]);
-				Chr2 = IndexChr(GrpOrt.Cont+Ind, engine->Letras);
-				if (Chr2 >= 0 &&
-					strcmp(engine->Letras[Chr1], "u") == 0 &&
-					strpbrk(engine->Letras[Chr2], "ei") != (char *) 0) {
-				  	if (safe_strcat(&SilOrt, engine->Letras[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					Pos += strlen(engine->Letras[Chr1]);
-				}
-			}
-		}
+            if (strcmp(engine->ConsTxt[Chr], "g") == 0)
+            {
+                Ind = Pos;
+                if ((Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->Letras)) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Ind += strlen(engine->Letras[Chr1]);
+                Chr2 = IndexChr(GrpOrt.Cont + Ind, engine->Letras);
+                if (Chr2 >= 0 &&
+                    strcmp(engine->Letras[Chr1], "u") == 0 &&
+                    strpbrk(engine->Letras[Chr2], "ei") != (char *) 0)
+                {
+                    if (safe_strcat
+                        (&SilOrt, engine->Letras[Chr1], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    Pos += strlen(engine->Letras[Chr1]);
+                }
+            }
+        }
 
-		Ind = Pos;
-		NumVocs = 0;
-		GrpVocs[0] = '\0';
-		GrpVocsFilled = 0;
-		while ((Chr = IndexChr(GrpOrt.Cont+Ind, engine->Vocales)) >= 0) {
-			if (Ind > 0 && (!strcmp(engine->Vocales[Chr], "hu") || !strcmp(engine->Vocales[Chr], "hi"))) {
-				Chr1 = IndexChr(GrpOrt.Cont+Ind+2, engine->Vocales);
-				if (Chr1 >= 0 && strpbrk(engine->Vocales[Chr1], "e")) {
-					if (NumVocs > 0) {
-						if (safe_strcat(&SilOrt, GrpVocs, &SilOrtSize, &SilOrtFilled) < 0) {
-							free(SilOrt);
-							free(GrpVocs);
-							free(GrpCons);
-							return NULL;
-						}
-						if (safe_strcat(&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0) {
-							free(SilOrt);
-							free(GrpVocs);
-							free(GrpCons);
-							return NULL;
-						}
-					}
-					Pos = Ind;
-					NumVocs = 1;
-					strcpy(GrpVocs, engine->Vocales[Chr]);
-					GrpVocsFilled = strlen(GrpVocs);
-					break;
-				}
-			}
-			Ind += strlen(engine->Vocales[Chr]);
-			if (safe_strcat(&GrpVocs, engine->Vocales[Chr], &GrpVocsSize, &GrpVocsFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			NumVocs++;
-		}
+        Ind = Pos;
+        NumVocs = 0;
+        GrpVocs[0] = '\0';
+        GrpVocsFilled = 0;
+        while ((Chr = IndexChr(GrpOrt.Cont + Ind, engine->Vocales)) >= 0)
+        {
+            if (Ind > 0
+                && (!strcmp(engine->Vocales[Chr], "hu")
+                    || !strcmp(engine->Vocales[Chr], "hi")))
+            {
+                Chr1 = IndexChr(GrpOrt.Cont + Ind + 2, engine->Vocales);
+                if (Chr1 >= 0 && strpbrk(engine->Vocales[Chr1], "e"))
+                {
+                    if (NumVocs > 0)
+                    {
+                        if (safe_strcat
+                            (&SilOrt, GrpVocs, &SilOrtSize,
+                             &SilOrtFilled) < 0)
+                        {
+                            free(SilOrt);
+                            free(GrpVocs);
+                            free(GrpCons);
+                            return NULL;
+                        }
+                        if (safe_strcat
+                            (&SilOrt, InterSil[0], &SilOrtSize,
+                             &SilOrtFilled) < 0)
+                        {
+                            free(SilOrt);
+                            free(GrpVocs);
+                            free(GrpCons);
+                            return NULL;
+                        }
+                    }
+                    Pos = Ind;
+                    NumVocs = 1;
+                    strcpy(GrpVocs, engine->Vocales[Chr]);
+                    GrpVocsFilled = strlen(GrpVocs);
+                    break;
+                }
+            }
+            Ind += strlen(engine->Vocales[Chr]);
+            if (safe_strcat
+                (&GrpVocs, engine->Vocales[Chr], &GrpVocsSize,
+                 &GrpVocsFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            NumVocs++;
+        }
 
-		switch (NumVocs) {
-		case 0 :
-			if (strcmp(SilOrt, "y") == 0) {
-				break;
-			}
-			else {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-		case 1 :
-			if (safe_strcat(&SilOrt, GrpVocs, &SilOrtSize, &SilOrtFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			Pos += strlen(GrpVocs);
-			break;
-		case 2 :
-			Ind = Pos;
-			Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->Vocales);
-			Ind += strlen(engine->Vocales[Chr1]);
-			Chr2 = IndexChr(GrpOrt.Cont+Ind, engine->Vocales);
-			if (IndexChr(engine->Vocales[Chr1], VocFort) >= 0 &&
-				IndexChr(engine->Vocales[Chr2], VocFort) >= 0) {
-				if (safe_strcat(&SilOrt, engine->Vocales[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(engine->Vocales[Chr1]);
-				FinSil = 1;
-				break;
-			}
-			else {
-				if (safe_strcat(&SilOrt, GrpVocs, &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(GrpVocs);
-				break;
-			}
-		default :
-			Ind = Pos;
-			Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->Vocales);
-			Ind += strlen(engine->Vocales[Chr1]);
-			Chr2 = IndexChr(GrpOrt.Cont+Ind, engine->Vocales);
-			Ind += strlen(engine->Vocales[Chr2]);
-			Chr3 = IndexChr(GrpOrt.Cont+Ind, engine->Vocales);
-			if (strpbrk(engine->Vocales[Chr1], "iu") != (char *) 0 &&
-				strpbrk(engine->Vocales[Chr2], "iu") != (char *) 0) {
-				if (safe_strcat(&SilOrt, engine->Vocales[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(engine->Vocales[Chr1]);
-				FinSil = 1;
-				if (strpbrk(engine->Vocales[Chr3], "iu") != (char *) 0) {
-					if (safe_strcat(&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					if (safe_strcat(&SilOrt, engine->Vocales[Chr2], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					Pos += strlen(engine->Vocales[Chr2]);
-				}
-			}
-			else if (IndexChr(engine->Vocales[Chr2], VocFort) >= 0) {
-				if (strchr(engine->Vocales[Chr2], 'i') != (char *) 0) {
-					if (safe_strcat(&SilOrt, engine->Vocales[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					Pos += strlen(engine->Vocales[Chr1]);
-					if (safe_strcat(&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					if (safe_strcat(&SilOrt, engine->Vocales[Chr2], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					Pos += strlen(engine->Vocales[Chr2]);
-					FinSil = 1;
-				}
-				else if (IndexChr(engine->Vocales[Chr1], VocFort) >= 0) {
-					if (safe_strcat(&SilOrt, engine->Vocales[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					Pos += strlen(engine->Vocales[Chr1]);
-					FinSil = 1;
-				}
-				else {
-					if (safe_strcat(&SilOrt, engine->Vocales[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-					Pos += strlen(engine->Vocales[Chr1]);
-				}
-			}
-			else if (strpbrk(engine->Vocales[Chr2], "iu") != (char *) 0 &&
-				strpbrk(engine->Vocales[Chr3], "iu") != (char *) 0) {
-					if (safe_strcat(&SilOrt, engine->Vocales[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-				Pos += strlen(engine->Vocales[Chr1]);
-					if (safe_strcat(&SilOrt, engine->Vocales[Chr2], &SilOrtSize, &SilOrtFilled) < 0) {
-						free(SilOrt);
-						free(GrpVocs);
-						free(GrpCons);
-						return NULL;
-					}
-				Pos += strlen(engine->Vocales[Chr2]);
-				FinSil = 1;
-			}
-			else if (IndexChr(engine->Vocales[Chr3], VocFort) >= 0) {
-				if (safe_strcat(&SilOrt, engine->Vocales[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(engine->Vocales[Chr1]);
-				FinSil = 1;
-			}
-		}
-		
-		if (FinSil != 0) {
-			FinSil = 0;
-			if (IndexChr(GrpOrt.Cont+Pos, engine->Letras) >= 0) {
-				if (safe_strcat(&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-			}
-			continue;
-		}
+        switch (NumVocs)
+        {
+        case 0:
+            if (strcmp(SilOrt, "y") == 0)
+            {
+                break;
+            }
+            else
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+        case 1:
+            if (safe_strcat(&SilOrt, GrpVocs, &SilOrtSize, &SilOrtFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            Pos += strlen(GrpVocs);
+            break;
+        case 2:
+            Ind = Pos;
+            Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->Vocales);
+            Ind += strlen(engine->Vocales[Chr1]);
+            Chr2 = IndexChr(GrpOrt.Cont + Ind, engine->Vocales);
+            if (IndexChr(engine->Vocales[Chr1], VocFort) >= 0 &&
+                IndexChr(engine->Vocales[Chr2], VocFort) >= 0)
+            {
+                if (safe_strcat
+                    (&SilOrt, engine->Vocales[Chr1], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->Vocales[Chr1]);
+                FinSil = 1;
+                break;
+            }
+            else
+            {
+                if (safe_strcat(&SilOrt, GrpVocs, &SilOrtSize, &SilOrtFilled)
+                    < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(GrpVocs);
+                break;
+            }
+        default:
+            Ind = Pos;
+            Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->Vocales);
+            Ind += strlen(engine->Vocales[Chr1]);
+            Chr2 = IndexChr(GrpOrt.Cont + Ind, engine->Vocales);
+            Ind += strlen(engine->Vocales[Chr2]);
+            Chr3 = IndexChr(GrpOrt.Cont + Ind, engine->Vocales);
+            if (strpbrk(engine->Vocales[Chr1], "iu") != (char *) 0 &&
+                strpbrk(engine->Vocales[Chr2], "iu") != (char *) 0)
+            {
+                if (safe_strcat
+                    (&SilOrt, engine->Vocales[Chr1], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->Vocales[Chr1]);
+                FinSil = 1;
+                if (strpbrk(engine->Vocales[Chr3], "iu") != (char *) 0)
+                {
+                    if (safe_strcat
+                        (&SilOrt, InterSil[0], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    if (safe_strcat
+                        (&SilOrt, engine->Vocales[Chr2], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    Pos += strlen(engine->Vocales[Chr2]);
+                }
+            }
+            else if (IndexChr(engine->Vocales[Chr2], VocFort) >= 0)
+            {
+                if (strchr(engine->Vocales[Chr2], 'i') != (char *) 0)
+                {
+                    if (safe_strcat
+                        (&SilOrt, engine->Vocales[Chr1], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    Pos += strlen(engine->Vocales[Chr1]);
+                    if (safe_strcat
+                        (&SilOrt, InterSil[0], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    if (safe_strcat
+                        (&SilOrt, engine->Vocales[Chr2], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    Pos += strlen(engine->Vocales[Chr2]);
+                    FinSil = 1;
+                }
+                else if (IndexChr(engine->Vocales[Chr1], VocFort) >= 0)
+                {
+                    if (safe_strcat
+                        (&SilOrt, engine->Vocales[Chr1], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    Pos += strlen(engine->Vocales[Chr1]);
+                    FinSil = 1;
+                }
+                else
+                {
+                    if (safe_strcat
+                        (&SilOrt, engine->Vocales[Chr1], &SilOrtSize,
+                         &SilOrtFilled) < 0)
+                    {
+                        free(SilOrt);
+                        free(GrpVocs);
+                        free(GrpCons);
+                        return NULL;
+                    }
+                    Pos += strlen(engine->Vocales[Chr1]);
+                }
+            }
+            else if (strpbrk(engine->Vocales[Chr2], "iu") != (char *) 0 &&
+                     strpbrk(engine->Vocales[Chr3], "iu") != (char *) 0)
+            {
+                if (safe_strcat
+                    (&SilOrt, engine->Vocales[Chr1], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->Vocales[Chr1]);
+                if (safe_strcat
+                    (&SilOrt, engine->Vocales[Chr2], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->Vocales[Chr2]);
+                FinSil = 1;
+            }
+            else if (IndexChr(engine->Vocales[Chr3], VocFort) >= 0)
+            {
+                if (safe_strcat
+                    (&SilOrt, engine->Vocales[Chr1], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->Vocales[Chr1]);
+                FinSil = 1;
+            }
+        }
 
-		Ind = Pos;
-		NumCons = 0;
-		GrpCons[0] = '\0';
-		GrpConsFilled = 0;
-		while ((Chr = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt)) >= 0) {
+        if (FinSil != 0)
+        {
+            FinSil = 0;
+            if (IndexChr(GrpOrt.Cont + Pos, engine->Letras) >= 0)
+            {
+                if (safe_strcat
+                    (&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+            }
+            continue;
+        }
+
+        Ind = Pos;
+        NumCons = 0;
+        GrpCons[0] = '\0';
+        GrpConsFilled = 0;
+        while ((Chr = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt)) >= 0)
+        {
 /* J. Adrián 21-JUN-2005
 			if (strcmp(engine->ConsTxt[Chr], "y") == 0) {
 				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), engine->ConsTxt)) >= 0 ||
@@ -429,7 +536,8 @@ char	*SilaPalOrt(GRP_ORT	GrpOrt, SagaEngine *engine)
 				}
 			}
 */
-			if (strcmp(engine->ConsTxt[Chr], "h") == 0) {
+            if (strcmp(engine->ConsTxt[Chr], "h") == 0)
+            {
 /* J. Adrián 21-JUN-2005
 				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), engine->ConsTxt)) >= 0 ||
 					IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), engine->Letras) < 0) {
@@ -437,144 +545,187 @@ char	*SilaPalOrt(GRP_ORT	GrpOrt, SagaEngine *engine)
 					break;
 				}
 */
-				if ((Chr1 = IndexChr(GrpOrt.Cont+Ind+strlen(engine->ConsTxt[Chr]), engine->Vocales)) >= 0) {
-					break;
-				}
-			}
-			Ind += strlen(engine->ConsTxt[Chr]);
-			if (safe_strcat(&GrpCons, engine->ConsTxt[Chr], &GrpConsSize, &GrpConsFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			NumCons++;
-		}
+                if ((Chr1 =
+                     IndexChr(GrpOrt.Cont + Ind +
+                              strlen(engine->ConsTxt[Chr]),
+                              engine->Vocales)) >= 0)
+                {
+                    break;
+                }
+            }
+            Ind += strlen(engine->ConsTxt[Chr]);
+            if (safe_strcat
+                (&GrpCons, engine->ConsTxt[Chr], &GrpConsSize,
+                 &GrpConsFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            NumCons++;
+        }
 
-		if ((Chr = IndexChr(GrpOrt.Cont+Ind, engine->Vocales)) < 0) {
-			if (safe_strcat(&SilOrt, GrpCons, &SilOrtSize, &SilOrtFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			Pos = Ind;
-			continue;
-		}
-		else if (Pos > 0 && (!strcmp(engine->Vocales[Chr], "hu") || !strcmp(engine->Vocales[Chr], "hi"))) {
-			Chr1 = IndexChr(GrpOrt.Cont+Ind+2, engine->Vocales);
-			if (Chr1 >= 0 && strpbrk(engine->Vocales[Chr1], "e") != (char *) 0) {
-				if (safe_strcat(&SilOrt, GrpCons, &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				if (safe_strcat(&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos = Ind;
-				continue;
-			}
-		}
+        if ((Chr = IndexChr(GrpOrt.Cont + Ind, engine->Vocales)) < 0)
+        {
+            if (safe_strcat(&SilOrt, GrpCons, &SilOrtSize, &SilOrtFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            Pos = Ind;
+            continue;
+        }
+        else if (Pos > 0
+                 && (!strcmp(engine->Vocales[Chr], "hu")
+                     || !strcmp(engine->Vocales[Chr], "hi")))
+        {
+            Chr1 = IndexChr(GrpOrt.Cont + Ind + 2, engine->Vocales);
+            if (Chr1 >= 0
+                && strpbrk(engine->Vocales[Chr1], "e") != (char *) 0)
+            {
+                if (safe_strcat(&SilOrt, GrpCons, &SilOrtSize, &SilOrtFilled)
+                    < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                if (safe_strcat
+                    (&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos = Ind;
+                continue;
+            }
+        }
 
-		switch (NumCons) {
-		case 0 :
-			break;
-		case 1 :
-			FinSil = 1;
-			break;
-		case 2 :
-			Ind = Pos;
-			Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt);
-			Ind += strlen(engine->ConsTxt[Chr1]);
-			Chr2 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt);
-			if ((IndexChr(engine->ConsTxt[Chr1], ConsL) < 0 ||
-				strcmp(engine->ConsTxt[Chr2], "l") != 0) &&
-				(IndexChr(engine->ConsTxt[Chr1], ConsR) < 0 ||
-				strcmp(engine->ConsTxt[Chr2], "r") != 0)) {
-				if (safe_strcat(&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(engine->ConsTxt[Chr1]);
-			}
-			FinSil = 1;
-			break;
-		case 3 :
-			Ind = Pos;
-			Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt);
-			Ind += strlen(engine->ConsTxt[Chr1]);
-			Chr2 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt);
-			Ind += strlen(engine->ConsTxt[Chr2]);
-			Chr3 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt);
-			if ((IndexChr(engine->ConsTxt[Chr2], ConsL) < 0 ||
-				strcmp(engine->ConsTxt[Chr3], "l") != 0) &&
-				(IndexChr(engine->ConsTxt[Chr2], ConsR) < 0 ||
-				strcmp(engine->ConsTxt[Chr3], "r") != 0)) {
-				if (safe_strcat(&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(engine->ConsTxt[Chr1]);
-				if (safe_strcat(&SilOrt, engine->ConsTxt[Chr2], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(engine->ConsTxt[Chr2]);
-			}
-			else {
-				if (safe_strcat(&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-					free(SilOrt);
-					free(GrpVocs);
-					free(GrpCons);
-					return NULL;
-				}
-				Pos += strlen(engine->ConsTxt[Chr1]);
-			}
-			FinSil = 1;
-			break;
-		default :
-			Ind = Pos;
-			Chr1 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt);
-			Ind += strlen(engine->ConsTxt[Chr1]);
-			Chr2 = IndexChr(GrpOrt.Cont+Ind, engine->ConsTxt);
-			if (safe_strcat(&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize, &SilOrtFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			Pos += strlen(engine->ConsTxt[Chr1]);
-			if (safe_strcat(&SilOrt, engine->ConsTxt[Chr2], &SilOrtSize, &SilOrtFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-			Pos += strlen(engine->ConsTxt[Chr2]);
-			FinSil = 1;
-		}
-		if (FinSil != 0) {
-			if (safe_strcat(&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled) < 0) {
-				free(SilOrt);
-				free(GrpVocs);
-				free(GrpCons);
-				return NULL;
-			}
-		}
-	}
+        switch (NumCons)
+        {
+        case 0:
+            break;
+        case 1:
+            FinSil = 1;
+            break;
+        case 2:
+            Ind = Pos;
+            Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt);
+            Ind += strlen(engine->ConsTxt[Chr1]);
+            Chr2 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt);
+            if ((IndexChr(engine->ConsTxt[Chr1], ConsL) < 0 ||
+                 strcmp(engine->ConsTxt[Chr2], "l") != 0) &&
+                (IndexChr(engine->ConsTxt[Chr1], ConsR) < 0 ||
+                 strcmp(engine->ConsTxt[Chr2], "r") != 0))
+            {
+                if (safe_strcat
+                    (&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->ConsTxt[Chr1]);
+            }
+            FinSil = 1;
+            break;
+        case 3:
+            Ind = Pos;
+            Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt);
+            Ind += strlen(engine->ConsTxt[Chr1]);
+            Chr2 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt);
+            Ind += strlen(engine->ConsTxt[Chr2]);
+            Chr3 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt);
+            if ((IndexChr(engine->ConsTxt[Chr2], ConsL) < 0 ||
+                 strcmp(engine->ConsTxt[Chr3], "l") != 0) &&
+                (IndexChr(engine->ConsTxt[Chr2], ConsR) < 0 ||
+                 strcmp(engine->ConsTxt[Chr3], "r") != 0))
+            {
+                if (safe_strcat
+                    (&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->ConsTxt[Chr1]);
+                if (safe_strcat
+                    (&SilOrt, engine->ConsTxt[Chr2], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->ConsTxt[Chr2]);
+            }
+            else
+            {
+                if (safe_strcat
+                    (&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize,
+                     &SilOrtFilled) < 0)
+                {
+                    free(SilOrt);
+                    free(GrpVocs);
+                    free(GrpCons);
+                    return NULL;
+                }
+                Pos += strlen(engine->ConsTxt[Chr1]);
+            }
+            FinSil = 1;
+            break;
+        default:
+            Ind = Pos;
+            Chr1 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt);
+            Ind += strlen(engine->ConsTxt[Chr1]);
+            Chr2 = IndexChr(GrpOrt.Cont + Ind, engine->ConsTxt);
+            if (safe_strcat
+                (&SilOrt, engine->ConsTxt[Chr1], &SilOrtSize,
+                 &SilOrtFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            Pos += strlen(engine->ConsTxt[Chr1]);
+            if (safe_strcat
+                (&SilOrt, engine->ConsTxt[Chr2], &SilOrtSize,
+                 &SilOrtFilled) < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+            Pos += strlen(engine->ConsTxt[Chr2]);
+            FinSil = 1;
+        }
+        if (FinSil != 0)
+        {
+            if (safe_strcat(&SilOrt, InterSil[0], &SilOrtSize, &SilOrtFilled)
+                < 0)
+            {
+                free(SilOrt);
+                free(GrpVocs);
+                free(GrpCons);
+                return NULL;
+            }
+        }
+    }
 
-	free(GrpVocs);
-	free(GrpCons);
-	return SilOrt;
+    free(GrpVocs);
+    free(GrpCons);
+    return SilOrt;
 }

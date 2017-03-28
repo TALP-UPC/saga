@@ -28,17 +28,17 @@
  * LiberaMatStr - Libera una lista de strings acabados en 0 
  **********************************************************************/
 
-void	LiberaMatStr(
-	char	**matStr)
+void LiberaMatStr(char **matStr)
 {
-	size_t i;
-	if (matStr == NULL) {
-		return;
-	}
-	for (i=0; matStr[i] != NULL; i++)
-		free(matStr[i]);
-	free(matStr);
-	return;
+    size_t i;
+    if (matStr == NULL)
+    {
+        return;
+    }
+    for (i = 0; matStr[i] != NULL; i++)
+        free(matStr[i]);
+    free(matStr);
+    return;
 }
 
 /*********************************************************************
@@ -48,8 +48,10 @@ void	LiberaMatStr(
 size_t MatStrLength(char **mat)
 {
     size_t len = 0;
-    if (mat == NULL) return 0;
-    while (mat[len] != NULL) {
+    if (mat == NULL)
+        return 0;
+    while (mat[len] != NULL)
+    {
         len++;
     }
     return len;
@@ -60,9 +62,9 @@ size_t MatStrLength(char **mat)
  * separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-char	**MatStr(const char	*Str)
+char **MatStr(const char *Str)
 {
-	return MatStrChr(Str, " ,");
+    return MatStrChr(Str, " ,");
 }
 
 /***********************************************************************
@@ -70,86 +72,95 @@ char	**MatStr(const char	*Str)
  * separada en "tokens" por comas y/o espacios.
  **********************************************************************/
 
-char	**MatStrChr(
-	const char	*_Str,
-	const char	*Delim)
-
+char **MatStrChr(const char *_Str, const char *Delim)
 {
-	char	**Mat, **Mat2 = NULL, *Str;
-	char *token;
-	char	*fStr;
-	size_t	i;
+    char **Mat, **Mat2 = NULL, *Str;
+    char *token;
+    char *fStr;
+    size_t i;
 
     if (_Str == NULL)
     {
         return NULL;
     }
     Str = strdup(_Str);
-	if (Str == NULL) {
-		return NULL;
-	}
+    if (Str == NULL)
+    {
+        return NULL;
+    }
     fStr = Str;
-	/* Allocate space for the final NULL */
-	if ((Mat = malloc(sizeof(char *))) == NULL) {
-		free(fStr);
-		return NULL;
-	}
+    /* Allocate space for the final NULL */
+    if ((Mat = malloc(sizeof(char *))) == NULL)
+    {
+        free(fStr);
+        return NULL;
+    }
 
-	for (i = 0; (token = strtok(Str, Delim)) != NULL; i++) {
-		token = strdup(token);
-		if (token == NULL) {
-			free(Mat);
-			free(fStr);
-			return NULL;
-		}
-		/* We have a new token. Allocate space for it */
-		Mat2 = realloc(Mat, (i + 2) * sizeof(char *));
-		if (Mat2 == NULL) {
-			free(fStr);
-			free(Mat);
-			free(token);
-			return NULL;
-		} else { /* realloc successful */
-			Mat = Mat2;
-			Mat2 = NULL;
-		}
-		/* Store the token */
-		Mat[i] = token;
-		/* All the following calls to strtok continue on the same str */
-		Str = NULL;	/* Para la siguiente llamada a strtok	*/
-	}
+    for (i = 0; (token = strtok(Str, Delim)) != NULL; i++)
+    {
+        token = strdup(token);
+        if (token == NULL)
+        {
+            free(Mat);
+            free(fStr);
+            return NULL;
+        }
+        /* We have a new token. Allocate space for it */
+        Mat2 = realloc(Mat, (i + 2) * sizeof(char *));
+        if (Mat2 == NULL)
+        {
+            free(fStr);
+            free(Mat);
+            free(token);
+            return NULL;
+        }
+        else
+        {                       /* realloc successful */
+            Mat = Mat2;
+            Mat2 = NULL;
+        }
+        /* Store the token */
+        Mat[i] = token;
+        /* All the following calls to strtok continue on the same str */
+        Str = NULL;             /* Para la siguiente llamada a strtok   */
+    }
 
-	Mat[i] = NULL;
-	free(fStr);
+    Mat[i] = NULL;
+    free(fStr);
 
-	return Mat;
+    return Mat;
 }
 
 
-int safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_strlen)
+int safe_strcat(char **dest, const char *src, size_t * dest_size,
+                size_t * dest_strlen)
 {
-	size_t src_strlen = strlen(src);
-	char *new_dest;
-	if (dest == NULL) {
-		fprintf(stderr, "Error concatenating: Nothing to concatenate\n");
-		return -1;
-	}
-	if (src_strlen == 0) {
-		return 0;
-	}
-	if (*dest_size == 0 || *dest_size-1-*dest_strlen < src_strlen) {
-		new_dest = realloc(*dest, 2*(*dest_size+src_strlen));
-		if (new_dest == NULL) {
-			*dest = NULL;
-			return -1;
-		}
-		*dest = new_dest;
-		*dest_size = 2*(*dest_size+src_strlen);
-		memset(*dest + *dest_strlen, 0, *dest_size - *dest_strlen);
-	}
-	strcpy(*dest + *dest_strlen, src);
-	*dest_strlen += src_strlen;
-	return 0;
+    size_t src_strlen = strlen(src);
+    char *new_dest;
+    if (dest == NULL)
+    {
+        fprintf(stderr, "Error concatenating: Nothing to concatenate\n");
+        return -1;
+    }
+    if (src_strlen == 0)
+    {
+        return 0;
+    }
+    if (*dest_size == 0 || *dest_size - 1 - *dest_strlen < src_strlen)
+    {
+        new_dest = realloc(*dest, 2 * (*dest_size + src_strlen));
+        if (new_dest == NULL)
+        {
+            *dest = NULL;
+            return -1;
+        }
+        *dest = new_dest;
+        *dest_size = 2 * (*dest_size + src_strlen);
+        memset(*dest + *dest_strlen, 0, *dest_size - *dest_strlen);
+    }
+    strcpy(*dest + *dest_strlen, src);
+    *dest_strlen += src_strlen;
+    return 0;
 }
 
 
@@ -162,16 +173,26 @@ static inline unsigned int to_latin9(const unsigned int code)
     /* Code points 0 to U+00FF are the same in both. */
     if (code < 256U)
         return code;
-    switch (code) {
-    case 0x0152U: return 188U; /* U+0152 = 0xBC: OE ligature */
-    case 0x0153U: return 189U; /* U+0153 = 0xBD: oe ligature */
-    case 0x0160U: return 166U; /* U+0160 = 0xA6: S with caron */
-    case 0x0161U: return 168U; /* U+0161 = 0xA8: s with caron */
-    case 0x0178U: return 190U; /* U+0178 = 0xBE: Y with diaresis */
-    case 0x017DU: return 180U; /* U+017D = 0xB4: Z with caron */
-    case 0x017EU: return 184U; /* U+017E = 0xB8: z with caron */
-    case 0x20ACU: return 164U; /* U+20AC = 0xA4: Euro */
-    default:      return 256U;
+    switch (code)
+    {
+    case 0x0152U:
+        return 188U;            /* U+0152 = 0xBC: OE ligature */
+    case 0x0153U:
+        return 189U;            /* U+0153 = 0xBD: oe ligature */
+    case 0x0160U:
+        return 166U;            /* U+0160 = 0xA6: S with caron */
+    case 0x0161U:
+        return 168U;            /* U+0161 = 0xA8: s with caron */
+    case 0x0178U:
+        return 190U;            /* U+0178 = 0xBE: Y with diaresis */
+    case 0x017DU:
+        return 180U;            /* U+017D = 0xB4: Z with caron */
+    case 0x017EU:
+        return 184U;            /* U+017E = 0xB8: z with caron */
+    case 0x20ACU:
+        return 164U;            /* U+20AC = 0xA4: Euro */
+    default:
+        return 256U;
     }
 }
 
@@ -183,104 +204,110 @@ static inline unsigned int to_latin9(const unsigned int code)
  * Output has to have room for (length+1) chars, including the trailing NUL byte.
  * http://stackoverflow.com/a/11173493/446149
 */
-size_t utf8_to_latin9(char *const output, const char *const input, const size_t length)
+size_t utf8_to_latin9(char *const output, const char *const input,
+                      const size_t length)
 {
-    unsigned char             *out = (unsigned char *)output;
-    const unsigned char       *in  = (const unsigned char *)input;
-    const unsigned char *const end = (const unsigned char *)input + length;
-    unsigned int               c;
+    unsigned char *out = (unsigned char *) output;
+    const unsigned char *in = (const unsigned char *) input;
+    const unsigned char *const end = (const unsigned char *) input + length;
+    unsigned int c;
 
     while (in < end)
         if (*in < 128)
             *(out++) = *(in++); /* Valid codepoint */
-        else
-        if (*in < 192)
+        else if (*in < 192)
             in++;               /* 10000000 .. 10111111 are invalid */
-        else
-        if (*in < 224) {        /* 110xxxxx 10xxxxxx */
+        else if (*in < 224)
+        {                       /* 110xxxxx 10xxxxxx */
             if (in + 1 >= end)
                 break;
-            if ((in[1] & 192U) == 128U) {
-                c = to_latin9( (((unsigned int)(in[0] & 0x1FU)) << 6U)
-                             |  ((unsigned int)(in[1] & 0x3FU)) );
+            if ((in[1] & 192U) == 128U)
+            {
+                c = to_latin9((((unsigned int) (in[0] & 0x1FU)) << 6U)
+                              | ((unsigned int) (in[1] & 0x3FU)));
                 if (c < 256)
                     *(out++) = c;
             }
             in += 2;
 
-        } else
-        if (*in < 240) {        /* 1110xxxx 10xxxxxx 10xxxxxx */
+        }
+        else if (*in < 240)
+        {                       /* 1110xxxx 10xxxxxx 10xxxxxx */
             if (in + 2 >= end)
                 break;
-            if ((in[1] & 192U) == 128U &&
-                (in[2] & 192U) == 128U) {
-                c = to_latin9( (((unsigned int)(in[0] & 0x0FU)) << 12U)
-                             | (((unsigned int)(in[1] & 0x3FU)) << 6U)
-                             |  ((unsigned int)(in[2] & 0x3FU)) );
+            if ((in[1] & 192U) == 128U && (in[2] & 192U) == 128U)
+            {
+                c = to_latin9((((unsigned int) (in[0] & 0x0FU)) << 12U)
+                              | (((unsigned int) (in[1] & 0x3FU)) << 6U)
+                              | ((unsigned int) (in[2] & 0x3FU)));
                 if (c < 256)
                     *(out++) = c;
             }
             in += 3;
 
-        } else
-        if (*in < 248) {        /* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
+        }
+        else if (*in < 248)
+        {                       /* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
             if (in + 3 >= end)
                 break;
             if ((in[1] & 192U) == 128U &&
-                (in[2] & 192U) == 128U &&
-                (in[3] & 192U) == 128U) {
-                c = to_latin9( (((unsigned int)(in[0] & 0x07U)) << 18U)
-                             | (((unsigned int)(in[1] & 0x3FU)) << 12U)
-                             | (((unsigned int)(in[2] & 0x3FU)) << 6U)
-                             |  ((unsigned int)(in[3] & 0x3FU)) );
+                (in[2] & 192U) == 128U && (in[3] & 192U) == 128U)
+            {
+                c = to_latin9((((unsigned int) (in[0] & 0x07U)) << 18U)
+                              | (((unsigned int) (in[1] & 0x3FU)) << 12U)
+                              | (((unsigned int) (in[2] & 0x3FU)) << 6U)
+                              | ((unsigned int) (in[3] & 0x3FU)));
                 if (c < 256)
                     *(out++) = c;
             }
             in += 4;
 
-        } else
-        if (*in < 252) {        /* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+        }
+        else if (*in < 252)
+        {                       /* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
             if (in + 4 >= end)
                 break;
             if ((in[1] & 192U) == 128U &&
                 (in[2] & 192U) == 128U &&
-                (in[3] & 192U) == 128U &&
-                (in[4] & 192U) == 128U) {
-                c = to_latin9( (((unsigned int)(in[0] & 0x03U)) << 24U)
-                             | (((unsigned int)(in[1] & 0x3FU)) << 18U)
-                             | (((unsigned int)(in[2] & 0x3FU)) << 12U)
-                             | (((unsigned int)(in[3] & 0x3FU)) << 6U)
-                             |  ((unsigned int)(in[4] & 0x3FU)) );
+                (in[3] & 192U) == 128U && (in[4] & 192U) == 128U)
+            {
+                c = to_latin9((((unsigned int) (in[0] & 0x03U)) << 24U)
+                              | (((unsigned int) (in[1] & 0x3FU)) << 18U)
+                              | (((unsigned int) (in[2] & 0x3FU)) << 12U)
+                              | (((unsigned int) (in[3] & 0x3FU)) << 6U)
+                              | ((unsigned int) (in[4] & 0x3FU)));
                 if (c < 256)
                     *(out++) = c;
             }
             in += 5;
 
-        } else
-        if (*in < 254) {        /* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+        }
+        else if (*in < 254)
+        {                       /* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
             if (in + 5 >= end)
                 break;
             if ((in[1] & 192U) == 128U &&
                 (in[2] & 192U) == 128U &&
                 (in[3] & 192U) == 128U &&
-                (in[4] & 192U) == 128U &&
-                (in[5] & 192U) == 128U) {
-                c = to_latin9( (((unsigned int)(in[0] & 0x01U)) << 30U)
-                             | (((unsigned int)(in[1] & 0x3FU)) << 24U)
-                             | (((unsigned int)(in[2] & 0x3FU)) << 18U)
-                             | (((unsigned int)(in[3] & 0x3FU)) << 12U)
-                             | (((unsigned int)(in[4] & 0x3FU)) << 6U)
-                             |  ((unsigned int)(in[5] & 0x3FU)) );
+                (in[4] & 192U) == 128U && (in[5] & 192U) == 128U)
+            {
+                c = to_latin9((((unsigned int) (in[0] & 0x01U)) << 30U)
+                              | (((unsigned int) (in[1] & 0x3FU)) << 24U)
+                              | (((unsigned int) (in[2] & 0x3FU)) << 18U)
+                              | (((unsigned int) (in[3] & 0x3FU)) << 12U)
+                              | (((unsigned int) (in[4] & 0x3FU)) << 6U)
+                              | ((unsigned int) (in[5] & 0x3FU)));
                 if (c < 256)
                     *(out++) = c;
             }
             in += 6;
 
-        } else
+        }
+        else
             in++;               /* 11111110 and 11111111 are invalid */
 
     /* Terminate the output string. */
     *out = '\0';
 
-    return (size_t)(out - (unsigned char *)output);
+    return (size_t) (out - (unsigned char *) output);
 }

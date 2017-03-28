@@ -25,16 +25,9 @@
 #define LIS_UDF_ERROR SIZE_MAX
 #define LIS_UDF_UNKNOWN SIZE_MAX
 
-size_t		ReadLisUdf(
-	const char	*FicLisUdf,	/* Fichero ASCII con las unidades foneticas	*/
-	char	***LisUdf);	/* Lista de unidades resultante				*/
-size_t		SeekLisUdf(
-	char	*Unidad,
-	size_t		TamLis,
-	char	**LisUdf);
-size_t		MeteLisUdf(
-	char	*Unidad,
-	size_t		*TamLis,
-	char	***LisUdf);
+size_t ReadLisUdf(const char *FicLisUdf,        /* Fichero ASCII con las unidades foneticas     */
+                  char ***LisUdf);      /* Lista de unidades resultante                         */
+size_t SeekLisUdf(char *Unidad, size_t TamLis, char **LisUdf);
+size_t MeteLisUdf(char *Unidad, size_t * TamLis, char ***LisUdf);
 
-#endif						/* defined (LIS_UDF_H)					*/
+#endif /* defined (LIS_UDF_H)                                  */

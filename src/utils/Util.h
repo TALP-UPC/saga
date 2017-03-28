@@ -20,11 +20,13 @@
 #ifndef	UTIL_H
 #define	UTIL_H
 
-char	**MatStr(const char *);
-char	**MatStrChr(const char *, const char *);
+char **MatStr(const char *);
+char **MatStrChr(const char *, const char *);
 size_t MatStrLength(char **mat);
-void LiberaMatStr(char	**MatChr);
+void LiberaMatStr(char **MatChr);
 
-int safe_strcat(char **dest, const char *src, size_t *dest_size, size_t *dest_strlen);
-size_t utf8_to_latin9(char *const output, const char *const input, const size_t length);
-#endif						/* defined (UTIL_H)					*/
+int safe_strcat(char **dest, const char *src, size_t * dest_size,
+                size_t * dest_strlen);
+size_t utf8_to_latin9(char *const output, const char *const input,
+                      const size_t length);
+#endif /* defined (UTIL_H)                                     */
