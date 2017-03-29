@@ -45,11 +45,11 @@ permiten utilizar SAGA en todas las variantes dialectales soportadas.
 Modificando SAGA
 -----------------
 
-En el directorio "work/dicc" se incluyen subdirectorios con los diccionarios 
+En el directorio "dicc" se incluyen subdirectorios con los diccionarios 
 que modifican el comportamiento de SAGA para las distintas variantes del 
 español. Estos diccionarios pueden ser ampliados/modificados según interese
 de acuerdo con las propiedades de la transcripción fonética que se pretenda.
-Además, cada subdirectorio en `work/dicc` incluye un documento `Readme` que
+Además, cada subdirectorio en `dicc` incluye un documento `Readme` que
 indica las opciones de SAGA que han de tomarse para obtener la variante de
 la transcripción.
 
@@ -58,34 +58,7 @@ El código fuente de SAGA se encuentra en el directorio `src`.
 Usar SAGA como librería
 ------------------------
 
-Este es un ejemplo de código para usar SAGA en un programa externo:
-
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "Saga.h"
-
-int main() {
-  const char texto[] = "hola mundo\nhola otra vez";
-  char *fon = NULL;
-  SagaEngine *engine = SagaEngine_NewFromVariant("castilla");
-  if (engine == NULL) {
-		return EXIT_FAILURE;
-	}
-  if (SagaEngine_TranscribeText(engine, texto, "ISO-8859-15",
-                            &fon, NULL, NULL, NULL, NULL) < 0) {
-    SagaEngine_Clear(engine);
-    free(engine);
-		return EXIT_FAILURE;
-	}
-  printf("%s\n", fon);
-  free(fon);
-  SagaEngine_Clear(engine);
-  free(engine);
-  return EXIT_SUCCESS;
-}
-```
+En `test/saga_example.c` hay un ejemplo de código para usar SAGA en un programa.
 
 Si Saga está instalado correctamente, `pkg-config` debería poder mostrar
 los parámetros de compilación necesarios:
