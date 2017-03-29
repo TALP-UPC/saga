@@ -28,7 +28,6 @@ int main()
 {
     /* Input text */
     const char texto[] = "hola mundo";
-    /* Placeholders for all possible outputs: They will be allocated as needed. We must free them */
 
     /* Load engine */
     SagaEngine *engine = SagaEngine_NewFromVariant("castilla");
@@ -37,6 +36,7 @@ int main()
         return EXIT_FAILURE;
     }
 
+    /* Saga can output in several formats, let's see them all: */
     SagaEngine_EnableFonOutput(engine, 1);
     SagaEngine_EnableFnmOutput(engine, 1);
     SagaEngine_EnableFnmPalOutput(engine, 1);
@@ -68,7 +68,7 @@ int main()
     SagaEngine_Refresh(engine);
 
     /* Another text to transcribe */
-    const char texto2[] = "hola mundo me gusta la carne";
+    const char texto2[] = "hola mundo otra vez";
     /* Now we just want one output, we disable the other four */
     SagaEngine_EnableFonOutput(engine, 0);
     SagaEngine_EnableFnmOutput(engine, 0);
@@ -84,7 +84,7 @@ int main()
         return EXIT_FAILURE;
     }
     printf("%s\n", SagaEngine_GetFnmPalOutput(engine, 0));
-    /* 'o - l a / m 'u n - d o / m e / G 'u s - t a / l a / k 'a r - n e */
+    /* 'o - l a / m 'u n - d o / 'o - t r a / B 'e T */
     /* Final clear */
     SagaEngine_Refresh(engine);
     SagaEngine_Clear(engine);
