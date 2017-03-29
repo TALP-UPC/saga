@@ -229,6 +229,9 @@ extern "C" {
     int AplDicSust(char ***DicSust, char **TrnFon, char **Fonemas);
     int AplDicGrp(char ***DicExc, char **TxtOrt, char **Fonemas);
 
+
+    int SagaEngine_Outputs_Clear(SagaEngine_Outputs * outputs);
+    int SagaEngine_Outputs_Initialize(SagaEngine_Outputs * outputs);
 #ifdef __cplusplus
 }
 #endif

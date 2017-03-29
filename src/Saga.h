@@ -54,6 +54,26 @@ extern "C" {
 #define OCLUS_EXPL	0x40000
 #define INI_FIN_PAL	0x80000
 
+    typedef struct struct_SagaOutputs {
+        char *fon;
+        char *fnm;
+        char *fnmpal;
+        char *sefo;
+        char *sem;
+
+        size_t fon_size;
+        size_t fnm_size;
+        size_t fnmpal_size;
+        size_t sefo_size;
+        size_t sem_size;
+
+        size_t fon_filled;
+        size_t fnm_filled;
+        size_t fnmpal_filled;
+        size_t sefo_filled;
+        size_t sem_filled;
+    } SagaEngine_Outputs;
+
     typedef struct struct_SagaEngine {
         /* Argumentos de entrada (linea de comandos) */
         int TrnPalAis;          /* Palabras aisladas? */
@@ -123,11 +143,15 @@ extern "C" {
         FILE *FpSem;
         FILE *FpSefo;
 
+
         int close_FpFon;
         int close_FpFnm;
         int close_FpFnmPal;
         int close_FpSem;
         int close_FpSefo;
+
+        /* Streams de salida */
+        SagaEngine_Outputs StreamOutputs;
 
         /* Error stream */
         FILE *FpErr;
@@ -195,9 +219,15 @@ extern "C" {
                                         const char *variant);
     SagaEngine *SagaEngine_NewFromVariant(const char *variant);
     int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
-                                  const char *encoding, char **fon,
-                                  char **fnm, char **fnmpal, char **sefo,
-                                  char **sem);
+                                  const char *encoding);
+
+    int SagaEngine_WriteOutputStream(SagaEngine *engine);
+
+    int SagaEngine_EnableFonOutput(SagaEngine *engine, int enable);
+    int SagaEngine_EnableFnmOutput(SagaEngine *engine, int enable);
+    int SagaEngine_EnableFnmPalOutput(SagaEngine *engine, int enable);
+    int SagaEngine_EnableSefoOutput(SagaEngine *engine, int enable);
+    int SagaEngine_EnableSemOutput(SagaEngine *engine, int enable);
 #ifdef __cplusplus
 }
 #endif

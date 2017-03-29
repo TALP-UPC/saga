@@ -100,6 +100,7 @@ int SagaEngine_Initialize(SagaEngine *engine)
     engine->close_FpSem = 0;
     engine->close_FpSefo = 0;
 
+    SagaEngine_Outputs_Initialize(&engine->StreamOutputs);
 
     engine->FpErr = stderr;
     engine->close_err = 0;
@@ -236,6 +237,7 @@ int SagaEngine_Clear(SagaEngine *engine)
     SagaEngine_CloseInput(engine);
     SagaEngine_CloseErrorFile(engine);
     SagaEngine_CloseOutputFiles(engine);
+    SagaEngine_Outputs_Clear(&engine->StreamOutputs);
     SagaEngine_Initialize(engine);
     return 0;
 }
@@ -794,6 +796,61 @@ int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut)
     return 0;
 }
 
+int SagaEngine_WriteOutputStream(SagaEngine *engine)
+{
+    if (engine->SalFon)
+    {
+        if (safe_strcat(&(engine->StreamOutputs.fon),
+                        engine->TrnFon,
+                        &(engine->StreamOutputs.fon_size),
+                        &(engine->StreamOutputs.fon_filled)) < 0)
+        {
+            return -1;
+        }
+    }
+    if (engine->SalFnm)
+    {
+        if (safe_strcat(&(engine->StreamOutputs.fnm),
+                        engine->TrnFnm,
+                        &(engine->StreamOutputs.fnm_size),
+                        &(engine->StreamOutputs.fnm_filled)) < 0)
+        {
+            return -1;
+        }
+    }
+    if (engine->SalFnmPal)
+    {
+        if (safe_strcat
+            (&(engine->StreamOutputs.fnmpal),
+             engine->TrnFnmPal,
+             &(engine->StreamOutputs.fnmpal_size),
+             &(engine->StreamOutputs.fnmpal_filled)) < 0)
+        {
+            return -1;
+        }
+    }
+    if (engine->SalSefo)
+    {
+        if (safe_strcat(&(engine->StreamOutputs.sefo),
+                        engine->TrnSefo,
+                        &(engine->StreamOutputs.sefo_size),
+                        &(engine->StreamOutputs.sefo_filled)) < 0)
+        {
+            return -1;
+        }
+    }
+    if (engine->SalSem)
+    {
+        if (safe_strcat(&(engine->StreamOutputs.sem),
+                        engine->TrnSem,
+                        &(engine->StreamOutputs.sem_size),
+                        &(engine->StreamOutputs.sem_filled)) < 0)
+        {
+            return -1;
+        }
+    }
+}
+
 int SagaEngine_WriteOutputFiles(SagaEngine *engine)
 {
     /*
@@ -1241,64 +1298,72 @@ SagaEngine *SagaEngine_NewFromVariant(const char *variant)
     return engine;
 }
 
-int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
-                              const char *encoding, char **fon, char **fnm,
-                              char **fnmpal, char **sefo, char **sem)
+int SagaEngine_Outputs_Clear(SagaEngine_Outputs * outputs)
 {
-    size_t fon_size = 0, fnm_size = 0, fnmpal_size = 0, sefo_size =
-        0, sem_size = 0;
-    size_t fon_filled = 0, fnm_filled = 0, fnmpal_filled = 0, sefo_filled =
-        0, sem_filled = 0;
-    if (fon != NULL)
-    {
-        if (*fon != NULL)
-        {
-            fon_filled = strlen(*fon);
-            fon_size = fon_filled + 1;
-        }
-        engine->SalFon = 1;
-    }
+    if (outputs->fon != NULL)
+        free(outputs->fon);
+    if (outputs->fnm != NULL)
+        free(outputs->fnm);
+    if (outputs->fnmpal != NULL)
+        free(outputs->fnmpal);
+    if (outputs->sefo != NULL)
+        free(outputs->sefo);
+    if (outputs->sem != NULL)
+        free(outputs->sem);
+    return SagaEngine_Outputs_Initialize(outputs);
+}
 
-    if (fnm != NULL)
-    {
-        if (*fnm != NULL)
-        {
-            fnm_filled = strlen(*fnm);
-            fnm_size = fnm_filled + 1;
-        }
-        engine->SalFnm = 1;
-    }
 
-    if (fnmpal != NULL)
-    {
-        if (*fnmpal != NULL)
-        {
-            fnmpal_filled = strlen(*fnmpal);
-            fnmpal_size = fnmpal_filled + 1;
-        }
-        engine->SalFnmPal = 1;
-    }
+int SagaEngine_Outputs_Initialize(SagaEngine_Outputs * outputs)
+{
+    outputs->fon = NULL;
+    outputs->fnm = NULL;
+    outputs->fnmpal = NULL;
+    outputs->sefo = NULL;
+    outputs->sem = NULL;
 
-    if (sefo != NULL)
-    {
-        if (*sefo != NULL)
-        {
-            sefo_filled = strlen(*sefo);
-            sefo_size = sefo_filled + 1;
-        }
-        engine->SalSefo = 1;
-    }
+    outputs->fon_size = 0;
+    outputs->fnm_size = 0;
+    outputs->fnmpal_size = 0;
+    outputs->sefo_size = 0;
+    outputs->sem_size = 0;
 
-    if (sem != NULL)
-    {
-        if (*sem != NULL)
-        {
-            sem_filled = strlen(*sem);
-            sem_size = sem_filled + 1;
-        }
-        engine->SalSem = 1;
-    }
+    outputs->fon_filled = 0;
+    outputs->fnm_filled = 0;
+    outputs->fnmpal_filled = 0;
+    outputs->sefo_filled = 0;
+    outputs->sem_filled = 0;
+    return 0;
+}
 
+int SagaEngine_EnableFonOutput(SagaEngine *engine, int enable)
+{
+    engine->SalFon = enable;
+}
+
+int SagaEngine_EnableFnmOutput(SagaEngine *engine, int enable)
+{
+    engine->SalFnm = enable;
+}
+
+int SagaEngine_EnableFnmPalOutput(SagaEngine *engine, int enable)
+{
+    engine->SalFnmPal = enable;
+}
+
+int SagaEngine_EnableSefoOutput(SagaEngine *engine, int enable)
+{
+    engine->SalSefo = enable;
+}
+
+int SagaEngine_EnableSemOutput(SagaEngine *engine, int enable)
+{
+    engine->SalSem = enable;
+}
+
+int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
+                              const char *encoding)
+{
     SagaEngine_Refresh(engine);
     SagaEngine_InputFromText(engine, text, encoding);
 
@@ -1309,42 +1374,9 @@ int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
             SagaEngine_Refresh(engine);
             return -1;
         }
-        if (engine->SalFon && fon != NULL)
+        if (SagaEngine_WriteOutputStream(engine) < 0)
         {
-            if (safe_strcat(fon, engine->TrnFon, &fon_size, &fon_filled) < 0)
-            {
-                return -1;
-            }
-        }
-        if (engine->SalFnm && fnm != NULL)
-        {
-            if (safe_strcat(fnm, engine->TrnFnm, &fnm_size, &fnm_filled) < 0)
-            {
-                return -1;
-            }
-        }
-        if (engine->SalFnmPal && fnmpal != NULL)
-        {
-            if (safe_strcat
-                (fnmpal, engine->TrnFnmPal, &fnmpal_size, &fnmpal_filled) < 0)
-            {
-                return -1;
-            }
-        }
-        if (engine->SalSefo && sefo != NULL)
-        {
-            if (safe_strcat(sefo, engine->TrnSem, &sefo_size, &sefo_filled) <
-                0)
-            {
-                return -1;
-            }
-        }
-        if (engine->SalSem && sem != NULL)
-        {
-            if (safe_strcat(sem, engine->TrnSefo, &sem_size, &sem_filled) < 0)
-            {
-                return -1;
-            }
+            return -1;
         }
     }
     SagaEngine_CloseInput(engine);
