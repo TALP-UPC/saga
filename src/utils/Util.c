@@ -163,6 +163,17 @@ int safe_strcat(char **dest, const char *src, size_t * dest_size,
     return 0;
 }
 
+char* Saga_concat(const char *s1, const char *s2)
+{
+    const size_t len1 = strlen(s1);
+    const size_t len2 = strlen(s2);
+    char *result = malloc(len1+len2+1);//+1 for the zero-terminator
+    if (result == NULL) return NULL;
+    memcpy(result, s1, len1);
+    memcpy(result+len1, s2, len2+1);//+1 to copy the null-terminator
+    return result;
+}
+
 
 /* UTF-8 to ISO-8859-1/ISO-8859-15 mapper.
  * Return 0..255 for valid ISO-8859-15 code points, 256 otherwise.

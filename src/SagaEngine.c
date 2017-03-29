@@ -29,6 +29,33 @@
 #include	"SagaInternal.h"
 #include "Saga.h"
 
+static int SagaEngine_WriteOutputStream(SagaEngine *engine);
+
+static int SagaEngine_FreeDiccFileNames(SagaEngine *engine)
+{
+  if (engine->FreeDiccNames > 0)
+  {
+    if (engine->FicDicExc != NULL) free(engine->FicDicExc);
+    engine->FicDicExc = NULL;
+    if (engine->FicTrnFon != NULL) free(engine->FicTrnFon);
+    engine->FicTrnFon = NULL;
+    if (engine->FicTrnPal != NULL) free(engine->FicTrnPal);
+    engine->FicTrnPal = NULL;
+    if (engine->FicDicSust != NULL) free(engine->FicDicSust);
+    engine->FicDicSust = NULL;
+    if (engine->FicDicGrp != NULL) free(engine->FicDicGrp);
+    engine->FicDicGrp = NULL;
+    if (engine->FicNovFon != NULL) free(engine->FicNovFon);
+    engine->FicNovFon = NULL;
+    if (engine->FicNovVoc != NULL) free(engine->FicNovVoc);
+    engine->FicNovVoc = NULL;
+    if (engine->FicNovCons != NULL) free(engine->FicNovCons);
+    engine->FicNovCons = NULL;
+  }
+    return 0;
+}
+
+
 int SagaEngine_Initialize(SagaEngine *engine)
 {
     /*
@@ -42,6 +69,8 @@ int SagaEngine_Initialize(SagaEngine *engine)
     engine->FicNovFon = NULL;
     engine->FicNovVoc = NULL;
     engine->FicNovCons = NULL;
+    engine->FreeDiccNames = 0;
+
     engine->StrIniPal = ".-";
     engine->StrFinPal = "+.";
     engine->TrnPalAis = 0;
@@ -155,7 +184,7 @@ int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr)
     if (NomErr == NULL)
     {
         engine->close_err = 0;
-        engine->FpErr = NULL;
+        engine->FpErr = stderr;
     }
     else if (strcmp(NomErr, "-") == 0)
     {
@@ -237,7 +266,8 @@ int SagaEngine_Clear(SagaEngine *engine)
     SagaEngine_CloseInput(engine);
     SagaEngine_CloseErrorFile(engine);
     SagaEngine_CloseOutputFiles(engine);
-    SagaEngine_Outputs_Clear(&engine->StreamOutputs);
+    SagaEngine_ClearOutputs(engine);
+    SagaEngine_FreeDiccFileNames(engine);
     SagaEngine_Initialize(engine);
     return 0;
 }
@@ -796,7 +826,7 @@ int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut)
     return 0;
 }
 
-int SagaEngine_WriteOutputStream(SagaEngine *engine)
+static int SagaEngine_WriteOutputStream(SagaEngine *engine)
 {
     if (engine->SalFon)
     {
@@ -1138,79 +1168,132 @@ char *ArreglaTxt(char *TxtOrt)
     return Txt;
 }
 
+static const char *SagaGetDiccDir()
+{
+  const char *basedir = getenv("SAGA_DICCDIR");
+  if (basedir == NULL)
+ {
+    basedir = SAGA_DICCDIR;
+ }
+  return basedir;
+}
+
 int SagaArgentinaParams(SagaEngine *engine)
 {
-
-    engine->FicDicExc = SAGA_DICCDIR "/Arg/ArgExc.dicc";
-    engine->FicDicSust = SAGA_DICCDIR "/Arg/ArgSust.dicc";
-    engine->FicDicGrp = SAGA_DICCDIR "/Arg/ArgDicGrp.dicc";
-    engine->FicNovFon = SAGA_DICCDIR "/Arg/ArgNovFon.dicc";
+    const char *basedir = SagaGetDiccDir();
+    engine->FicDicExc = Saga_concat(basedir, "/Arg/ArgExc.dicc");
+    engine->FicDicSust = Saga_concat(basedir, "/Arg/ArgSust.dicc");
+    engine->FicDicGrp = Saga_concat(basedir, "/Arg/ArgDicGrp.dicc");
+    engine->FicNovFon = Saga_concat(basedir, "/Arg/ArgNovFon.dicc");
     engine->ClaveModif = SESEO | ESE_ASP_CON;
+    engine->FreeDiccNames = 1;
+    if (engine->FicDicExc == NULL || engine->FicDicSust == NULL || 
+           engine->FicDicGrp == NULL || engine->FicNovFon == NULL)
+        {
+            fprintf(stderr, "Error allocating dictionary names\n");
+            return -1;
+        }
     return 0;
 }
 
 
 int SagaCastillaParams(SagaEngine *engine)
 {
+    const char *basedir = SagaGetDiccDir();
+    engine->FicDicExc = Saga_concat(basedir, "/Cas/CasExc.dicc");
+    engine->FicTrnFon = Saga_concat(basedir, "/Cas/CasTrnFon.dicc");
+    engine->FicTrnPal = Saga_concat(basedir, "/Cas/CasTrnPal.dicc");
 
-    engine->FicDicExc = SAGA_DICCDIR "/Cas/CasExc.dicc";
-    engine->FicTrnFon = SAGA_DICCDIR "/Cas/CasTrnFon.dicc";
-    engine->FicTrnPal = SAGA_DICCDIR "/Cas/CasTrnPal.dicc";
-    engine->FicDicSust = SAGA_DICCDIR "/Cas/CasDicSust.dicc";
-    engine->FicDicGrp = SAGA_DICCDIR "/Cas/CasDicGrp.dicc";
-    engine->FicNovCons = SAGA_DICCDIR "/Cas/CasNovCns.dicc";
+    engine->FicDicSust = Saga_concat(basedir, "/Cas/CasDicSust.dicc");
+    engine->FicDicGrp = Saga_concat(basedir, "/Cas/CasDicGrp.dicc");
+    engine->FicNovCons = Saga_concat(basedir, "/Cas/CasNovCns.dicc");
+    engine->FreeDiccNames = 1;
+    if (engine->FicDicExc == NULL || engine->FicTrnFon == NULL ||
+          engine->FicTrnPal == NULL || engine->FicDicSust == NULL || 
+          engine->FicDicGrp == NULL || engine->FicNovCons == NULL)
+        {
+            fprintf(stderr, "Error allocating dictionary names\n");
+            return -1;
+        }
     return 0;
 }
 
 int SagaChileParams(SagaEngine *engine)
 {
-
-    engine->FicNovFon = SAGA_DICCDIR "/Chl/ChlNovFon.dicc";
-    engine->FicDicExc = SAGA_DICCDIR "/Chl/ChlExc.dicc";
-    engine->FicDicSust = SAGA_DICCDIR "/Chl/ChlSust.dicc";
-    engine->FicDicGrp = SAGA_DICCDIR "/Chl/ChlGrup.dicc";
+    const char *basedir = SagaGetDiccDir();
+    engine->FicNovFon = Saga_concat(basedir, "/Chl/ChlNovFon.dicc");
+    engine->FicDicExc = Saga_concat(basedir, "/Chl/ChlExc.dicc");
+    engine->FicDicSust = Saga_concat(basedir, "/Chl/ChlSust.dicc");
+    engine->FicDicGrp = Saga_concat(basedir, "/Chl/ChlGrup.dicc");
     engine->ClaveModif = SESEO | ESE_ASP_INC;
+    engine->FreeDiccNames = 1;
+    if (engine->FicNovFon == NULL || engine->FicDicExc == NULL ||
+          engine->FicDicSust == NULL || engine->FicDicGrp == NULL )
+        {
+            fprintf(stderr, "Error allocating dictionary names\n");
+            return -1;
+        }
     return 0;
 }
 
 int SagaColombiaParams(SagaEngine *engine)
 {
-
-    engine->FicDicExc = SAGA_DICCDIR "/Col/ColExc.dicc";
-    engine->FicDicSust = SAGA_DICCDIR "/Col/ColSust.dicc";
-
+    const char *basedir = SagaGetDiccDir();
+    engine->FicDicExc = Saga_concat(basedir, "/Col/ColExc.dicc");
+    engine->FicDicSust = Saga_concat(basedir, "/Col/ColSust.dicc");
     engine->ClaveModif = SESEO | BDG_ANDES;
+    engine->FreeDiccNames = 1;
+    if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
+        {
+            fprintf(stderr, "Error allocating dictionary names\n");
+            return -1;
+        }
     return 0;
 }
 
 int SagaMexicoParams(SagaEngine *engine)
 {
-
-    engine->FicDicExc = SAGA_DICCDIR "/Mex/MexExc.dicc";
-    engine->FicDicSust = SAGA_DICCDIR "/Mex/MexSust.dicc";
-
+    const char *basedir = SagaGetDiccDir();
+    engine->FicDicExc = Saga_concat(basedir, "/Mex/MexExc.dicc");
+    engine->FicDicSust = Saga_concat(basedir, "/Mex/MexSust.dicc");
     engine->ClaveModif = SESEO | EQUIS_KS;
+    engine->FreeDiccNames = 1;
+    if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
+        {
+            fprintf(stderr, "Error allocating dictionary names\n");
+            return -1;
+        }
     return 0;
 }
 
 int SagaPeruParams(SagaEngine *engine)
 {
-
-    engine->FicDicExc = SAGA_DICCDIR "/Per/PerExc.dicc";
-    engine->FicDicSust = SAGA_DICCDIR "/Per/PerSust.dicc";
-
+    const char *basedir = SagaGetDiccDir();
+    engine->FicDicExc = Saga_concat(basedir, "/Per/PerExc.dicc");
+    engine->FicDicSust = Saga_concat(basedir, "/Per/PerSust.dicc");
     engine->ClaveModif =
         SESEO | ESE_ASP_CON | NAS_VELAR | ARCHI_IMPL | ELIM_D;
+    engine->FreeDiccNames = 1;
+    if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
+        {
+            fprintf(stderr, "Error allocating dictionary names\n");
+            return -1;
+        }
     return 0;
 }
 
 int SagaVenezuelaParams(SagaEngine *engine)
 {
-
-    engine->FicDicExc = SAGA_DICCDIR "/Ven/VenExc.dicc";
-    engine->FicDicSust = SAGA_DICCDIR "/Ven/VenSust.dicc";
-
+    const char *basedir = SagaGetDiccDir();
+    engine->FicDicExc = Saga_concat(basedir, "/Ven/VenExc.dicc");
+    engine->FicDicSust = Saga_concat(basedir, "/Ven/VenSust.dicc");
     engine->ClaveModif = SESEO | ESE_ASP_INC | NAS_VELAR | EQUIS_KS;
+    engine->FreeDiccNames = 1;
+    if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
+        {
+            fprintf(stderr, "Error allocating dictionary names\n");
+            return -1;
+        }
     return 0;
 }
 
@@ -1298,19 +1381,14 @@ SagaEngine *SagaEngine_NewFromVariant(const char *variant)
     return engine;
 }
 
-int SagaEngine_Outputs_Clear(SagaEngine_Outputs * outputs)
+int SagaEngine_ClearOutputs(SagaEngine *engine)
 {
-    if (outputs->fon != NULL)
-        free(outputs->fon);
-    if (outputs->fnm != NULL)
-        free(outputs->fnm);
-    if (outputs->fnmpal != NULL)
-        free(outputs->fnmpal);
-    if (outputs->sefo != NULL)
-        free(outputs->sefo);
-    if (outputs->sem != NULL)
-        free(outputs->sem);
-    return SagaEngine_Outputs_Initialize(outputs);
+    SagaEngine_ClearFonOutput(engine);
+    SagaEngine_ClearFnmOutput(engine);
+    SagaEngine_ClearFnmPalOutput(engine);
+    SagaEngine_ClearSefoOutput(engine);
+    SagaEngine_ClearSemOutput(engine);
+    return 0;
 }
 
 
@@ -1338,40 +1416,153 @@ int SagaEngine_Outputs_Initialize(SagaEngine_Outputs * outputs)
 
 int SagaEngine_EnableFonOutput(SagaEngine *engine, int enable)
 {
+    if (enable == 0)
+    {
+        SagaEngine_ClearFonOutput(engine);
+    }
     engine->SalFon = enable;
 }
 
 int SagaEngine_EnableFnmOutput(SagaEngine *engine, int enable)
 {
+    if (enable == 0)
+    {
+        SagaEngine_ClearFnmOutput(engine);
+    }
     engine->SalFnm = enable;
 }
 
 int SagaEngine_EnableFnmPalOutput(SagaEngine *engine, int enable)
 {
+    if (enable == 0)
+    {
+        SagaEngine_ClearFnmPalOutput(engine);
+    }
+
     engine->SalFnmPal = enable;
 }
 
 int SagaEngine_EnableSefoOutput(SagaEngine *engine, int enable)
 {
+    if (enable == 0)
+    {
+        SagaEngine_ClearSefoOutput(engine);
+    }
     engine->SalSefo = enable;
 }
 
 int SagaEngine_EnableSemOutput(SagaEngine *engine, int enable)
 {
+    if (enable == 0)
+    {
+        SagaEngine_ClearSemOutput(engine);
+    }
+
     engine->SalSem = enable;
 }
+
+char *SagaEngine_GetFonOutput(SagaEngine *engine, int copy)
+{
+    if (copy > 0)
+        return strdup(engine->StreamOutputs.fon);
+    else
+        return engine->StreamOutputs.fon;
+}
+
+char *SagaEngine_GetFnmOutput(SagaEngine *engine, int copy)
+{
+    if (copy > 0)
+        return strdup(engine->StreamOutputs.fnm);
+    else
+        return engine->StreamOutputs.fnm;
+}
+
+char *SagaEngine_GetFnmPalOutput(SagaEngine *engine, int copy)
+{
+    if (copy > 0)
+        return strdup(engine->StreamOutputs.fnmpal);
+    else
+        return engine->StreamOutputs.fnmpal;
+}
+
+char *SagaEngine_GetSefoOutput(SagaEngine *engine, int copy)
+{
+    if (copy > 0)
+        return strdup(engine->StreamOutputs.sefo);
+    else
+        return engine->StreamOutputs.sefo;
+}
+
+char *SagaEngine_GetSemOutput(SagaEngine *engine, int copy)
+{
+    if (copy > 0)
+        return strdup(engine->StreamOutputs.sem);
+    else
+        return engine->StreamOutputs.sem;
+}
+
+int SagaEngine_ClearFonOutput(SagaEngine *engine)
+{
+    if (engine->StreamOutputs.fon != NULL)
+        free(engine->StreamOutputs.fon);
+    engine->StreamOutputs.fon = NULL;
+    engine->StreamOutputs.fon_size = 0;
+    engine->StreamOutputs.fon_filled = 0;
+    return 0;
+}
+
+int SagaEngine_ClearFnmOutput(SagaEngine *engine)
+{
+    if (engine->StreamOutputs.fnm != NULL)
+        free(engine->StreamOutputs.fnm);
+    engine->StreamOutputs.fnm = NULL;
+    engine->StreamOutputs.fnm_size = 0;
+    engine->StreamOutputs.fnm_filled = 0;
+    return 0;
+}
+
+int SagaEngine_ClearFnmPalOutput(SagaEngine *engine)
+{
+    if (engine->StreamOutputs.fnmpal != NULL)
+        free(engine->StreamOutputs.fnmpal);
+    engine->StreamOutputs.fnmpal = NULL;
+    engine->StreamOutputs.fnmpal_size = 0;
+    engine->StreamOutputs.fnmpal_filled = 0;
+    return 0;
+}
+
+int SagaEngine_ClearSefoOutput(SagaEngine *engine)
+{
+    if (engine->StreamOutputs.sefo != NULL)
+        free(engine->StreamOutputs.sefo);
+    engine->StreamOutputs.sefo = NULL;
+    engine->StreamOutputs.sefo_size = 0;
+    engine->StreamOutputs.sefo_filled = 0;
+    return 0;
+}
+
+int SagaEngine_ClearSemOutput(SagaEngine *engine)
+{
+    if (engine->StreamOutputs.sem != NULL)
+        free(engine->StreamOutputs.sem);
+    engine->StreamOutputs.sem = NULL;
+    engine->StreamOutputs.sem_size = 0;
+    engine->StreamOutputs.sem_filled = 0;
+    return 0;
+}
+
 
 int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
                               const char *encoding)
 {
     SagaEngine_Refresh(engine);
     SagaEngine_InputFromText(engine, text, encoding);
-
     while (!(SagaEngine_ReadText(engine) < 0))
     {
         if (SagaEngine_Transcribe(engine) < 0)
         {
             SagaEngine_Refresh(engine);
+            fprintf(stderr, "Error in SagaEngine_Transcribe\n");
             return -1;
         }
         if (SagaEngine_WriteOutputStream(engine) < 0)

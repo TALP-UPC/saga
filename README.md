@@ -57,81 +57,9 @@ SAGA source code is available under the `src` directory.
 Using SAGA as a library
 ------------------------
 
-This is a sample code to use SAGA in an external program:
+In `test/saga_example.c` there is an example on how to use SAGA in an
+external program.
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "Saga.h"
-
-int main() {
-  /* Input text */
-  const char texto[] = "hola mundo";
-  /* Placeholders for all possible outputs: They will be allocated as needed. We must free them */
-  char *phonemes = NULL; /* 'o-la m'un-do */
-  char *phonemes_separated = NULL; /* 'o l a m 'u n d o */
-  char *phonemes_sep_words = NULL; /* 'o - l a / m 'u n - d o */
-  char *semisyllables = NULL; /* o- -'o la- -a mu- -'un do- -o  */
-  char *semiphonemes = NULL; /* .-'o 'o+l 'o-l l+a l-a a+. .-m m+'u m-'u 'u+n 'u-n n+d n-d d+o d-o o+. */
-
-  /* Load engine */
-  SagaEngine *engine = SagaEngine_NewFromVariant("castilla");
-  if (engine == NULL) {
-		return EXIT_FAILURE;
-  }
-
-  /* Transcribe the text */
-  if (SagaEngine_TranscribeText(engine, texto, "UTF-8", &phonemes, &phonemes_separated,
-                                &phonemes_sep_words, &semisyllables, &semiphonemes) < 0) {
-    SagaEngine_Clear(engine);
-    free(engine);
-    printf("Error in transcribe text\n");
-	return EXIT_FAILURE;
-  }
-  /* Print all outputs */
-  printf("Phonemes: %s\n", phonemes);
-  /* Phonemes: 'o-la m'un-do */
-  printf("Phonemes separated: %s\n", phonemes_separated);
-  /* Phonemes separated:  'o l a m 'u n d o  */
-  printf("Phonemes separated and separating words: %s\n", phonemes_sep_words);
-  /* Phonemes separated and separating words: 'o - l a / m 'u n - d o */
-  printf("Semisyllables: %s\n", semisyllables);
-  /* Semisyllables: o- -'o la- -a mu- -'un do- -o  */
-  printf("Semiphonemes: %s\n", semiphonemes);
-  /* Semiphonemes: .-'o 'o+l 'o-l l+a l-a a+. .-m m+'u m-'u 'u+n 'u-n n+d n-d d+o d-o o+. */
-
-  /* Free the output */
-  free(phonemes);
-  free(phonemes_separated);
-  free(phonemes_sep_words);
-  free(semisyllables);
-  free(semiphonemes);
-
-  /* Clear the engine, prepare it for the next transcription */
-  SagaEngine_Refresh(engine);
-
-  /* Another text to transcribe */
-  const char texto2[] = "hola mundo me gusta la carne";
-  /* Now we just want one output */
-  phonemes_sep_words = NULL;
-  if (SagaEngine_TranscribeText(engine, texto2, "UTF-8",
-                            NULL, NULL, &phonemes_sep_words, NULL, NULL) < 0) {
-    SagaEngine_Clear(engine);
-    free(engine);
-    printf("Error in transcribe text\n");
-	return EXIT_FAILURE;
-  }
-  printf("%s\n", phonemes_sep_words);
-  /* 'o - l a / m 'u n - d o / m e / G 'u s - t a / l a / k 'a r - n e */
-  free(phonemes_sep_words);
-  /* Final clear */
-  SagaEngine_Refresh(engine);
-  SagaEngine_Clear(engine);
-  free(engine);
-  return EXIT_SUCCESS;
-}
-```
 
 If Saga has been installed properly, `pkg-config` should be able to show
 the necessary compiler flags:

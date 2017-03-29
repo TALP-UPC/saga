@@ -29,4 +29,6 @@ int safe_strcat(char **dest, const char *src, size_t * dest_size,
                 size_t * dest_strlen);
 size_t utf8_to_latin9(char *const output, const char *const input,
                       const size_t length);
+char* Saga_concat(const char *s1, const char *s2);
+
 #endif /* defined (UTIL_H)                                     */

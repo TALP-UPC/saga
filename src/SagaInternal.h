@@ -88,6 +88,7 @@ extern "C" {
 #define ALL_ACUTE "\xE1\xE9\xED\xF3\xFA"
 #define ALL_PUNCT_AND_SPACES ".,:;\xBF?()\xA1! \t\n"
 
+
     static char *_Letras[] __attribute__ ((unused)) =
     {
     "a", "'a", "ha", "h'a", "b", "c", "ch", "d", "e", "'e", "he",
@@ -229,8 +230,6 @@ extern "C" {
     int AplDicSust(char ***DicSust, char **TrnFon, char **Fonemas);
     int AplDicGrp(char ***DicExc, char **TxtOrt, char **Fonemas);
 
-
-    int SagaEngine_Outputs_Clear(SagaEngine_Outputs * outputs);
     int SagaEngine_Outputs_Initialize(SagaEngine_Outputs * outputs);
 #ifdef __cplusplus
 }

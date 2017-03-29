@@ -81,15 +81,18 @@ extern "C" {
         int ConSil;             /* Conservar los silencios */
         const char *StrIniPal;  /* Marca inicio palabra */
         const char *StrFinPal;  /* Marca fin de palabra */
-        const char *FicDicExc;  /* Nombre fichero Diccionario excepciones */
-        const char *FicTrnFon;  /* Nombre fichero Diccionario transcripcion de grafemas */
-        const char *FicTrnPal;  /* Nombre fichero Diccionario transcripcion de palabras */
-        const char *FicDicSust; /* Nombre fichero Diccionario de substitucion de fonemas */
-        const char *FicDicGrp;  /* Nombre fichero Diccionario de substitucion de grupos foneticos */
-        const char *FicNovVoc;  /* Nombre fichero Lista de grafemas vocalicos introducidos */
-        const char *FicNovCons; /* Nombre fichero Lista de grafemas consonanticos introducidos */
-        const char *FicNovFon;  /* Nombre fichero Lista de fonemas introducidos */
-        long ClaveModif;        /* Incluye las opciones -M de la linea de comandos */
+
+        char *FicDicExc;  /* Nombre fichero Diccionario excepciones */
+        char *FicTrnFon;  /* Nombre fichero Diccionario transcripcion de grafemas */
+        char *FicTrnPal;  /* Nombre fichero Diccionario transcripcion de palabras */
+        char *FicDicSust; /* Nombre fichero Diccionario de substitucion de fonemas */
+        char *FicDicGrp;  /* Nombre fichero Diccionario de substitucion de grupos foneticos */
+        char *FicNovVoc;  /* Nombre fichero Lista de grafemas vocalicos introducidos */
+        char *FicNovCons; /* Nombre fichero Lista de grafemas consonanticos introducidos */
+        char *FicNovFon;  /* Nombre fichero Lista de fonemas introducidos */
+        int FreeDiccNames;          /* Hacer free de los nombre fichero diccionarios */
+
+        int32_t ClaveModif;        /* Incluye las opciones -M de la linea de comandos */
 
         /* Diccionarios cargados */
         char ***DicExc;
@@ -221,13 +224,27 @@ extern "C" {
     int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
                                   const char *encoding);
 
-    int SagaEngine_WriteOutputStream(SagaEngine *engine);
 
     int SagaEngine_EnableFonOutput(SagaEngine *engine, int enable);
     int SagaEngine_EnableFnmOutput(SagaEngine *engine, int enable);
     int SagaEngine_EnableFnmPalOutput(SagaEngine *engine, int enable);
     int SagaEngine_EnableSefoOutput(SagaEngine *engine, int enable);
     int SagaEngine_EnableSemOutput(SagaEngine *engine, int enable);
+
+    char *SagaEngine_GetFonOutput(SagaEngine *engine, int copy);
+    char *SagaEngine_GetFnmOutput(SagaEngine *engine, int copy);
+    char *SagaEngine_GetFnmPalOutput(SagaEngine *engine, int copy);
+    char *SagaEngine_GetSefoOutput(SagaEngine *engine, int copy);
+    char *SagaEngine_GetSemOutput(SagaEngine *engine, int copy);
+
+    int SagaEngine_ClearOutputs(SagaEngine *engine);
+    int SagaEngine_ClearFonOutput(SagaEngine *engine);
+    int SagaEngine_ClearFnmOutput(SagaEngine *engine);
+    int SagaEngine_ClearFnmPalOutput(SagaEngine *engine);
+    int SagaEngine_ClearSefoOutput(SagaEngine *engine);
+    int SagaEngine_ClearSemOutput(SagaEngine *engine);
+
+
 #ifdef __cplusplus
 }
 #endif

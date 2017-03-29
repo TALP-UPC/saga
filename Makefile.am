@@ -103,12 +103,31 @@ dist_man1_MANS = man/man1/saga.1
 
 check_PROGRAMS = test/test_saga
 
+check_SCRIPTS = test/test_saga_example.sh
+
+CLEANFILES += test/test_saga_example.sh
+EXTRA_DIST += test/test_saga_example.sh.in
+
+do_subst_test_saga_example = 
+
+test/test_saga_example.sh: test/test_saga_example.sh.in Makefile
+	sed -e 's,[@]abs_top_srcdir[@],$(abs_top_srcdir),g'  < $(srcdir)/test/test_saga_example.sh.in > test/test_saga_example.sh
+	chmod +x test/test_saga_example.sh
+
+noinst_PROGRAMS = test/saga_example
+
+test_saga_example_SOURCES = test/saga_example.c
+test_saga_example_LDADD = libsaga.la 
+test_saga_example_CFLAGS = $(libsaga_la_CFLAGS)
+
+
+
 test_test_saga_SOURCES = test/test_saga.c
 test_test_saga_LDADD = libsaga.la 
 test_test_saga_CFLAGS = $(libsaga_la_CFLAGS) \
     -DTEST_FILE_DIR=\"$(top_srcdir)/test/\"
 
-TESTS = test/test_saga
+TESTS = test/test_saga test/test_saga_example.sh
 
 EXTRA_DIST += gpl-3.0.txt Readme.txt \
  doc/Saga_man.pdf \

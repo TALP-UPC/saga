@@ -34,44 +34,45 @@
 
 void test_lisudf(void)
 {
-	char **lisudf;
-	size_t tamlis;
-	TEST_CHECK_((tamlis = ReadLisUdf(TEST_READLISUDF_INPUT, &lisudf)) == 4,
-	            "Could not read list");
-	TEST_CHECK_(MeteLisUdf("raxacoricofallapatorius", &tamlis, &lisudf) != LIS_UDF_ERROR,
-	            "Could not append to LisUdf");
-	TEST_CHECK_(SeekLisUdf("raxacoricofallapatorius", tamlis, lisudf) == 4,
-	            "LisUdf seek failed");
-	return;
+    char **lisudf;
+    size_t tamlis;
+    TEST_CHECK_((tamlis = ReadLisUdf(TEST_READLISUDF_INPUT, &lisudf)) == 4,
+                "Could not read list");
+    TEST_CHECK_(MeteLisUdf("raxacoricofallapatorius", &tamlis, &lisudf) !=
+                LIS_UDF_ERROR, "Could not append to LisUdf");
+    TEST_CHECK_(SeekLisUdf("raxacoricofallapatorius", tamlis, lisudf) == 4,
+                "LisUdf seek failed");
+    return;
 }
 
 void test_matstr(void)
 {
-  char **matstr = NULL;
-  matstr = MatStr(NULL);
-  TEST_CHECK_(matstr == NULL, "MatStr(NULL) failed");
-  LiberaMatStr(matstr);
-  matstr = MatStr("hola amigos,estoy contento");
-  TEST_CHECK_(matstr != NULL, "Error creating MatStr from text");
-  TEST_CHECK_(MatStrLength(matstr) == 4, "Test MatStrLength failed");
-  LiberaMatStr(matstr);
+    char **matstr = NULL;
+    matstr = MatStr(NULL);
+    TEST_CHECK_(matstr == NULL, "MatStr(NULL) failed");
+    LiberaMatStr(matstr);
+    matstr = MatStr("hola amigos,estoy contento");
+    TEST_CHECK_(matstr != NULL, "Error creating MatStr from text");
+    TEST_CHECK_(MatStrLength(matstr) == 4, "Test MatStrLength failed");
+    LiberaMatStr(matstr);
 }
 
-void test_initialize_engine(void) {
-	SagaEngine engine;
-	TEST_CHECK_(SagaEngine_Initialize(&engine) >= 0,
+void test_initialize_engine(void)
+{
+    SagaEngine engine;
+    TEST_CHECK_(SagaEngine_Initialize(&engine) >= 0,
                 "Error in SagaEngine_Initialize");
-	TEST_CHECK_(
-        SagaEngine_InputFromText(&engine, "hola", "ISO-8859-15") >= 0,
-        "Error using InputFromText");
-	TEST_CHECK_(SagaEngine_Refresh(&engine) >= 0, "Error Refreshing engine");
-	TEST_CHECK_(SagaEngine_Clear(&engine) >= 0,"Error Clearing engine");
-	return;
+    TEST_CHECK_(SagaEngine_InputFromText(&engine, "hola", "ISO-8859-15") >= 0,
+                "Error using InputFromText");
+    TEST_CHECK_(SagaEngine_Refresh(&engine) >= 0, "Error Refreshing engine");
+    TEST_CHECK_(SagaEngine_Clear(&engine) >= 0, "Error Clearing engine");
+    return;
 }
 
 
 
-TEST_LIST = {
+TEST_LIST =
+{
     {"Initialize engine from text", test_initialize_engine},
     {"Test Matrix of strings helpers", test_matstr},
     {"Test ListUdf helpers", test_lisudf},
