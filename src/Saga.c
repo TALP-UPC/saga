@@ -215,19 +215,19 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
             *NomErr = strdup(optarg);
             break;
         case 'f':
-            engine->SalFon = 1;
+            SagaEngine_EnableFonOutput(engine, 1);
             hay_salida = 1;
             break;
         case 'F':
-            engine->SalFnm = 1;
+            SagaEngine_EnableFnmOutput(engine, 1);
             hay_salida = 1;
             break;
         case 'p':
-            engine->SalFnmPal = 1;
+            SagaEngine_EnableFnmPalOutput(engine, 1);
             hay_salida = 1;
             break;
         case 'y':
-            engine->SalSefo = 1;
+            SagaEngine_EnableSefoOutput(engine, 1);
             hay_salida = 1;
             break;
         case 'Y':
@@ -238,7 +238,7 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
             free(Matriz);       /* I have stolen the inner pointers */
             break;
         case 's':
-            engine->SalSem = 1;
+            SagaEngine_EnableSemOutput(engine, 1);
             break;
         case 'S':
             engine->ConSil = 1;
@@ -251,67 +251,67 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
                 case ' ':
                     continue;
                 case 'S':
-                    engine->ClaveModif |= SESEO;
+                    SagaEngine_Opt_Seseo(engine, 1);
                     break;
                 case 'X':
-                    engine->ClaveModif |= EQUIS_KS;
+                    SagaEngine_Opt_X_KS(engine, 1);
                     break;
                 case 'H':
-                    engine->ClaveModif |= ESE_ASP_INC;
+                    SagaEngine_Opt_SAspInc(engine, 1);
                     break;
                 case 'h':
-                    engine->ClaveModif |= ESE_ASP_CON;
+                    SagaEngine_Opt_SAspCond(engine, 1);
                     break;
                 case 'K':
-                    engine->ClaveModif |= SC_KS;
+                    SagaEngine_Opt_SC_KS(engine, 1);
                     break;
                 case 'A':
-                    engine->ClaveModif |= BDG_ANDES;
+                    SagaEngine_Opt_BDG_Andes(engine, 1);
                     break;
                 case 'N':
-                    engine->ClaveModif |= ENE_VELAR;
+                    SagaEngine_Opt_NVelar(engine, 1);
                     break;
                 case 'M':
-                    engine->ClaveModif |= NAS_VELAR;
+                    SagaEngine_Opt_NasalVelar(engine, 1);
                     break;
                 case 'P':
-                    engine->ClaveModif |= ARCHI_IMPL;
+                    SagaEngine_Opt_ArchImpl(engine, 1);
                     break;
                 case 'y':
-                    engine->ClaveModif |= Y_VOCAL;
+                    SagaEngine_Opt_YVocal(engine, 1);
                     break;
                 case 'R':
-                    engine->ClaveModif |= ERRE_IMPL;
+                    SagaEngine_Opt_RImpl(engine, 1);
                     break;
                 case '@':
-                    engine->ClaveModif |= GRUPO_SIL;
+                    SagaEngine_Opt_GrupoSil(engine, 1);
                     break;
                 case ':':
-                    engine->ClaveModif |= MARCA_IMPL;
+                    SagaEngine_Opt_MarcaImpl(engine, 1);
                     break;
                 case '_':
-                    engine->ClaveModif |= VOCAL_PTON;
+                    SagaEngine_Opt_VocalPTON(engine, 1);
                     break;
                 case '.':
-                    engine->ClaveModif |= INI_FIN_PAL;
+                    SagaEngine_Opt_IniFinPal(engine, 1);
                     break;
                 case '~':
-                    engine->ClaveModif |= VOCAL_NASAL;
+                    SagaEngine_Opt_VocalNasal(engine, 1);
                     break;
                 case 'C':
-                    engine->ClaveModif |= OCLUS_EXPL;
+                    SagaEngine_Opt_OclusExpl(engine, 1);
                     break;
                 case 'E':
                     switch (optarg[++i])
                     {
                     case 'b':
-                        engine->ClaveModif |= ELIM_B;
+                        SagaEngine_Opt_ElimB(engine, 1);
                         break;
                     case 'd':
-                        engine->ClaveModif |= ELIM_D;
+                        SagaEngine_Opt_ElimD(engine, 1);
                         break;
                     case 'g':
-                        engine->ClaveModif |= ELIM_G;
+                        SagaEngine_Opt_ElimG(engine, 1);
                         break;
                     default:
                         fprintf(stderr, "Clave desconocida \"%c\"\n",
@@ -360,7 +360,7 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
      */
     if (!hay_salida)
     {
-        engine->SalFon = 1;
+        SagaEngine_EnableFonOutput(engine, 1);
     }
 
     return 0;

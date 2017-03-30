@@ -28,33 +28,7 @@ extern "C" {
 #include <stdio.h>
 #include <inttypes.h>
 
-#if defined(_WIN32) && !defined(__attribute__)
-#define __attribute__(A)
-#endif
-
-/* Accessor methods instead of defines could be used */
-#define SESEO		0x00001
-#define EQUIS_KS	0x00002
-#define SC_KS		0x00004
-#define ESE_ASP_INC	0x00008
-#define ESE_ASP_CON	0x00010
-#define BDG_ANDES	0x00020
-#define ELIM_B		0x00040
-#define ELIM_D		0x00080
-#define ELIM_G		0x00100
-#define ENE_VELAR	0x00200
-#define NAS_VELAR	0x00400
-#define ARCHI_IMPL	0x00800
-#define Y_VOCAL		0x01000
-#define ERRE_IMPL	0x02000
-#define GRUPO_SIL	0x04000
-#define MARCA_IMPL	0x08000
-#define VOCAL_NASAL	0x10000
-#define VOCAL_PTON	0x20000
-#define OCLUS_EXPL	0x40000
-#define INI_FIN_PAL	0x80000
-
-    typedef struct struct_SagaOutputs {
+    typedef struct SagaEngine_Outputs_struct_ {
         char *fon;
         char *fnm;
         char *fnmpal;
@@ -74,7 +48,7 @@ extern "C" {
         size_t sem_filled;
     } SagaEngine_Outputs;
 
-    typedef struct struct_SagaEngine {
+    typedef struct SagaEngine_struct_ {
         /* Argumentos de entrada (linea de comandos) */
         int TrnPalAis;          /* Palabras aisladas? */
         int TrnLinAis;          /* Lineas aisladas? */
@@ -243,6 +217,27 @@ extern "C" {
     int SagaEngine_ClearFnmPalOutput(SagaEngine *engine);
     int SagaEngine_ClearSefoOutput(SagaEngine *engine);
     int SagaEngine_ClearSemOutput(SagaEngine *engine);
+
+    int SagaEngine_Opt_Seseo(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_X_KS(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_SC_KS(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_SAspInc(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_SAspCond(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_BDG_Andes(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_ElimB(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_ElimD(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_ElimG(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_NVelar(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_NasalVelar(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_ArchImpl(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_YVocal(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_RImpl(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_GrupoSil(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_MarcaImpl(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_OclusExpl(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_VocalNasal(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_VocalPTON(SagaEngine *engine, int enable);
+    int SagaEngine_Opt_IniFinPal(SagaEngine *engine, int enable);
 
 
 #ifdef __cplusplus

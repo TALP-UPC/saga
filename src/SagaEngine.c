@@ -1579,3 +1579,183 @@ int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
     SagaEngine_CloseInput(engine);
     return 0;
 }
+
+int SagaEngine_Opt_Seseo(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= SESEO;
+    else
+        engine->ClaveModif &= ~SESEO;
+    return 0;
+}
+
+int SagaEngine_Opt_X_KS(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= EQUIS_KS;
+    else
+        engine->ClaveModif &= ~EQUIS_KS;
+    return 0;
+}
+
+int SagaEngine_Opt_SC_KS(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= SC_KS;
+    else
+        engine->ClaveModif &= ~SC_KS;
+    return 0;
+}
+
+int SagaEngine_Opt_SAspInc(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ESE_ASP_INC;
+    else
+        engine->ClaveModif &= ~ESE_ASP_INC;
+    return 0;
+}
+
+int SagaEngine_Opt_SAspCond(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ESE_ASP_CON;
+    else
+        engine->ClaveModif &= ~ESE_ASP_CON;
+    return 0;
+}
+
+int SagaEngine_Opt_BDG_Andes(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= BDG_ANDES;
+    else
+        engine->ClaveModif &= ~BDG_ANDES;
+    return 0;
+}
+
+int SagaEngine_Opt_ElimB(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ELIM_B;
+    else
+        engine->ClaveModif &= ~ELIM_B;
+    return 0;
+}
+
+int SagaEngine_Opt_ElimD(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ELIM_D;
+    else
+        engine->ClaveModif &= ~ELIM_D;
+    return 0;
+}
+
+int SagaEngine_Opt_ElimG(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ELIM_G;
+    else
+        engine->ClaveModif &= ~ELIM_G;
+    return 0;
+}
+
+int SagaEngine_Opt_NVelar(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ENE_VELAR;
+    else
+        engine->ClaveModif &= ~ENE_VELAR;
+    return 0;
+}
+
+int SagaEngine_Opt_NasalVelar(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= NAS_VELAR;
+    else
+        engine->ClaveModif &= ~NAS_VELAR;
+    return 0;
+}
+
+int SagaEngine_Opt_ArchImpl(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ARCHI_IMPL;
+    else
+        engine->ClaveModif &= ~ARCHI_IMPL;
+    return 0;
+}
+
+int SagaEngine_Opt_YVocal(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= Y_VOCAL;
+    else
+        engine->ClaveModif &= ~Y_VOCAL;
+    return 0;
+}
+
+int SagaEngine_Opt_RImpl(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= ERRE_IMPL;
+    else
+        engine->ClaveModif &= ~ERRE_IMPL;
+    return 0;
+}
+
+int SagaEngine_Opt_GrupoSil(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= GRUPO_SIL;
+    else
+        engine->ClaveModif &= ~GRUPO_SIL;
+    return 0;
+}
+
+int SagaEngine_Opt_MarcaImpl(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= MARCA_IMPL;
+    else
+        engine->ClaveModif &= ~MARCA_IMPL;
+    return 0;
+}
+
+int SagaEngine_Opt_VocalNasal(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= VOCAL_NASAL;
+    else
+        engine->ClaveModif &= ~VOCAL_NASAL;
+    return 0;
+}
+
+int SagaEngine_Opt_VocalPTON(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= VOCAL_PTON;
+    else
+        engine->ClaveModif &= ~VOCAL_PTON;
+    return 0;
+}
+
+int SagaEngine_Opt_OclusExpl(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= OCLUS_EXPL;
+    else
+        engine->ClaveModif &= ~OCLUS_EXPL;
+    return 0;
+}
+
+int SagaEngine_Opt_IniFinPal(SagaEngine *engine, int enable)
+{
+    if (enable > 0)
+        engine->ClaveModif |= INI_FIN_PAL;
+    else
+        engine->ClaveModif &= ~INI_FIN_PAL;
+    return 0;
+}
