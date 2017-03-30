@@ -879,6 +879,7 @@ static int SagaEngine_WriteOutputStream(SagaEngine *engine)
             return -1;
         }
     }
+    return 0;
 }
 
 int SagaEngine_WriteOutputFiles(SagaEngine *engine)
@@ -1421,6 +1422,7 @@ int SagaEngine_EnableFonOutput(SagaEngine *engine, int enable)
         SagaEngine_ClearFonOutput(engine);
     }
     engine->SalFon = enable;
+    return 0;
 }
 
 int SagaEngine_EnableFnmOutput(SagaEngine *engine, int enable)
@@ -1430,6 +1432,7 @@ int SagaEngine_EnableFnmOutput(SagaEngine *engine, int enable)
         SagaEngine_ClearFnmOutput(engine);
     }
     engine->SalFnm = enable;
+    return 0;
 }
 
 int SagaEngine_EnableFnmPalOutput(SagaEngine *engine, int enable)
@@ -1440,6 +1443,7 @@ int SagaEngine_EnableFnmPalOutput(SagaEngine *engine, int enable)
     }
 
     engine->SalFnmPal = enable;
+    return 0;
 }
 
 int SagaEngine_EnableSefoOutput(SagaEngine *engine, int enable)
@@ -1449,6 +1453,7 @@ int SagaEngine_EnableSefoOutput(SagaEngine *engine, int enable)
         SagaEngine_ClearSefoOutput(engine);
     }
     engine->SalSefo = enable;
+    return 0;
 }
 
 int SagaEngine_EnableSemOutput(SagaEngine *engine, int enable)
@@ -1459,6 +1464,7 @@ int SagaEngine_EnableSemOutput(SagaEngine *engine, int enable)
     }
 
     engine->SalSem = enable;
+    return 0;
 }
 
 char *SagaEngine_GetFonOutput(SagaEngine *engine, int copy)
