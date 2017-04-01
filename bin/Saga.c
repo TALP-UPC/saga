@@ -379,7 +379,9 @@ static void EmpleoSaga(char **ArgV)
     fprintf(stderr, "    TxtIn:    Texto ortografico de entrada\n");
     fprintf(stderr, "    NomOut:    Nombre, sin ext., ficheros de salida\n");
     fprintf(stderr, "y opciones puede ser:\n");
-    fprintf(stderr, "    -f        : Transcripcion fonetica (ext. .fon)\n");
+    fprintf(stderr, "    -L dialecto: Establece todas las opciones para un dialecto (argentina,\n");
+    fprintf(stderr, "                 castilla, chile, colombia, mexico, peru o venezuela)\n");
+   fprintf(stderr, "    -f        : Transcripcion fonetica (ext. .fon)\n");
     fprintf(stderr, "    -F        : Transcripcion en fonemas (ext. .fnm)\n");
     fprintf(stderr,
             "    -p        : Transcripcion en fonemas por palabras (ext. .fnp)\n");
@@ -416,7 +418,8 @@ static void EmpleoSaga(char **ArgV)
     fprintf(stderr,
             "    -MH       : Transcribir [s] implosiva como [h] siempre\n");
     fprintf(stderr,
-            "    -Mh       : Transcribir [s] implosiva como [h] salvo final o enlace entre palabras\n");
+            "    -Mh       : Transcribir [s] implosiva como [h] salvo final o enlace\n");
+    fprintf(stderr, "                entre palabras\n");
     fprintf(stderr, "    -MK       : Transcribir [sT] como [ks]\n");
     fprintf(stderr, "    -MA       : Transcribir [b], [d] y [g] andinas\n");
     fprintf(stderr,

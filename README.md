@@ -40,8 +40,7 @@ some of the Spanish dialectal variants:
 - The latinoamerica dialectal variants defined in the SALA
   (SpeechDat Across Latin-America) project.
 
-Once installed, the `saga-*` scripts in the `bin` directory cover allow to use
-SAGA in all the supported dialectal variants.
+The `saga -L` argument controls the supported dialectal variants.
 
 
 Modifying SAGA
@@ -50,7 +49,8 @@ Modifying SAGA
 The `dicc` directory contains the dictionaries that change SAGA behaviour
 for the Spanish variants. These dictionaries can be modified to customize the
 phonetic transcriptions as desired. Each of the `dicc` directories contains
-a README file, describing the additional SAGA command line options needed.
+a README file, describing the additional SAGA modifiers that are used for that
+dialect.
 
 SAGA source code is available under the `src` directory.
 
@@ -92,5 +92,7 @@ Main Authors
 Contributors
 -------------
 
-- Sergio Oller Moreno: Standarize build system. Documentation improvements.
+- Sergio Oller Moreno took care of adding autotools support, update
+  documentation, write the SagaEngine API, provide pkg-config support and include
+  functions that replace their POSIX versions if needed for portability.
 

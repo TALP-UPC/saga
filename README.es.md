@@ -39,9 +39,8 @@ dialectales del español:
 - Las variedades dialectales de latinoamérica definidas en el proyecto SALA
   (SpeechDat Across Latin-America)
 
-Una vez SAGA está instalado, los scripts `saga-*` en el directorio `bin`
-permiten utilizar SAGA en todas las variantes dialectales soportadas.
-
+El argument `saga -L` permite especificar la variante dialectal a utilizar para
+la transcripción.
 Modificando SAGA
 -----------------
 
@@ -91,6 +90,7 @@ Autores principales
 Colaboradores
 ---------------
 
-- Sergio Oller Moreno: Estandarización de scripts para compilar. Mejora de
-                       documentación.
+- Sergio Oller Moreno se encargó del soporte de autotools, actualizar documentación,
+  escribir la API SagaEngine, añadir soporte a pkg-config en Saga y incluir una
+  libreria de compatibilidad para sistemas que no sean POSIX.
 
