@@ -1,7 +1,7 @@
 dnl Use autogen.sh to regenerate the configure script
 AC_PREREQ([2.62])
 AC_INIT([saga],
-        [1.0.9000],
+        [2.0],
         [https://github.com/TALP-UPC/saga/])
 
 AC_CONFIG_AUX_DIR([autotools])

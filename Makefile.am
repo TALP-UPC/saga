@@ -15,7 +15,21 @@ pkgconfiginstall_DATA = saga.pc
 lib_LTLIBRARIES += libsaga.la
 libsaga_la_SOURCES = src/utils/LisUdf.c src/utils/Util.c src/utils/PosixCompat.c
 libsaga_la_CFLAGS = -DSAGA_DICCDIR=\"$(pkgdatadir)/dicc/\"
-libsaga_la_LDFLAGS = -no-undefined
+# version-info is defined according to the libtool manual:
+#
+# 1. Start with version information of ‘0:0:0’
+# 2. Update the version information only immediately before a public release of
+#    your software. More frequent updates are unnecessary, and only guarantee that
+#    the current interface number gets larger faster.
+# 3. If the library source code has changed at all since the last update, then
+#    increment revision (‘c:r:a’ becomes ‘c:r+1:a’).
+# 4. If any interfaces have been added, removed, or changed since the last update,
+#    increment current, and set revision to 0.
+# 5. If any interfaces have been added since the last public release, then
+#    increment age.
+# 6. If any interfaces have been removed or changed since the last public release,
+#    then set age to 0.
+libsaga_la_LDFLAGS = -no-undefined -version-info 2:0:0
 libsaga_la_LIBADD = 
 
 libsaga_la_SOURCES += src/SagaAcc.c src/SagaDic.c src/SagaExt.c \
