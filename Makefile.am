@@ -105,6 +105,10 @@ check_PROGRAMS = test/test_saga
 
 check_SCRIPTS = test/test_saga_example.sh
 
+check_HEADERS = test/cutest.h
+
+EXTRA_DIST += test/test_readlisudf.txt
+
 CLEANFILES += test/test_saga_example.sh
 EXTRA_DIST += test/test_saga_example.sh.in
 
@@ -129,7 +133,7 @@ test_test_saga_CFLAGS = $(libsaga_la_CFLAGS) \
 
 TESTS = test/test_saga test/test_saga_example.sh
 
-EXTRA_DIST += gpl-3.0.txt Readme.txt \
+EXTRA_DIST += gpl-3.0.txt README.md README.es.md \
  doc/Saga_man.pdf \
  doc/Saga_Reglas_Trans.pdf \
  doc/SAMPA_Spanish_93.pdf \
