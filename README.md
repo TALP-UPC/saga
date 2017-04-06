@@ -27,7 +27,7 @@ From a downloaded tarball only
 Typically you will want to install SAGA to a custom directory, use `--prefix=`
 to specify the directory where Saga will be installed.
     
-    ./configure --prefix="$HOME"
+    ./configure --prefix="$HOME/saga"
     make
     make install
 

@@ -25,7 +25,7 @@ Desde tarball:
 Si se desea instalar SAGA en un directorio personalizado, hay que usar
 `--prefix=` a fin de especificar el directorio dónde se desee instalar SAGA.
 
-    ./configure --prefix="$HOME"
+    ./configure --prefix="$HOME/saga"
     make
     make install
 
