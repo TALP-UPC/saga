@@ -4,8 +4,8 @@ AC_INIT([saga],
         [1.0.9000],
         [https://github.com/TALP-UPC/saga/])
 
-AC_CONFIG_AUX_DIR([config])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([autotools])
+AC_CONFIG_MACRO_DIR([autotools/m4])
 
 
 AC_CANONICAL_HOST
@@ -17,14 +17,11 @@ AM_PROG_AR
 AM_SILENT_RULES([no])
 AC_PROG_INSTALL
 AC_CONFIG_SRCDIR([src/SagaEngine.c])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([include/config.h])
 LT_PREREQ([2.2])
 AC_C_BIGENDIAN
 
-dnl By default disable building static libraries.
-dnl use ./configure --enable-static
-dnl to build them.
-LT_INIT([disable-static])
+LT_INIT()
 AC_CHECK_DECLS([strdup, getopt])
 AC_CHECK_FUNCS([strdup getopt])
 AC_TYPE_SSIZE_T

@@ -1,4 +1,4 @@
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I autotools/m4
 
 lib_LTLIBRARIES =
 pkginclude_HEADERS =

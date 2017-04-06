@@ -1,5 +1,5 @@
 #!/bin/sh
-mkdir -p "m4" "config"
+mkdir -p "autotools/m4"
 libtoolize --copy \
 && aclocal \
 && autoheader \
