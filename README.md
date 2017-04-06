@@ -21,7 +21,8 @@ From git only:
 
 From a downloaded tarball only
 
-    tar xzf saga-1.1.tgz
+    tar xzf saga.tgz
+    cd saga
 
 Typically you will want to install SAGA to a custom directory, use `--prefix=`
 to specify the directory where Saga will be installed.

@@ -19,7 +19,8 @@ Desde git:
 
 Desde tarball:
 
-    tar xzf saga-1.1.tgz
+    tar xzf saga.tgz
+    cd saga
 
 Si se desea instalar SAGA en un directorio personalizado, hay que usar
 `--prefix=` a fin de especificar el directorio dónde se desee instalar SAGA.
