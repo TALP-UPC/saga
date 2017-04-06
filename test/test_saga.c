@@ -1,7 +1,8 @@
 /*
  * test.c
  * 
- * Copyright 2016 Sergio Oller <sergioller@gmail.com>
+ * Copyright (C) 1993-2017  Albino Nogueiras Rodríguez y José B. Mariño
+ *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

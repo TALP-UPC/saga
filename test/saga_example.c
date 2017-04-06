@@ -1,7 +1,8 @@
 /*
  * saga_example.c
  * 
- * Copyright 2017 Sergio Oller <sergioller@gmail.com>
+ * Copyright (C) 1993-2009  Albino Nogueiras Rodríguez y José B. Mariño
+ *       TALP - Universitat Politècnica de Catalunya, ESPAÑA
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
  * 
  * 
  */
-
+/* Author: Sergio Oller, 2017 */
 #include <stdio.h>
 #include <stdlib.h>
 
