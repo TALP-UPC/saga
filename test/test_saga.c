@@ -18,8 +18,7 @@
  * 
  * 
  */
-
-#include "cutest.h"
+/* Author: Sergio Oller, 2017 */
 #include "Saga.h"
 #include "Util.h"
 #include "LisUdf.h"
@@ -32,49 +31,93 @@
 #define TEST_READLISUDF_INPUT TEST_FILE_DIR "test_readlisudf.txt"
 #endif
 
-void test_lisudf(void)
+int test_lisudf(void)
 {
     char **lisudf;
     size_t tamlis;
-    TEST_CHECK_((tamlis = ReadLisUdf(TEST_READLISUDF_INPUT, &lisudf)) == 4,
-                "Could not read list");
-    TEST_CHECK_(MeteLisUdf("raxacoricofallapatorius", &tamlis, &lisudf) !=
-                LIS_UDF_ERROR, "Could not append to LisUdf");
-    TEST_CHECK_(SeekLisUdf("raxacoricofallapatorius", tamlis, lisudf) == 4,
-                "LisUdf seek failed");
-    return;
+    int err;
+    tamlis = ReadLisUdf(TEST_READLISUDF_INPUT, &lisudf);
+    if (tamlis != 4)
+    {
+			fprintf(stderr, "Could not read list\n");
+			return -1;
+		}
+		err = MeteLisUdf("raxacoricofallapatorius", &tamlis, &lisudf);
+		if (err == LIS_UDF_ERROR)
+		{
+			fprintf(stderr, "Could not append to LisUdf\n");
+			return -1;
+		}
+		tamlis = SeekLisUdf("raxacoricofallapatorius", tamlis, lisudf);
+		if (tamlis != 4)
+		{
+			fprintf(stderr, "LisUdf seek failed\n");
+			return -1;
+		}
+    return 0;
 }
 
-void test_matstr(void)
+int test_matstr(void)
 {
     char **matstr = NULL;
     matstr = MatStr(NULL);
-    TEST_CHECK_(matstr == NULL, "MatStr(NULL) failed");
+    if (matstr != NULL)
+		{
+			fprintf(stderr, "MatStr(NULL) failed\n");
+			return -1;
+		}
     LiberaMatStr(matstr);
     matstr = MatStr("hola amigos,estoy contento");
-    TEST_CHECK_(matstr != NULL, "Error creating MatStr from text");
-    TEST_CHECK_(MatStrLength(matstr) == 4, "Test MatStrLength failed");
+    if (matstr == NULL)
+		{
+			fprintf(stderr, "Error creating MatStr from text\n");
+			return -1;
+		}
+    if (MatStrLength(matstr) != 4)
+    {
+			fprintf(stderr,  "Test MatStrLength failed\n");
+			return -1;
+		}
     LiberaMatStr(matstr);
+    return 0;
 }
 
-void test_initialize_engine(void)
+int test_initialize_engine(void)
 {
     SagaEngine engine;
-    TEST_CHECK_(SagaEngine_Initialize(&engine) >= 0,
-                "Error in SagaEngine_Initialize");
-    TEST_CHECK_(SagaEngine_InputFromText(&engine, "hola", "ISO-8859-15") >= 0,
-                "Error using InputFromText");
-    TEST_CHECK_(SagaEngine_Refresh(&engine) >= 0, "Error Refreshing engine");
-    TEST_CHECK_(SagaEngine_Clear(&engine) >= 0, "Error Clearing engine");
-    return;
+    int err;
+    err = SagaEngine_Initialize(&engine);
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error in SagaEngine_Initialize\n");
+			  return -1;
+		}
+    err = SagaEngine_InputFromText(&engine, "hola", "UTF-8");
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error using InputFromText\n");
+			  return -1;
+		}
+    err = SagaEngine_Refresh(&engine);
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error Refreshing engine\n");
+			  return -1;
+		}
+    err = SagaEngine_Clear(&engine);
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error Clearing engine\n");
+			  return -1;
+		}
+    return 0;
 }
 
-
-
-TEST_LIST =
+int main()
 {
-    {"Initialize engine from text", test_initialize_engine},
-    {"Test Matrix of strings helpers", test_matstr},
-    {"Test ListUdf helpers", test_lisudf},
-    {0}
-};
+	if (test_initialize_engine() < 0) return -1;
+	if (test_matstr() < 0) return -1;
+	if (test_lisudf() < 0) return -1;
+	return 0;
+}
+

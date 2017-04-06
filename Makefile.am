@@ -105,8 +105,6 @@ check_PROGRAMS = test/test_saga
 
 check_SCRIPTS = test/test_saga_example.sh
 
-check_HEADERS = test/cutest.h
-
 EXTRA_DIST += test/test_readlisudf.txt
 
 CLEANFILES += test/test_saga_example.sh
