@@ -20,6 +20,7 @@
  * 
  */
 /* Author: Sergio Oller, 2017 */
+#include <stdlib.h>
 #include "Saga.h"
 #include "Util.h"
 #include "LisUdf.h"
@@ -114,11 +115,39 @@ int test_initialize_engine(void)
     return 0;
 }
 
+int test_empty()
+{
+    const char *text = "";
+    SagaEngine engine;
+    int err;
+    err = SagaEngine_Initialize(&engine);
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error in SagaEngine_Initialize\n");
+			  return -1;
+	}
+    SagaEngine_EnableFnmPalOutput(&engine, 1);
+    if (SagaEngine_TranscribeText(&engine, text, "UTF-8") < 0)
+    {
+        SagaEngine_Clear(&engine);
+        return -1;
+    }
+    if (engine.StreamOutputs.fnmpal == NULL)
+    {
+        fprintf(stderr, "fnmpal should be empty but it is NULL\n");
+        return -1;
+    }
+    SagaEngine_Clear(&engine);
+    return 0;
+}
+
+
 int main()
 {
 	if (test_initialize_engine() < 0) return -1;
 	if (test_matstr() < 0) return -1;
 	if (test_lisudf() < 0) return -1;
+	if (test_empty() < 0) return -1;
 	return 0;
 }
 

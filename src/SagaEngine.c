@@ -209,20 +209,13 @@ int SagaEngine_ReadText(SagaEngine *engine)
     SagaEngine_Refresh(engine);
     if (engine->FpIn != NULL)
     {
-        engine->TxtOrt =
-            CargTxtOrt(engine->FpIn, engine->TrnLinAis, engine->in_encoding);
+        return CargTxtOrt(engine->FpIn, engine->TrnLinAis, engine->in_encoding, &engine->TxtOrt);
     }
     else if (engine->TxtIn != NULL)
     {
-        engine->TxtOrt =
-            CargTxtOrtChar(engine->TxtIn, &engine->TxtInOffset,
-                           engine->TrnLinAis);
+        return CargTxtOrtChar(engine->TxtIn, &engine->TxtInOffset,
+                                                   engine->TrnLinAis, &engine->TxtOrt);
     }
-    if (engine->TxtOrt == NULL)
-    {
-        return -1;
-    }
-    return 0;
 }
 
 int SagaEngine_CloseOutputFiles(SagaEngine *engine)
@@ -981,14 +974,16 @@ int SagaEngine_CloseInput(SagaEngine *engine)
  * CargTxtOrt - Carga un texto ortografico.
  **********************************************************************/
 
-char *CargTxtOrtChar(const char *txtin, intptr_t * TxtInOffset, int TrnLinAis)
+int CargTxtOrtChar(const char *txtin, intptr_t * TxtInOffset, int TrnLinAis,
+                                     char **txtout)
 {
     char *Txt;
     size_t input_len;
     if (txtin == NULL)
     {
         fprintf(stderr, "Error al leer el texto de entrada\n");
-        return NULL;
+        *txtout = NULL;
+        return -2;
     }
     input_len = 0;
     while (1)
@@ -1004,21 +999,27 @@ char *CargTxtOrtChar(const char *txtin, intptr_t * TxtInOffset, int TrnLinAis)
         }
         input_len++;
     }
-    if (input_len == 0)
-        return NULL;
     Txt = malloc((input_len + 1) * sizeof(char));
     if (Txt == NULL)
     {
         fprintf(stderr, "Error al reservar memoria\n");
-        return NULL;
+        *txtout = NULL;
+        return -2;
     }
     memcpy(Txt, txtin + *TxtInOffset, input_len);
     Txt[input_len] = '\0';
     *TxtInOffset += input_len;
-    return Txt;
+    *txtout = Txt;
+    if (input_len == 0)
+    {
+        return -1;
+    } else
+    {
+        return 0;
+    }
 }
 
-char *CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding)
+int CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding, char **txtout)
 {
     char *Txt;
     char *txt_converted;
@@ -1030,7 +1031,8 @@ char *CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding)
     if ((Txt = (char *) malloc((AllocLong + 1) * sizeof(char))) == NULL)
     {
         fprintf(stderr, "Error al ubicar memoria para Txt\n");
-        return NULL;
+        *txtout = NULL;
+        return -2;
     }
 
     Final = 0;
@@ -1047,7 +1049,8 @@ char *CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding)
                 NULL)
             {
                 fprintf(stderr, "Error al reubicar memoria para Txt\n");
-                return NULL;
+               *txtout = NULL;
+                return -2;
             }
         }
 
@@ -1073,18 +1076,18 @@ char *CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding)
     Txt[Long - 1] = '\0';
     if (Long == 1)
     {
-        free(Txt);
-        return NULL;
+        *txtout = Txt;
+        return -1;
     }
     /* Convert encoding */
     if (encoding == NULL || strcmp(encoding, "UTF-8") == 0)
     {
-        /* default assume UTF-8 */
         txt_converted = malloc(Long + 1);
         if (txt_converted == NULL)
         {
             free(Txt);
-            return NULL;
+            *txtout = NULL;
+            return -2;
         }
         txt_conv_size = utf8_to_latin9(txt_converted, Txt, Long);
         free(Txt);
@@ -1094,7 +1097,8 @@ char *CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding)
             Txt = txt_converted;
         }
     }
-    return Txt;
+    *txtout = Txt;
+    return 0;
 }
 
 /***********************************************************************
@@ -1561,19 +1565,37 @@ int SagaEngine_ClearSemOutput(SagaEngine *engine)
 int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
                               const char *encoding)
 {
+    int read_status = 0;
     SagaEngine_Refresh(engine);
     SagaEngine_InputFromText(engine, text, encoding);
-    while (!(SagaEngine_ReadText(engine) < 0))
+    while (1)
     {
+        read_status = SagaEngine_ReadText(engine);
+        if (read_status < -1)
+        {
+            fprintf(stderr, "Error in SagaEngine_ReadText\n");
+            return -1;
+        }
         if (SagaEngine_Transcribe(engine) < 0)
         {
             SagaEngine_Refresh(engine);
+            SagaEngine_CloseInput(engine);
             fprintf(stderr, "Error in SagaEngine_Transcribe\n");
             return -1;
         }
         if (SagaEngine_WriteOutputStream(engine) < 0)
         {
+            SagaEngine_Refresh(engine);
+            SagaEngine_CloseInput(engine);
+            fprintf(stderr, "Error in SagaEngine_WriteOutputStream\n");
             return -1;
+        }
+        if (read_status == -1)
+        {
+            fprintf(stderr, "We have finished reading\n");
+            fflush(stderr);
+            /* We have finished reading */
+            break;
         }
     }
     SagaEngine_CloseInput(engine);

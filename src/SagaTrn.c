@@ -53,6 +53,10 @@ char *TrnSilAcc(char *SilAcc,
      * Inicializamos TrnFon a "" para poder utilizar strcat's...
      */
     strcpy(TrnFon, "");
+    if (LongTxt == 0)
+    {
+        return TrnFon;
+    }
 
     /*
      * Cogemos el primer grupo ortografico.
@@ -1461,7 +1465,7 @@ char *TrnFonFnmPal(char *TrnFon, int ConSil, char **Fonemas)
      * TrnFon. Esto garantiza que cabra cualquier transcripcion.
      */
     if ((TrnFnm =
-         (char *) calloc((size_t) 20 * LongFon, sizeof(char))) == (char *) 0)
+         (char *) calloc((size_t) 20 * LongFon +1, sizeof(char))) == (char *) 0)
     {
         fprintf(stderr, "Error al ubicar memoria para TrnFnm\n");
         return NULL;

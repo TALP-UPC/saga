@@ -210,9 +210,9 @@ extern "C" {
 
     char *ArreglaTxt(char *TxtOrt);
 
-    char *CargTxtOrtChar(const char *txtin, intptr_t * TxtInOffset,
-                         int TrnLinAis);
-    char *CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding);
+    int CargTxtOrtChar(const char *txtin, intptr_t * TxtInOffset,
+                         int TrnLinAis, char **txtout);
+    int CargTxtOrt(FILE * fpin, int TrnLinAis, char *encoding, char **txtout);
     char *SilaTxtOrt(char *TxtOrt, char ***DicTrnPal, SagaEngine *engine);
     int CogeGrpOrt(char *TxtOrt, int PosAct, GRP_ORT *GrpAct, char **Letras);
     int CogeGrpFon(char *TrnFon, int PosAct, GRP_ORT *GrpAct, char **Fonemas);

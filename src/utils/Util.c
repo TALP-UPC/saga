@@ -142,20 +142,16 @@ int safe_strcat(char **dest, const char *src, size_t * dest_size,
         fprintf(stderr, "Error concatenating: Nothing to concatenate\n");
         return -1;
     }
-    if (src_strlen == 0)
-    {
-        return 0;
-    }
     if (*dest_size == 0 || *dest_size - 1 - *dest_strlen < src_strlen)
     {
-        new_dest = realloc(*dest, 2 * (*dest_size + src_strlen));
+        new_dest = realloc(*dest, 2 * (*dest_size + src_strlen) + 1);
         if (new_dest == NULL)
         {
             *dest = NULL;
             return -1;
         }
         *dest = new_dest;
-        *dest_size = 2 * (*dest_size + src_strlen);
+        *dest_size = 2 * (*dest_size + src_strlen) + 1;
         memset(*dest + *dest_strlen, 0, *dest_size - *dest_strlen);
     }
     strcpy(*dest + *dest_strlen, src);

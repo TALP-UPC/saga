@@ -40,6 +40,7 @@ int main(int ArgC, char *ArgV[])
 {
     char *NomIn = NULL, *NomOut = NULL, *NomErr = NULL;
     SagaEngine engine;
+    int read_status;
 
     SagaEngine_Initialize(&engine);
     /*
@@ -104,9 +105,20 @@ int main(int ArgC, char *ArgV[])
         return EXIT_FAILURE;
     }
 
-    while (!(SagaEngine_ReadText(&engine) < 0))
+    while (1)
     {
-
+        read_status = SagaEngine_ReadText(&engine);
+        if (read_status == -2)
+        {
+            SagaEngine_Refresh(&engine);
+            SagaEngine_Clear(&engine);
+            free(NomIn);
+            if (NomOut != NULL)
+                free(NomOut);
+            if (NomErr != NULL)
+                free(NomErr);
+            return EXIT_FAILURE;
+        }
         if (SagaEngine_Transcribe(&engine) < 0)
         {
             SagaEngine_Refresh(&engine);
@@ -135,6 +147,11 @@ int main(int ArgC, char *ArgV[])
             if (NomErr != NULL)
                 free(NomErr);
             return EXIT_FAILURE;
+        }
+        if (read_status == -1)
+        {
+            /* End of file */
+            break;
         }
     }
 
