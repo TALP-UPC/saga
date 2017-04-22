@@ -216,6 +216,10 @@ int SagaEngine_ReadText(SagaEngine *engine)
         return CargTxtOrtChar(engine->TxtIn, &engine->TxtInOffset,
                                                    engine->TrnLinAis, &engine->TxtOrt);
     }
+    else
+    {
+        return -1;
+    }
 }
 
 int SagaEngine_CloseOutputFiles(SagaEngine *engine)
