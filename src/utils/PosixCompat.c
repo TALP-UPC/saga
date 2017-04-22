@@ -99,18 +99,23 @@ int getopt(int argc, char *argv[], char *optstring)
 #include <limits.h>
 
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
-    char c, *cur_pos, *new_lineptr;
+    char *cur_pos, *new_lineptr;
     size_t new_lineptr_len;
+    int c;
 
     if (lineptr == NULL || n == NULL || stream == NULL) {
+#ifdef EINVAL
         errno = EINVAL;
+#endif
         return -1;
     }
 
     if (*lineptr == NULL) {
         *n = 128; /* init len */
         if ((*lineptr = (char *)malloc(*n)) == NULL) {
+#ifdef ENOMEM
             errno = ENOMEM;
+#endif
             return -1;
         }
     }
@@ -137,16 +142,18 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
             new_lineptr_len = *n * 2;
 
             if ((new_lineptr = (char *)realloc(*lineptr, new_lineptr_len)) == NULL) {
+#ifdef ENOMEM
                 errno = ENOMEM;
+#endif
                 return -1;
             }
             *lineptr = new_lineptr;
             *n = new_lineptr_len;
         }
 
-        *cur_pos++ = c;
+        *cur_pos++ = (char) c;
 
-        if (c == delim)
+        if (((char) c) == delim)
             break;
     }
 
