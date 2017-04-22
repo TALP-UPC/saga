@@ -252,6 +252,7 @@ extern "C" {
     int AplDicGrp(char ***DicExc, char **TxtOrt, char **Fonemas);
 
     int SagaEngine_Outputs_Initialize(SagaEngine_Outputs * outputs);
+    void SagaEngine_ErrMsg(SagaEngine *engine, const char* format, ... );
 #ifdef __cplusplus
 }
 #endif

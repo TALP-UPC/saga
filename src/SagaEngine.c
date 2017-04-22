@@ -23,6 +23,7 @@
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	<limits.h>
+#include    <stdarg.h>
 #include	<values.h>
 #include	"Util.h"
 #include	"LisUdf.h"
@@ -197,7 +198,7 @@ int SagaEngine_OpenErrorFile(SagaEngine *engine, const char *NomErr)
         engine->FpErr = fopen(NomErr, "wt");
         if (engine->FpErr == NULL)
         {
-            fprintf(stderr, "Error al abrir %s\n", NomErr);
+            SagaEngine_ErrMsg(engine, "Error al abrir %s\n", NomErr);
             return -1;
         }
     }
@@ -276,7 +277,7 @@ int SagaEngine_WriteErrorWords(SagaEngine *engine)
      */
     if (EscrPalExt(engine->PalExt) < 0)
     {
-        fprintf(engine->FpErr, "Error al escribir las palabras extranhas\n");
+        SagaEngine_ErrMsg(engine, "Error al escribir las palabras extranhas\n");
         return -1;
     }
     return 0;
@@ -1205,7 +1206,7 @@ int SagaArgentinaParams(SagaEngine *engine)
     if (engine->FicDicExc == NULL || engine->FicDicSust == NULL || 
            engine->FicDicGrp == NULL || engine->FicNovFon == NULL)
         {
-            fprintf(stderr, "Error allocating dictionary names\n");
+            SagaEngine_ErrMsg(engine,  "Error allocating dictionary names\n");
             return -1;
         }
     return 0;
@@ -1227,7 +1228,7 @@ int SagaCastillaParams(SagaEngine *engine)
           engine->FicTrnPal == NULL || engine->FicDicSust == NULL || 
           engine->FicDicGrp == NULL || engine->FicNovCons == NULL)
         {
-            fprintf(stderr, "Error allocating dictionary names\n");
+            SagaEngine_ErrMsg(engine, "Error allocating dictionary names\n");
             return -1;
         }
     return 0;
@@ -1245,7 +1246,7 @@ int SagaChileParams(SagaEngine *engine)
     if (engine->FicNovFon == NULL || engine->FicDicExc == NULL ||
           engine->FicDicSust == NULL || engine->FicDicGrp == NULL )
         {
-            fprintf(stderr, "Error allocating dictionary names\n");
+            SagaEngine_ErrMsg(engine, "Error allocating dictionary names\n");
             return -1;
         }
     return 0;
@@ -1260,7 +1261,7 @@ int SagaColombiaParams(SagaEngine *engine)
     engine->FreeDiccNames = 1;
     if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
         {
-            fprintf(stderr, "Error allocating dictionary names\n");
+            SagaEngine_ErrMsg(engine, "Error allocating dictionary names\n");
             return -1;
         }
     return 0;
@@ -1275,7 +1276,7 @@ int SagaMexicoParams(SagaEngine *engine)
     engine->FreeDiccNames = 1;
     if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
         {
-            fprintf(stderr, "Error allocating dictionary names\n");
+            SagaEngine_ErrMsg(engine, "Error allocating dictionary names\n");
             return -1;
         }
     return 0;
@@ -1291,7 +1292,7 @@ int SagaPeruParams(SagaEngine *engine)
     engine->FreeDiccNames = 1;
     if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
         {
-            fprintf(stderr, "Error allocating dictionary names\n");
+            SagaEngine_ErrMsg(engine, "Error allocating dictionary names\n");
             return -1;
         }
     return 0;
@@ -1306,7 +1307,7 @@ int SagaVenezuelaParams(SagaEngine *engine)
     engine->FreeDiccNames = 1;
     if (engine->FicDicExc == NULL || engine->FicDicSust == NULL)
         {
-            fprintf(stderr, "Error allocating dictionary names\n");
+            SagaEngine_ErrMsg(engine, "Error allocating dictionary names\n");
             return -1;
         }
     return 0;
@@ -1365,7 +1366,7 @@ int SagaEngine_SetParamsFromVariant(SagaEngine *engine, const char *variant)
     }
     else
     {
-        fprintf(stderr, "Variante dialectal desconocida: '%s'\n", variant);
+        SagaEngine_ErrMsg(engine, "Variante dialectal desconocida: '%s'\n", variant);
         return -1;
     }
     return 0;
@@ -1592,21 +1593,21 @@ int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
         read_status = SagaEngine_ReadText(engine);
         if (read_status < -1)
         {
-            fprintf(stderr, "Error in SagaEngine_ReadText\n");
+            SagaEngine_ErrMsg(engine,  "Error in SagaEngine_ReadText\n");
             return -1;
         }
         if (SagaEngine_Transcribe(engine) < 0)
         {
             SagaEngine_Refresh(engine);
             SagaEngine_CloseInput(engine);
-            fprintf(stderr, "Error in SagaEngine_Transcribe\n");
+            SagaEngine_ErrMsg(engine, "Error in SagaEngine_Transcribe\n");
             return -1;
         }
         if (SagaEngine_WriteOutputStream(engine) < 0)
         {
             SagaEngine_Refresh(engine);
             SagaEngine_CloseInput(engine);
-            fprintf(stderr, "Error in SagaEngine_WriteOutputStream\n");
+            SagaEngine_ErrMsg(engine, "Error in SagaEngine_WriteOutputStream\n");
             return -1;
         }
         if (read_status == -1)
@@ -1797,4 +1798,17 @@ int SagaEngine_Opt_IniFinPal(SagaEngine *engine, int enable)
     else
         engine->ClaveModif &= ~INI_FIN_PAL;
     return 0;
+}
+
+ 
+void SagaEngine_ErrMsg(SagaEngine *engine, const char* format, ... ) {
+    if (engine == NULL || engine->FpErr == NULL)
+    {
+        return;
+    }
+    va_list args;
+    va_start( args, format );
+    vfprintf(engine->FpErr, format, args );
+    va_end( args );
+    return;
 }

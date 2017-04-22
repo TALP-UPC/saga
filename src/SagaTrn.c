@@ -45,7 +45,7 @@ char *TrnSilAcc(char *SilAcc,
      */
     if ((TrnFon = calloc((size_t) (20 * LongTxt + 1), sizeof(char))) == NULL)
     {
-        fprintf(stderr, "Error al ubicar memoria para TrnFon\n");
+        SagaEngine_ErrMsg(engine, "Error al ubicar memoria para TrnFon\n");
         return NULL;
     }
 
@@ -203,7 +203,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
      */
     if ((TrnPal = calloc((size_t) (20 * Long + 1), sizeof(char))) == NULL)
     {
-        fprintf(stderr, "Error al ubicar memoria para TrnPal\n");
+        SagaEngine_ErrMsg(engine,  "Error al ubicar memoria para TrnPal\n");
         return NULL;
     }
 
