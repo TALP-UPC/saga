@@ -227,15 +227,10 @@ extern "C" {
     char *AcenPalSil(GRP_ORT GrpOrt, SagaEngine *engine);
     int EsExcAcc(char *SilOrt, int PosAct, char **LisExc, char **Letras);
     int AcenSil(char *Sil, SagaEngine *engine);
-    char *TrnSilAcc(char *SilAcc,
-                    char ***DicTrnPal,
-                    char ***DicTrnFon,
-                    int TrnPalAis, long ClaveModif, SagaEngine *engine);
+    char *TrnSilAcc(SagaEngine *engine, char *SilAcc);
     char *TrnPalSil(GRP_ORT GrpAnt,
                     GRP_ORT GrpAct,
-                    GRP_ORT GrpSig,
-                    char ***DicTrnFon,
-                    int TrnPalAis, long ClaveModif, SagaEngine *engine);
+                    GRP_ORT GrpSig, SagaEngine *engine);
     int IndexChr(const char *Chr, char **VectChr);
     char *TrnFonFnm(char *TrnFon, int ConSil, char **Fonemas);
     char *TrnFonFnmPal(char *TrnFon, int ConSil, char **Fonemas);

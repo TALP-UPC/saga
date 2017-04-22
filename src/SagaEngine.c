@@ -659,9 +659,7 @@ int SagaEngine_Transcribe(SagaEngine *engine)
     /*
      * Realizamos la transcripcion fonetica.
      */
-    if ((engine->TrnFon =
-         TrnSilAcc(SilAcc, engine->DicTrnPal, engine->DicTrnFon,
-                   engine->TrnPalAis, engine->ClaveModif, engine)) == NULL)
+    if ((engine->TrnFon = TrnSilAcc(engine, SilAcc)) == NULL)
     {
         fprintf(engine->FpErr, "Error al transcribir %s\n", SilAcc);
         free(SilOrt);

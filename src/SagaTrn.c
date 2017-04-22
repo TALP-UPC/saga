@@ -29,10 +29,7 @@
  * TrnSilAcc - Transcribe un texto silabificado y acentuado.
  **********************************************************************/
 
-char *TrnSilAcc(char *SilAcc,
-                char ***DicTrnPal,
-                char ***DicTrnFon,
-                int TrnPalAis, long ClaveModif, SagaEngine *engine)
+char *TrnSilAcc(SagaEngine *engine, char *SilAcc)
 {
     char *TrnFon, *TrnPal;
     size_t PosAct, PosSig, LongTxt = strlen(SilAcc), Long;
@@ -123,14 +120,14 @@ char *TrnSilAcc(char *SilAcc,
         }
 
         Encontrada = 0;
-        for (i = 0; DicTrnPal != NULL && DicTrnPal[i] != NULL; i++)
+        for (i = 0; engine->DicTrnPal != NULL && engine->DicTrnPal[i] != NULL; i++)
         {
-            if ((Long = strlen(DicTrnPal[i][0])) != GrpAct.Long)
+            if ((Long = strlen(engine->DicTrnPal[i][0])) != GrpAct.Long)
                 continue;
-            if (strncmp(DicTrnPal[i][0], GrpAct.Cont, Long) == 0)
+            if (strncmp(engine->DicTrnPal[i][0], GrpAct.Cont, Long) == 0)
             {
                 Encontrada = 1;
-                strcat(TrnFon, DicTrnPal[i][1]);
+                strcat(TrnFon, engine->DicTrnPal[i][1]);
                 break;
             }
         }
@@ -138,8 +135,7 @@ char *TrnSilAcc(char *SilAcc,
         if (!Encontrada && (GrpAct.Tipo & PALABRA))
         {
             if ((TrnPal =
-                 TrnPalSil(GrpAnt, GrpAct, GrpSig, DicTrnFon, TrnPalAis,
-                           ClaveModif, engine)) == NULL)
+                 TrnPalSil(GrpAnt, GrpAct, GrpSig, engine)) == NULL)
             {
                 free(TrnFon);
                 return NULL;
@@ -180,8 +176,7 @@ char *TrnSilAcc(char *SilAcc,
 char *TrnPalSil(GRP_ORT GrpAnt,
                 GRP_ORT GrpAct,
                 GRP_ORT GrpSig,
-                char ***DicTrnFon,
-                int TrnPalAis, long ClaveModif, SagaEngine *engine)
+                SagaEngine *engine)
 {
     char *TrnPal, *Sil, *Pointer;
     char CntAnt[128], CntSig[128];
@@ -211,7 +206,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
      * Determinamos los contextos anterior y posterior.
      */
     strcpy(ChrAnt, "");
-    if (TrnPalAis == 1 || GrpAnt.Tipo != PALABRA)
+    if (engine->TrnPalAis == 1 || GrpAnt.Tipo != PALABRA)
     {
         strcpy(CntAnt, "");
         EraVocal = 0;
@@ -234,7 +229,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
             strcpy(ChrAnt, engine->Letras[Chr]);
         }
     }
-    if (TrnPalAis == 1 || GrpSig.Tipo != PALABRA)
+    if (engine->TrnPalAis == 1 || GrpSig.Tipo != PALABRA)
     {
         strcpy(CntSig, "");
     }
@@ -269,12 +264,12 @@ char *TrnPalSil(GRP_ORT GrpAnt,
             Chr1 = IndexChr(GrpAct.Cont + Pos, engine->Letras);
             if (Chr1 >= 0 && strcmp(engine->Letras[Chr1], "x") == 0)
             {
-                if (ClaveModif & EQUIS_KS)
+                if (engine->ClaveModif & EQUIS_KS)
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "kcl");
-                        if ((ClaveModif & MARCA_IMPL))
+                        if ((engine->ClaveModif & MARCA_IMPL))
                             strcat(TrnPal, ":");
                     }
                     strcat(TrnPal, "k");
@@ -283,7 +278,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 else
                 {
                     strcat(TrnPal, "G");
-                    if ((ClaveModif & MARCA_IMPL))
+                    if ((engine->ClaveModif & MARCA_IMPL))
                         strcat(TrnPal, ":");
                 }
             }
@@ -327,7 +322,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
         Ind = 0;
         while ((Chr = IndexChr(SilAct + Ind, engine->Letras)) >= 0)
         {
-            if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+            if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                 strcat(TrnPal, ".");
 
             EsVocal = 0;
@@ -351,10 +346,10 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             Encontrada = 0;
             for (i = 0;
-                 DicTrnFon != (char ***) 0 && DicTrnFon[i] != (char **) 0;
+                 engine->DicTrnFon != NULL && engine->DicTrnFon[i] != NULL;
                  i++)
             {
-                if (strcmp(DicTrnFon[i][0], ChrAct) == 0)
+                if (strcmp(engine->DicTrnFon[i][0], ChrAct) == 0)
                 {
                     Encontrada = 1;
                     break;
@@ -363,7 +358,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             if (Encontrada)
             {
-                strcat(TrnPal, DicTrnFon[i][1]);
+                strcat(TrnPal, engine->DicTrnFon[i][1]);
             }
             else if (strchr(ChrAct, 'a') != (char *) 0)
             {
@@ -425,13 +420,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
             {
                 if (!strcmp(ChrAct, "qu"))
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "kcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "k");
@@ -496,7 +491,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                             EsVocal = 1;
                         }
                     }
-                    else if (!(ClaveModif & Y_VOCAL) &&
+                    else if (!(engine->ClaveModif & Y_VOCAL) &&
                              Chr1 >= 0 && !strchr(engine->Vocales[Chr1], 'i')
                              && Chr2 >= 0
                              && !strchr(engine->Vocales[Chr2], 'i'))
@@ -556,7 +551,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "h"));
 
-            else if ((ClaveModif & ARCHI_IMPL) && FinSil && !FinPal
+            else if ((engine->ClaveModif & ARCHI_IMPL) && FinSil && !FinPal
                      && (!strcmp(ChrAct, "p") || !strcmp(ChrAct, "b")
                          || !strcmp(ChrAct, "v") || !strcmp(ChrAct, "d")
                          || !strcmp(ChrAct, "t") || !strcmp(ChrAct, "c")
@@ -568,16 +563,16 @@ char *TrnPalSil(GRP_ORT GrpAnt,
             else if (!strcmp(ChrAct, "b") || !strcmp(ChrAct, "v")
                      || !strcmp(ChrAct, "w"))
             {
-                if ((ClaveModif & ELIM_B) && !IniPal && FinPal &&
+                if ((engine->ClaveModif & ELIM_B) && !IniPal && FinPal &&
                     strchr(ChrSig, '\'') == (char *) 0 && EraVocal
                     && IndexChr(ChrSig, engine->Vocales) >= 0)
                 {
                 }
-                else if ((ClaveModif & ELIM_B) && FinPal && FinSil
+                else if ((engine->ClaveModif & ELIM_B) && FinPal && FinSil
                          && EraVocal)
                 {
                 }
-                else if (ClaveModif & BDG_ANDES)
+                else if (engine->ClaveModif & BDG_ANDES)
                 {
                     if (!IniSil || EraVocal)
                     {
@@ -585,13 +580,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                     }
                     else
                     {
-                        if (ClaveModif & OCLUS_EXPL)
+                        if (engine->ClaveModif & OCLUS_EXPL)
                         {
                             strcat(TrnPal, "bcl");
-                            if ((ClaveModif & MARCA_IMPL) && !IniSil
+                            if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                                 && (EraVocal || FinSil))
                                 strcat(TrnPal, ":");
-                            if ((ClaveModif & INI_FIN_PAL) && IniPal
+                            if ((engine->ClaveModif & INI_FIN_PAL) && IniPal
                                 && IniSil)
                                 strcat(TrnPal, ".");
                         }
@@ -602,13 +597,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                          && ((IniPal && !strlen(CntAnt))
                              || !strcmp(ChrAnt, "m") || !strcmp(ChrAnt, "n")))
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "bcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "b");
@@ -624,7 +619,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 if (FinSil == 0
                     && (strchr(ChrSig, 'e') || strchr(ChrSig, 'i')))
                 {
-                    strcat(TrnPal, ((ClaveModif & SESEO) ? "s" : "T"));
+                    strcat(TrnPal, ((engine->ClaveModif & SESEO) ? "s" : "T"));
                 }
                 else if (FinSil && FinPal
                          && (!strcmp(ChrSig, "l") || !strcmp(ChrSig, "r")))
@@ -648,13 +643,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                     }
                     else
                     {
-                        if (ClaveModif & OCLUS_EXPL)
+                        if (engine->ClaveModif & OCLUS_EXPL)
                         {
                             strcat(TrnPal, "kcl");
-                            if ((ClaveModif & MARCA_IMPL) && !IniSil
+                            if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                                 && (EraVocal || FinSil))
                                 strcat(TrnPal, ":");
-                            if ((ClaveModif & INI_FIN_PAL) && IniPal
+                            if ((engine->ClaveModif & INI_FIN_PAL) && IniPal
                                 && IniSil)
                                 strcat(TrnPal, ".");
                         }
@@ -663,13 +658,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 }
                 else
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "kcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "k");
@@ -678,18 +673,18 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "ch"))
             {
-                if (ClaveModif & OCLUS_EXPL)
+                if (engine->ClaveModif & OCLUS_EXPL)
                 {
                     strcat(TrnPal, "tcl");
-                    if ((ClaveModif & MARCA_IMPL) && !IniSil
+                    if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                         && (EraVocal || FinSil))
                         strcat(TrnPal, ":");
                 }
                 strcat(TrnPal, "tS");
-                if ((ClaveModif & MARCA_IMPL) && !IniSil
+                if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                     && (EraVocal || FinSil))
                     strcat(TrnPal, ":");
-                if ((ClaveModif & INI_FIN_PAL) && FinPal && FinSil)
+                if ((engine->ClaveModif & INI_FIN_PAL) && FinPal && FinSil)
                 {
                     strcat(TrnPal, ".");
                 }
@@ -697,16 +692,16 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "d"))
             {
-                if ((ClaveModif & ELIM_D) && !IniPal && FinPal &&
+                if ((engine->ClaveModif & ELIM_D) && !IniPal && FinPal &&
                     strchr(ChrSig, '\'') == (char *) 0 && EraVocal
                     && IndexChr(ChrSig, engine->Vocales) >= 0)
                 {
                 }
-                else if ((ClaveModif & ELIM_D) && FinPal && FinSil
+                else if ((engine->ClaveModif & ELIM_D) && FinPal && FinSil
                          && EraVocal)
                 {
                 }
-                else if (ClaveModif & BDG_ANDES)
+                else if (engine->ClaveModif & BDG_ANDES)
                 {
                     if (!IniSil || EraVocal)
                     {
@@ -714,13 +709,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                     }
                     else
                     {
-                        if (ClaveModif & OCLUS_EXPL)
+                        if (engine->ClaveModif & OCLUS_EXPL)
                         {
                             strcat(TrnPal, "dcl");
-                            if ((ClaveModif & MARCA_IMPL) && !IniSil
+                            if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                                 && (EraVocal || FinSil))
                                 strcat(TrnPal, ":");
-                            if ((ClaveModif & INI_FIN_PAL) && IniPal
+                            if ((engine->ClaveModif & INI_FIN_PAL) && IniPal
                                 && IniSil)
                                 strcat(TrnPal, ".");
                         }
@@ -732,13 +727,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                                     || !strcmp(ChrAnt, "n")
                                     || !strcmp(ChrAnt, "l")))
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "dcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "d");
@@ -761,16 +756,16 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 {
                     strcat(TrnPal, "x");
                 }
-                else if ((ClaveModif & ELIM_G) && !IniPal && FinPal &&
+                else if ((engine->ClaveModif & ELIM_G) && !IniPal && FinPal &&
                          strchr(ChrSig, '\'') == (char *) 0 && EraVocal
                          && IndexChr(ChrSig, engine->Vocales) >= 0)
                 {
                 }
-                else if ((ClaveModif & ELIM_G) && FinPal && FinSil
+                else if ((engine->ClaveModif & ELIM_G) && FinPal && FinSil
                          && EraVocal)
                 {
                 }
-                else if (ClaveModif & BDG_ANDES)
+                else if (engine->ClaveModif & BDG_ANDES)
                 {
                     if (!IniSil || EraVocal)
                     {
@@ -778,13 +773,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                     }
                     else
                     {
-                        if (ClaveModif & OCLUS_EXPL)
+                        if (engine->ClaveModif & OCLUS_EXPL)
                         {
                             strcat(TrnPal, "gcl");
-                            if ((ClaveModif & MARCA_IMPL) && !IniSil
+                            if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                                 && (EraVocal || FinSil))
                                 strcat(TrnPal, ":");
-                            if ((ClaveModif & INI_FIN_PAL) && IniPal
+                            if ((engine->ClaveModif & INI_FIN_PAL) && IniPal
                                 && IniSil)
                                 strcat(TrnPal, ".");
                         }
@@ -795,13 +790,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                          && ((IniPal && strlen(ChrAnt) == 0)
                              || !strcmp(ChrAnt, "m") || !strcmp(ChrAnt, "n")))
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "gcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "g");
@@ -830,13 +825,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "k"))
             {
-                if (ClaveModif & OCLUS_EXPL)
+                if (engine->ClaveModif & OCLUS_EXPL)
                 {
                     strcat(TrnPal, "kcl");
-                    if ((ClaveModif & MARCA_IMPL) && !IniSil
+                    if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                         && (EraVocal || FinSil))
                         strcat(TrnPal, ":");
-                    if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                    if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                         strcat(TrnPal, ".");
                 }
                 strcat(TrnPal, "k");
@@ -844,7 +839,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "l"))
             {
-                if ((ClaveModif & GRUPO_SIL) &&
+                if ((engine->ClaveModif & GRUPO_SIL) &&
                     (!IniSil && !FinSil
                      && IndexChr(ChrSig, engine->Vocales) >= 0))
                 {
@@ -863,7 +858,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "m"))
             {
-                if ((ClaveModif & NAS_VELAR) && FinSil)
+                if ((engine->ClaveModif & NAS_VELAR) && FinSil)
                 {
                     strcat(TrnPal, "N");
                 }
@@ -875,7 +870,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "n"))
             {
-                if ((ClaveModif & (ENE_VELAR | NAS_VELAR)) && FinSil)
+                if ((engine->ClaveModif & (ENE_VELAR | NAS_VELAR)) && FinSil)
                 {
                     strcat(TrnPal, "N");
                 }
@@ -928,13 +923,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "p"))
             {
-                if (ClaveModif & OCLUS_EXPL)
+                if (engine->ClaveModif & OCLUS_EXPL)
                 {
                     strcat(TrnPal, "pcl");
-                    if ((ClaveModif & MARCA_IMPL) && !IniSil
+                    if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                         && (EraVocal || FinSil))
                         strcat(TrnPal, ":");
-                    if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                    if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                         strcat(TrnPal, ".");
                 }
                 strcat(TrnPal, "p");
@@ -942,12 +937,12 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "r"))
             {
-                if ((ClaveModif & ERRE_IMPL)
+                if ((engine->ClaveModif & ERRE_IMPL)
                     && IndexChr(ChrSig, engine->Vocales) < 0)
                 {
                     strcat(TrnPal, "R");
                 }
-                else if ((ClaveModif & ERRE_IMPL) && FinSil
+                else if ((engine->ClaveModif & ERRE_IMPL) && FinSil
                          && (!strcmp(ChrSig, "hu") || !strcmp(ChrSig, "hi"))
                          && (Chr = IndexChr(SilSig + 2, engine->Letras)) >= 0
                          && IndexChr(engine->Letras[Chr],
@@ -955,7 +950,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 {
                     strcat(TrnPal, "R");
                 }
-                else if ((ClaveModif & GRUPO_SIL) &&
+                else if ((engine->ClaveModif & GRUPO_SIL) &&
                          (!IniSil && !FinSil
                           && IndexChr(ChrSig, engine->Vocales) >= 0))
                 {
@@ -986,10 +981,10 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 SigueEse = 0;
                 if (FinSil && !FinPal && !strcmp(ChrSig, "s"))
                     SigueEse = 1;
-                else if (FinSil && !FinPal && (ClaveModif & SESEO)
+                else if (FinSil && !FinPal && (engine->ClaveModif & SESEO)
                          && !strcmp(ChrSig, "z"))
                     SigueEse = 1;
-                else if (FinSil && !FinPal && (ClaveModif & SESEO)
+                else if (FinSil && !FinPal && (engine->ClaveModif & SESEO)
                          && !strcmp(ChrSig, "c"))
                 {
                     Chr = IndexChr(SilSig + strlen(ChrSig), engine->Letras);
@@ -1000,39 +995,39 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 }
 
                 if (!(IniPal && IniSil) && strcmp(ChrAct, "x") == 0
-                    && (ClaveModif & EQUIS_KS))
+                    && (engine->ClaveModif & EQUIS_KS))
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "kcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "k");
                 }
 
 /*
-				if (!strcmp(ChrAct, "x") && (ClaveModif & EQUIS_KS) && FinSil && !FinPal) { 
+				if (!strcmp(ChrAct, "x") && (engine->ClaveModif & EQUIS_KS) && FinSil && !FinPal) { 
 */
-                if (!strcmp(ChrAct, "x") && (ClaveModif & EQUIS_KS) && FinSil)
+                if (!strcmp(ChrAct, "x") && (engine->ClaveModif & EQUIS_KS) && FinSil)
                 {
                     if (!SigueEse)
                     {
                         strcat(TrnPal, "s");
                     }
                 }
-                else if ((ClaveModif & SC_KS) && FinSil && !FinPal)
+                else if ((engine->ClaveModif & SC_KS) && FinSil && !FinPal)
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "kcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "k");
@@ -1041,11 +1036,11 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 {
                     /* Nos comemos la ese */
                 }
-                else if ((ClaveModif & ESE_ASP_INC) && FinSil)
+                else if ((engine->ClaveModif & ESE_ASP_INC) && FinSil)
                 {
                     strcat(TrnPal, "h");
                 }
-                else if ((ClaveModif & ESE_ASP_CON) && FinSil)
+                else if ((engine->ClaveModif & ESE_ASP_CON) && FinSil)
                 {
                     if (FinPal && FinSil &&
                         (IndexChr(ChrSig, engine->Vocales) >= 0
@@ -1129,13 +1124,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                         && (!strcmp(ChrAnt, "m") || !strcmp(ChrAnt, "n")
                             || !strcmp(ChrAnt, "l")))
                     {
-                        if (ClaveModif & OCLUS_EXPL)
+                        if (engine->ClaveModif & OCLUS_EXPL)
                         {
                             strcat(TrnPal, "dcl");
-                            if ((ClaveModif & MARCA_IMPL) && !IniSil
+                            if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                                 && (EraVocal || FinSil))
                                 strcat(TrnPal, ":");
-                            if ((ClaveModif & INI_FIN_PAL) && IniPal
+                            if ((engine->ClaveModif & INI_FIN_PAL) && IniPal
                                 && IniSil)
                                 strcat(TrnPal, ".");
                         }
@@ -1144,10 +1139,10 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                     else if (FinPal)
                     {
                         strcat(TrnPal, "t");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && FinPal && FinSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && FinPal && FinSil)
                             strcat(TrnPal, ".");
                     }
                     else
@@ -1157,13 +1152,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 }
                 else
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "tcl");
-                        if ((ClaveModif & MARCA_IMPL) && !IniSil
+                        if ((engine->ClaveModif & MARCA_IMPL) && !IniSil
                             && (EraVocal || FinSil))
                             strcat(TrnPal, ":");
-                        if ((ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
+                        if ((engine->ClaveModif & INI_FIN_PAL) && IniPal && IniSil)
                             strcat(TrnPal, ".");
                     }
                     strcat(TrnPal, "t");
@@ -1172,13 +1167,13 @@ char *TrnPalSil(GRP_ORT GrpAnt,
 
             else if (!strcmp(ChrAct, "z"))
             {
-                if (ClaveModif & SESEO)
+                if (engine->ClaveModif & SESEO)
                 {
-                    if ((ClaveModif & ESE_ASP_INC) && FinSil)
+                    if ((engine->ClaveModif & ESE_ASP_INC) && FinSil)
                     {
                         strcat(TrnPal, "h");
                     }
-                    else if ((ClaveModif & ESE_ASP_CON) && FinSil)
+                    else if ((engine->ClaveModif & ESE_ASP_CON) && FinSil)
                     {
                         if (FinPal && FinSil &&
                             (IndexChr(ChrSig, engine->Vocales) >= 0
@@ -1256,23 +1251,23 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 if (FinPal && FinSil)
                 {
                     strcat(TrnPal, "tL");
-                    if (ClaveModif & MARCA_IMPL)
+                    if (engine->ClaveModif & MARCA_IMPL)
                         strcat(TrnPal, ":");
                 }
                 else
                 {
-                    if (ClaveModif & OCLUS_EXPL)
+                    if (engine->ClaveModif & OCLUS_EXPL)
                     {
                         strcat(TrnPal, "tcl");
                     }
                     strcat(TrnPal, "t");
-                    if (ClaveModif & GRUPO_SIL)
+                    if (engine->ClaveModif & GRUPO_SIL)
                         strcat(TrnPal, "@");
                     strcat(TrnPal, "l");
                 }
             }
 
-            if ((ClaveModif & VOCAL_PTON)
+            if ((engine->ClaveModif & VOCAL_PTON)
                 && strchr("aeiou", TrnPal[strlen(TrnPal) - 1])
                 && TrnPal[strlen(TrnPal) - 2] != '\'')
             {
@@ -1284,7 +1279,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 }
             }
 
-            if ((ClaveModif & MARCA_IMPL) && !EsVocal && !IniSil
+            if ((engine->ClaveModif & MARCA_IMPL) && !EsVocal && !IniSil
                 && (EraVocal || EraSemi || FinSil) && (strlen(TrnPal) > 0)
                 && TrnPal[strlen(TrnPal) - 1] != ':')
             {
@@ -1310,7 +1305,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 }
             }
 
-            if ((ClaveModif & VOCAL_NASAL) && EsVocal
+            if ((engine->ClaveModif & VOCAL_NASAL) && EsVocal
                 && IndexChr(ChrSig, Nasales) >= 0)
             {
                 if (IndexChr(ChrAnt, Nasales) >= 0
@@ -1320,7 +1315,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
                 }
             }
 
-            if ((ClaveModif & INI_FIN_PAL) && FinPal && FinSil)
+            if ((engine->ClaveModif & INI_FIN_PAL) && FinPal && FinSil)
             {
                 strcat(TrnPal, ".");
             }
