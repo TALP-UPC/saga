@@ -164,7 +164,7 @@ extern "C" {
  */
     int SagaEngine_OpenOutputFiles(SagaEngine *engine, const char *NomOut);
 /** Loads the dictionaries and builds the characters list */
-    int SagaEngine_LoadData(SagaEngine *engine);
+    int SagaEngine_Prepare(SagaEngine *engine);
 /** Reads / Points to the next piece of text for transcription */
     int SagaEngine_ReadText(SagaEngine *engine);
 /** Transcribes the text */
@@ -194,6 +194,7 @@ extern "C" {
 
     int SagaEngine_SetParamsFromVariant(SagaEngine *engine,
                                         const char *variant);
+    int SagaEngine_SetVariant(SagaEngine *engine, const char *variant);
     SagaEngine *SagaEngine_NewFromVariant(const char *variant);
     int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
                                   const char *encoding);

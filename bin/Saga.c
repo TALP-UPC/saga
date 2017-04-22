@@ -94,7 +94,7 @@ int main(int ArgC, char *ArgV[])
         return EXIT_FAILURE;
     }
 
-    if (SagaEngine_LoadData(&engine) < 0)
+    if (SagaEngine_Prepare(&engine) < 0)
     {
         SagaEngine_Clear(&engine);
         free(NomIn);

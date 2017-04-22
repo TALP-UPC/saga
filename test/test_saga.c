@@ -21,6 +21,7 @@
  */
 /* Author: Sergio Oller, 2017 */
 #include <stdlib.h>
+#include <string.h>
 #include "Saga.h"
 #include "Util.h"
 #include "LisUdf.h"
@@ -126,6 +127,12 @@ int test_empty()
 			  fprintf(stderr, "Error in SagaEngine_Initialize\n");
 			  return -1;
 	}
+    err = SagaEngine_Prepare(&engine);
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error in SagaEngine_Prepare\n");
+			  return -1;
+	}
     SagaEngine_EnableFnmPalOutput(&engine, 1);
     if (SagaEngine_TranscribeText(&engine, text, "UTF-8") < 0)
     {
@@ -141,13 +148,77 @@ int test_empty()
     return 0;
 }
 
+int test_emoji()
+{
+    const char *text = "hola 😀 mundo";
+    SagaEngine engine;
+    int err;
+    err = SagaEngine_Initialize(&engine);
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error in SagaEngine_Initialize\n");
+			  return -1;
+	}
+    err = SagaEngine_Prepare(&engine);
+    if (err < 0)
+    {
+			  fprintf(stderr, "Error in SagaEngine_Prepare\n");
+			  return -1;
+	}
+    SagaEngine_EnableFnmPalOutput(&engine, 1);
+    if (SagaEngine_TranscribeText(&engine, text, "UTF-8") < 0)
+    {
+        SagaEngine_Clear(&engine);
+        return -1;
+    }
+    SagaEngine_Clear(&engine);
+    return 0;
+}
 
+int test_utf8_to_latin9()
+{
+    char output[20];
+    char input[] = "hola 😀 mundo";
+    utf8_to_latin9(output, input, strlen(input));
+    if (strcmp("hola  mundo", output) != 0)
+    {
+        return -1;
+        }
+    return 0;
+}
 int main()
 {
-	if (test_initialize_engine() < 0) return -1;
-	if (test_matstr() < 0) return -1;
-	if (test_lisudf() < 0) return -1;
-	if (test_empty() < 0) return -1;
-	return 0;
+    int ret = 0;
+	if (test_initialize_engine() < 0)
+	{
+        printf("Test initialize engine failed\n");
+        ret = -1;
+    }
+	if (test_matstr() < 0)
+	{ 
+        printf("Test matstr failed\n");
+        ret = -1;
+    }
+	if (test_lisudf() < 0)
+	{ 
+        printf("Test lisudf failed\n");
+        ret = -1;
+    }
+	if (test_utf8_to_latin9() < 0)
+	{ 
+        printf("Test utf8_to_latin9 failed\n");
+        ret = -1;
+    }
+	if (test_empty() < 0)
+	{ 
+        printf("Test empty failed\n");
+        ret = -1;
+    }
+	if (test_emoji() < 0)
+	{ 
+        printf("Test emoji failed\n");
+        ret = -1;
+    }
+	return ret;
 }
 

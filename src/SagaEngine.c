@@ -526,13 +526,15 @@ static int SagaEngine_LoadCharacters(SagaEngine *engine)
     return 0;
 }
 
-int SagaEngine_LoadData(SagaEngine *engine)
+int SagaEngine_Prepare(SagaEngine *engine)
 {
     int err;
     err = SagaEngine_LoadDictionaries(engine);
     if (err < 0)
         return err;
     err = SagaEngine_LoadCharacters(engine);
+    if (err < 0)
+        return err;
     return err;
 }
 
@@ -624,7 +626,11 @@ static int SagaEngine_TextPreparation(SagaEngine *engine)
 int SagaEngine_Transcribe(SagaEngine *engine)
 {
     char *SilOrt = NULL, *SilAcc = NULL;
-    SagaEngine_TextPreparation(engine);
+    if (SagaEngine_TextPreparation(engine) < 0)
+    {
+        fprintf(engine->FpErr, "Error en SagaEngine_TextPreparation\n");
+        return -1;
+    }
     /*
      * Silabificamos el texto ortografico.
      */
@@ -1363,27 +1369,36 @@ int SagaEngine_SetParamsFromVariant(SagaEngine *engine, const char *variant)
 
 SagaEngine *SagaEngine_NewFromVariant(const char *variant)
 {
-    SagaEngine *engine = calloc(1, sizeof(SagaEngine));
+    SagaEngine *engine = malloc(sizeof(SagaEngine));
     if (engine == NULL)
         return NULL;
-    if (SagaEngine_Initialize(engine) < 0)
+    if (SagaEngine_SetVariant(engine, variant) < 0)
     {
-        free(engine);
-        return NULL;
-    }
-    if (SagaEngine_SetParamsFromVariant(engine, variant) < 0)
-    {
-        SagaEngine_Clear(engine);
-        free(engine);
-        return NULL;
-    }
-    if (SagaEngine_LoadData(engine) < 0)
-    {
-        SagaEngine_Clear(engine);
         free(engine);
         return NULL;
     }
     return engine;
+}
+
+int SagaEngine_SetVariant(SagaEngine *engine, const char *variant)
+{
+    if (engine == NULL)
+        return -1;
+    if (SagaEngine_Initialize(engine) < 0)
+    {
+        return -1;
+    }
+    if (SagaEngine_SetParamsFromVariant(engine, variant) < 0)
+    {
+        SagaEngine_Clear(engine);
+        return -1;
+    }
+    if (SagaEngine_Prepare(engine) < 0)
+    {
+        SagaEngine_Clear(engine);
+        return -1;
+    }
+    return 0;
 }
 
 int SagaEngine_ClearOutputs(SagaEngine *engine)
@@ -1592,8 +1607,6 @@ int SagaEngine_TranscribeText(SagaEngine *engine, const char *text,
         }
         if (read_status == -1)
         {
-            fprintf(stderr, "We have finished reading\n");
-            fflush(stderr);
             /* We have finished reading */
             break;
         }
