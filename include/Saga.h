@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 #include <stdio.h>
-#include <inttypes.h>
+#include <stdint.h>
 
     typedef struct SagaEngine_Outputs_struct_ {
         char *fon;

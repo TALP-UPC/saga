@@ -550,7 +550,7 @@ int SagaEngine_InputFromText(SagaEngine *engine, const char *text,
     SagaEngine_CloseInput(engine);
     if (strcmp(encoding, "ISO-8859-15") == 0)
     {
-        engine->TxtIn = strdup(text);
+        engine->TxtIn = saga_strdup(text);
         engine->close_in = 1;
     }
     else if (strcmp(encoding, "UTF-8") == 0)
@@ -1491,7 +1491,7 @@ int SagaEngine_EnableSemOutput(SagaEngine *engine, int enable)
 char *SagaEngine_GetFonOutput(SagaEngine *engine, int copy)
 {
     if (copy > 0)
-        return strdup(engine->StreamOutputs.fon);
+        return saga_strdup(engine->StreamOutputs.fon);
     else
         return engine->StreamOutputs.fon;
 }
@@ -1499,7 +1499,7 @@ char *SagaEngine_GetFonOutput(SagaEngine *engine, int copy)
 char *SagaEngine_GetFnmOutput(SagaEngine *engine, int copy)
 {
     if (copy > 0)
-        return strdup(engine->StreamOutputs.fnm);
+        return saga_strdup(engine->StreamOutputs.fnm);
     else
         return engine->StreamOutputs.fnm;
 }
@@ -1507,7 +1507,7 @@ char *SagaEngine_GetFnmOutput(SagaEngine *engine, int copy)
 char *SagaEngine_GetFnmPalOutput(SagaEngine *engine, int copy)
 {
     if (copy > 0)
-        return strdup(engine->StreamOutputs.fnmpal);
+        return saga_strdup(engine->StreamOutputs.fnmpal);
     else
         return engine->StreamOutputs.fnmpal;
 }
@@ -1515,7 +1515,7 @@ char *SagaEngine_GetFnmPalOutput(SagaEngine *engine, int copy)
 char *SagaEngine_GetSefoOutput(SagaEngine *engine, int copy)
 {
     if (copy > 0)
-        return strdup(engine->StreamOutputs.sefo);
+        return saga_strdup(engine->StreamOutputs.sefo);
     else
         return engine->StreamOutputs.sefo;
 }
@@ -1523,7 +1523,7 @@ char *SagaEngine_GetSefoOutput(SagaEngine *engine, int copy)
 char *SagaEngine_GetSemOutput(SagaEngine *engine, int copy)
 {
     if (copy > 0)
-        return strdup(engine->StreamOutputs.sem);
+        return saga_strdup(engine->StreamOutputs.sem);
     else
         return engine->StreamOutputs.sem;
 }

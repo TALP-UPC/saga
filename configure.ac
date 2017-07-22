@@ -22,8 +22,6 @@ LT_PREREQ([2.2])
 AC_C_BIGENDIAN
 
 LT_INIT()
-AC_CHECK_DECLS([strdup, getopt])
-AC_CHECK_FUNCS([strdup getopt])
 AC_TYPE_SSIZE_T
 
 AC_CONFIG_FILES([Makefile saga.pc])

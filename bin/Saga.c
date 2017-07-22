@@ -23,7 +23,6 @@
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	<limits.h>
-#include	<unistd.h>      /* getopt family */
 #include	"Util.h"
 #include    "PosixCompat.h"
 #include	"LisUdf.h"
@@ -186,12 +185,12 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
     *NomErr = NULL;
 
     while ((Opcion =
-            getopt(ArgC, ArgV, "abd:L:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1)
+            saga_getopt(ArgC, ArgV, "abd:L:t:T:x:g:v:c:l:e:fFpysSM:Y:")) != -1)
     {
         switch (Opcion)
         {
         case 'L':
-            if (SagaEngine_SetParamsFromVariant(engine, optarg) < 0)
+            if (SagaEngine_SetParamsFromVariant(engine, saga_optarg) < 0)
             {
                 return -1;
             }
@@ -204,31 +203,31 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
             engine->TrnLinAis = 1;
             break;
         case 'd':
-            engine->FicDicExc = optarg;
+            engine->FicDicExc = saga_optarg;
             break;
         case 't':
-            engine->FicTrnFon = optarg;
+            engine->FicTrnFon = saga_optarg;
             break;
         case 'T':
-            engine->FicTrnPal = optarg;
+            engine->FicTrnPal = saga_optarg;
             break;
         case 'x':
-            engine->FicDicSust = optarg;
+            engine->FicDicSust = saga_optarg;
             break;
         case 'g':
-            engine->FicDicGrp = optarg;
+            engine->FicDicGrp = saga_optarg;
             break;
         case 'v':
-            engine->FicNovVoc = optarg;
+            engine->FicNovVoc = saga_optarg;
             break;
         case 'c':
-            engine->FicNovCons = optarg;
+            engine->FicNovCons = saga_optarg;
             break;
         case 'l':
-            engine->FicNovFon = optarg;
+            engine->FicNovFon = saga_optarg;
             break;
         case 'e':
-            *NomErr = strdup(optarg);
+            *NomErr = saga_strdup(saga_optarg);
             break;
         case 'f':
             SagaEngine_EnableFonOutput(engine, 1);
@@ -247,7 +246,7 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
             hay_salida = 1;
             break;
         case 'Y':
-            Matriz = MatStr(optarg);
+            Matriz = MatStr(saga_optarg);
             engine->StrIniPal = engine->StrFinPal = Matriz[0];
             if (Matriz[1] != NULL)
                 engine->StrFinPal = Matriz[1];
@@ -260,9 +259,9 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
             engine->ConSil = 1;
             break;
         case 'M':
-            for (i = 0; i < strlen(optarg); i++)
+            for (i = 0; i < strlen(saga_optarg); i++)
             {
-                switch (optarg[i])
+                switch (saga_optarg[i])
                 {
                 case ' ':
                     continue;
@@ -318,7 +317,7 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
                     SagaEngine_Opt_OclusExpl(engine, 1);
                     break;
                 case 'E':
-                    switch (optarg[++i])
+                    switch (saga_optarg[++i])
                     {
                     case 'b':
                         SagaEngine_Opt_ElimB(engine, 1);
@@ -331,7 +330,7 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
                         break;
                     default:
                         fprintf(stderr, "Clave desconocida \"%c\"\n",
-                                optarg[i + 1]);
+                                saga_optarg[i + 1]);
                         return -1;
                         break;
                     }
@@ -339,7 +338,7 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
                 default:
                     fprintf(stderr,
                             "Clave de modificacion desconocida \"%c\"\n",
-                            optarg[i]);
+                            saga_optarg[i]);
                     return -1;
                 }
             }
@@ -349,26 +348,26 @@ static int OpcSaga(int ArgC,    /* No. argumentos linea de comandos             
         }
     }
 
-    if (ArgC == optind)
+    if (ArgC == saga_optind)
     {
         return -1;
     }
 
-    *NomIn = strdup(ArgV[optind]);
+    *NomIn = saga_strdup(ArgV[saga_optind]);
 
-    optind++;
-    if (ArgC > optind)
+    saga_optind++;
+    if (ArgC > saga_optind)
     {
-        *NomOut = strdup(ArgV[optind]);
+        *NomOut = saga_strdup(ArgV[saga_optind]);
     }
     else
     {
-        *NomOut = strdup("-");
+        *NomOut = saga_strdup("-");
     }
 
     if (*NomErr == NULL)
     {
-        *NomErr = strdup("-");
+        *NomErr = saga_strdup("-");
     }
 
     /*

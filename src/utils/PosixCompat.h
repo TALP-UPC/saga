@@ -28,22 +28,13 @@
 #include <sys/types.h>
 #endif
 
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 
+char *saga_strdup(const char *str);
 
-#if !HAVE_DECL_STRDUP
-char *strdup(const char *str);
-#endif
+int saga_getopt(int argc, char *const *nargv, const char *ostr);
+extern char *saga_optarg;
+extern int saga_optind, saga_opterr, saga_optopt;
 
-#if !HAVE_DECL_GETOPT
-int getopt(int nargc, char *const *nargv, const char *ostr);
-extern char *optarg;
-extern int optind, opterr, optopt;
-#endif
-
-#if !HAVE_DECL_GETLINE
 #include <stdio.h>
 #include <stdint.h>
 
@@ -53,8 +44,7 @@ extern int optind, opterr, optopt;
 #ifndef SSIZE_MAX
 #define SSIZE_MAX INT64_MAX
 #endif
-ssize_t getline(char **lineptr, size_t *n, FILE *stream);
-#endif
 
+ssize_t saga_getline(char **lineptr, size_t *n, FILE *stream);
 
 #endif

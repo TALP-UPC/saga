@@ -1330,7 +1330,7 @@ char *TrnPalSil(GRP_ORT GrpAnt,
     }
 
     Pointer = TrnPal;
-    TrnPal = strdup(TrnPal);
+    TrnPal = saga_strdup(TrnPal);
     free((void *) Pointer);
 
     return TrnPal;
@@ -1438,7 +1438,7 @@ char *TrnFonFnm(char *TrnFon, int ConSil, char **Fonemas)
     }
 
     Pointer = TrnFnm;
-    TrnFnm = strdup(TrnFnm);
+    TrnFnm = saga_strdup(TrnFnm);
     free((void *) Pointer);
 
     return TrnFnm;
@@ -1552,7 +1552,7 @@ char *TrnFonFnmPal(char *TrnFon, int ConSil, char **Fonemas)
     }
 
     Pointer = TrnFnm;
-    TrnFnm = strdup(TrnFnm);
+    TrnFnm = saga_strdup(TrnFnm);
     free(Pointer);
 
     return TrnFnm;
@@ -1675,7 +1675,7 @@ char *TrnFonSefo(char *TrnFon,
     }
 
     Pointer = TrnSefo;
-    TrnSefo = strdup(TrnSefo);
+    TrnSefo = saga_strdup(TrnSefo);
     free((void *) Pointer);
 
     return TrnSefo;
@@ -1793,7 +1793,7 @@ char *TrnFonSem(char *TrnFon, int ConSil, char **Fonemas)
     }
 
     Pointer = TrnSem;
-    TrnSem = strdup(TrnSem);
+    TrnSem = saga_strdup(TrnSem);
     free((void *) Pointer);
 
     return TrnSem;

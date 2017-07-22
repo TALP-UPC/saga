@@ -1,24 +1,20 @@
 /* coding: utf-8 */
 /* No copyright is applicable */
 /* The functions here have been released under public domain */
-/* These functions are only used if the system does not already provide them */
 
 #include "PosixCompat.h"
 
-#if !HAVE_STRDUP
 #include <string.h>
 #include <stdlib.h>
 
-char *strdup(const char *str)
+char *saga_strdup(const char *str)
 {
     char *str_copy = malloc(strlen(str)+1);
     if (str_copy == NULL) return NULL;
     strcpy(str_copy, str);
     return str_copy;
 }
-#endif
 
-#if !HAVE_GETOPT
 /*
  * This is a version of the public domain getopt implementation by
  * Henry Spencer originally posted to net.sources.
@@ -29,34 +25,34 @@ char *strdup(const char *str)
 #include <stdio.h>
 #include <string.h>
 
-char *optarg; /* Global argument pointer. */
-int optind = 0; /* Global argv index. */
+char *saga_optarg; /* Global argument pointer. */
+int saga_optind = 0; /* Global argv index. */
 
-int getopt(int argc, char *argv[], char *optstring)
+int saga_getopt(int argc, char *const *argv, const char *ostr)
 {
         static char *scan = NULL; /* Private scan pointer. */
 	char c;
 	char *place;
 
-	optarg = NULL;
+	saga_optarg = NULL;
 
 	if (!scan || *scan == '\0') {
-		if (optind == 0)
-			optind++;
+		if (saga_optind == 0)
+			saga_optind++;
 
-		if (optind >= argc || argv[optind][0] != '-' || argv[optind][1] == '\0')
+		if (saga_optind >= argc || argv[saga_optind][0] != '-' || argv[saga_optind][1] == '\0')
 			return EOF;
-		if (argv[optind][1] == '-' && argv[optind][2] == '\0') {
-			optind++;
+		if (argv[saga_optind][1] == '-' && argv[saga_optind][2] == '\0') {
+			saga_optind++;
 			return EOF;
 		}
 
-		scan = argv[optind]+1;
-		optind++;
+		scan = argv[saga_optind]+1;
+		saga_optind++;
 	}
 
 	c = *scan++;
-	place = strchr(optstring, c);
+	place = strchr(ostr, c);
 
 	if (!place || c == ':') {
 		fprintf(stderr, "%s: unknown option -%c\n", argv[0], c);
@@ -66,11 +62,11 @@ int getopt(int argc, char *argv[], char *optstring)
 	place++;
 	if (*place == ':') {
 		if (*scan != '\0') {
-			optarg = scan;
+			saga_optarg = scan;
 			scan = NULL;
-		} else if( optind < argc ) {
-			optarg = argv[optind];
-			optind++;
+		} else if( saga_optind < argc ) {
+			saga_optarg = argv[saga_optind];
+			saga_optind++;
 		} else {
 			fprintf(stderr, "%s: option requires argument -%c\n", argv[0], c);
 			return ':';
@@ -79,18 +75,15 @@ int getopt(int argc, char *argv[], char *optstring)
 
 	return c;
 }
-#endif
 
-
-#if !HAVE_GETLINE
-/* getline.c
+/* saga_getline.c
  *
- * getdelim(), getline() - read a delimited record from stream, ersatz implementation
+ * saga_getdelim(), saga_getline() - read a delimited record from stream, ersatz implementation
  *
- * For more details, see: http://pubs.opengroup.org/onlinepubs/9699919799/functions/getline.html
+ * For more details, see: http://pubs.opengroup.org/onlinepubs/9699919799/functions/saga_getline.html
  *
- * This implementation of getline was released into the public domain at 
- * https://github.com/ivanra/getline
+ * This implementation of saga_getline was released into the public domain at 
+ * https://github.com/ivanra/saga_getline
  *
  *
  */
@@ -98,7 +91,7 @@ int getopt(int argc, char *argv[], char *optstring)
 #include <errno.h>
 #include <limits.h>
 
-ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
+ssize_t saga_getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
     char *cur_pos, *new_lineptr;
     size_t new_lineptr_len;
     int c;
@@ -161,8 +154,6 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream) {
     return (ssize_t)(cur_pos - *lineptr);
 }
 
-ssize_t getline(char **lineptr, size_t *n, FILE *stream) {
-    return getdelim(lineptr, n, '\n', stream);
+ssize_t saga_getline(char **lineptr, size_t *n, FILE *stream) {
+    return saga_getdelim(lineptr, n, '\n', stream);
 }
-
-#endif

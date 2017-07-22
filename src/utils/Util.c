@@ -83,7 +83,7 @@ char **MatStrChr(const char *_Str, const char *Delim)
     {
         return NULL;
     }
-    Str = strdup(_Str);
+    Str = saga_strdup(_Str);
     if (Str == NULL)
     {
         return NULL;
@@ -98,7 +98,7 @@ char **MatStrChr(const char *_Str, const char *Delim)
 
     for (i = 0; (token = strtok(Str, Delim)) != NULL; i++)
     {
-        token = strdup(token);
+        token = saga_strdup(token);
         if (token == NULL)
         {
             free(Mat);

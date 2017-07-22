@@ -61,7 +61,7 @@ size_t ReadLisUdf(const char *FicLisUdf,        /* Fichero ASCII con las unidade
      * Bucle para todas las unidades contenidas en el fichero.
      */
     TamLis = 0;
-    while (getline(&Unidad, &TamUnidad, FpLis) != -1)
+    while (saga_getline(&Unidad, &TamUnidad, FpLis) != -1)
     {
         TamLis++;
         tmplis = realloc(*LisUdf, (TamLis + 1) * sizeof(char *));
@@ -79,7 +79,7 @@ size_t ReadLisUdf(const char *FicLisUdf,        /* Fichero ASCII con las unidade
         if (Unidad[strlen(Unidad) - 1] == '\n')
             Unidad[strlen(Unidad) - 1] = '\0';
 
-        (*LisUdf)[TamLis - 1] = strdup(Unidad);
+        (*LisUdf)[TamLis - 1] = saga_strdup(Unidad);
         (*LisUdf)[TamLis] = NULL;
 
         if (TamLis == SIZE_MAX - 1)
@@ -145,7 +145,7 @@ size_t MeteLisUdf(char *Unidad, size_t * TamLis, char ***LisUdf)
         {
             return LIS_UDF_ERROR;
         }
-        (*LisUdf)[0] = strdup(Unidad);
+        (*LisUdf)[0] = saga_strdup(Unidad);
         (*LisUdf)[1] = NULL;
         (*TamLis) = 1;
         return 0;
@@ -171,7 +171,7 @@ size_t MeteLisUdf(char *Unidad, size_t * TamLis, char ***LisUdf)
             return LIS_UDF_ERROR;
         }
         *LisUdf = tmplis;
-        (*LisUdf)[Indice] = strdup(Unidad);
+        (*LisUdf)[Indice] = saga_strdup(Unidad);
         (*LisUdf)[*TamLis] = NULL;
     }
 

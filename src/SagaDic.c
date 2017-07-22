@@ -171,7 +171,7 @@ char ***ReadDicExc(char *FicDicExc)
             return NULL;
         }
 
-        DicExc[Long][0] = strdup(PalIn);
+        DicExc[Long][0] = saga_strdup(PalIn);
         if (DicExc[Long][0] == NULL)
         {
             fprintf(stderr, "Error de memoria para el diccionario\n");
@@ -181,7 +181,7 @@ char ***ReadDicExc(char *FicDicExc)
             fclose(FpDicExc);
             return NULL;
         }
-        DicExc[Long][1] = strdup(PalOut);
+        DicExc[Long][1] = saga_strdup(PalOut);
         if (DicExc[Long][1] == NULL)
         {
             fprintf(stderr, "Error de memoria para el diccionario\n");
