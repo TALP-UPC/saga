@@ -23,7 +23,6 @@
 #include	<stdlib.h>
 #include	<ctype.h>
 #include	<limits.h>
-#include	<values.h>
 #include	<unistd.h>      /* getopt family */
 #include	"Util.h"
 #include    "PosixCompat.h"

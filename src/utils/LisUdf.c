@@ -18,7 +18,6 @@
 */
 
 #include	<limits.h>
-#include	<values.h>
 #include	<string.h>
 #include	<stdlib.h>
 #include	<stdio.h>

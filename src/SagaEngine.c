@@ -24,7 +24,6 @@
 #include	<ctype.h>
 #include	<limits.h>
 #include    <stdarg.h>
-#include	<values.h>
 #include	"Util.h"
 #include	"LisUdf.h"
 #include	"SagaInternal.h"
