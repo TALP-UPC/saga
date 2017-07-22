@@ -1,7 +1,9 @@
 #!/bin/sh
 mkdir -p "autotools/m4"
-libtoolize --copy \
-&& aclocal \
+case `uname` in Darwin*) glibtoolize --copy ;;
+*) libtoolize --copy ;; esac
+
+aclocal \
 && autoheader \
 && automake --add-missing --copy \
 && autoconf
