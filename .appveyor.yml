@@ -1,0 +1,51 @@
+os: Visual Studio 2015
+
+environment:
+  global:
+    compiler: msvc2015
+  matrix:
+    - arch: x86
+
+    - arch: x64
+
+platform:
+  - x64
+
+install:
+  - cmd: if %arch%==x86 (set PYTHON_PATH=C:\python34) else (set PYTHON_PATH=C:\python34-x64)
+  # Prepend newly installed Python to the PATH of this build (this cannot be
+  # done from inside the powershell script as it would require to restart
+  # the parent CMD process).
+  - "SET PATH=%PYTHON_PATH%;%PYTHON_PATH%\\Scripts;%PATH%"
+  # Check that we have the expected version and architecture for Python
+  - "python --version"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+
+  # Upgrade to the latest version of pip to avoid it displaying warnings
+  # about it being out of date.
+  - "pip install --disable-pip-version-check --user --upgrade pip"
+  # Use the x86 python only when building for x86 for the cpython tests.
+  # For all other archs (including, say, arm), use the x64 python.
+  - ps: (new-object net.webclient).DownloadFile('https://www.dropbox.com/s/bbzvepq85hv47x1/ninja.exe?dl=1', 'C:\projects\saga\ninja.exe')
+  - cmd: echo Using ninja version
+  - cmd: C:\projects\saga\ninja.exe --version
+  - cmd: echo Using Python at %PYTHON_PATH%
+  - cmd: "pip install meson"
+  - cmd: if %compiler%==msvc2010 ( call "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat" %arch% )
+  - cmd: if %compiler%==msvc2015 ( call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %arch% )
+
+build_script:
+  - cmd: echo Building on %arch% with %compiler%
+  - cmd: PATH=%cd%;%PYTHON_PATH%;%PATH%; && python %PYTHON_PATH%\\Scripts\\meson.py --default-library=static --backend=ninja builddir
+  - cmd: PATH=%cd%;%PYTHON_PATH%;%PATH%; && C:\projects\saga\ninja.exe -C builddir
+
+test_script:
+  - cmd: PATH=%cd%;%PYTHON_PATH%;%PATH%; && C:\projects\saga\ninja.exe -C builddir test
+
+after_build:
+  - cmd: 7z a all.zip %APPVEYOR_BUILD_FOLDER%\builddir\*
+
+artifacts:
+  - path: 'all.zip'
+    name: Everything
+
