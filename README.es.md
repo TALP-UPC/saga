@@ -1,36 +1,50 @@
-SAGA
-========
+# SAGA
 
 SAGA es una aplicación para la transcripción fonética del español, considerando
 sus múltiples variantes dialectales. Esta aplicación se distribuye bajo la GNU
 General Public License (http://www.gnu.org/licenses/gpl-3.0.txt).
 
-Instalación
---------------
-
-El primer paso depende de si dispone de una versión distribuída en .tar.gz o
-de un repositorio git.
+## Obtención de saga:
 
 Desde git:
 
     git clone https://github.com/TALP-UPC/saga.git
     cd saga
-    ./autogen.sh # genera el script configure. Requiere autotools-dev
 
-Desde tarball:
+Desde un fichero comprimido .tgz:
 
     tar xzf saga.tgz
     cd saga
 
-Si se desea instalar SAGA en un directorio personalizado, hay que usar
+
+## Compilación mediante meson
+
+Instalación de meson, si no está disponible:
+
+    # From a Debian-like system
+    # sudo apt install meson
+    # Any system with python3 and pip3:
+    # pip3 --user install meson
+
+Compilación:
+
+Si se desea instalar SAGA en un directorio personalizado, hay que usar 
 `--prefix=` a fin de especificar el directorio dónde se desee instalar SAGA.
 
+    meson --prefix="/$HOME/saga" builddir && cd builddir
+    ninja test
+    ninja install # may require sudo, depending on the prefix
+
+## Compilación mediante autotools
+
+Si se desea instalar SAGA en un directorio personalizado, hay que usar 
+`--prefix=` a fin de especificar el directorio dónde se desee instalar SAGA.
+    
     ./configure --prefix="$HOME/saga"
     make
     make install
 
-Uso de SAGA
--------------
+## Uso de SAGA
 
 SAGA puede cubrir varias transcripciones fonéticas, cubriendo varias variantes
 dialectales del español:
@@ -42,8 +56,8 @@ dialectales del español:
 
 El argument `saga -L` permite especificar la variante dialectal a utilizar para
 la transcripción.
-Modificando SAGA
------------------
+
+## Modificando SAGA
 
 En el directorio "dicc" se incluyen subdirectorios con los diccionarios 
 que modifican el comportamiento de SAGA para las distintas variantes del 
@@ -55,8 +69,7 @@ la transcripción.
 
 El código fuente de SAGA se encuentra en el directorio `src`.
 
-Usar SAGA como librería
-------------------------
+## Usar SAGA como librería
 
 En `test/saga_example.c` hay un ejemplo de código para usar SAGA en un programa.
 
@@ -67,8 +80,7 @@ los parámetros de compilación necesarios:
  - `pkg-config --libs saga`
 
 
-Más documentación
-------------------
+## Más documentación
 
 En el directorio "doc" se encuentran los siguientes documentos:
 
@@ -82,14 +94,12 @@ En el directorio "doc" se encuentran los siguientes documentos:
      Proc. ICSLP'98, pp. 189-192, Sydney, Australia (Nov. 1998).
      (SpanishDialectalVariants-ICSLP98)
 
-Autores principales
---------------------
+## Autores principales
 
 - José B. Mariño, Universidad Politécnica de Catalunya -- BarcelonaTech
 - Albino Nogueiras Rodríguez, Polytechnic University of Catalonia -- BarcelonaTech
 
-Colaboradores
----------------
+## Colaboradores
 
 - Sergio Oller Moreno se encargó del soporte de autotools, actualizar documentación,
   escribir la API SagaEngine, añadir soporte a pkg-config en Saga y incluir una

@@ -5,7 +5,7 @@ pkginclude_HEADERS =
 noinst_HEADERS =
 bin_PROGRAMS =
 CLEANFILES =
-EXTRA_DIST = saga.pc.in
+EXTRA_DIST = saga.pc.in meson.build
 
 
 pkgconfiginstalldir = $(libdir)/pkgconfig

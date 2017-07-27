@@ -1,5 +1,4 @@
-SAGA
-=========
+# SAGA
 
 Para leer la documentación en español consulte el fichero [README.es.md].
 
@@ -7,22 +6,35 @@ SAGA is an automatic tool for grapheme-to-allophone trasncription in Spanish,
 considering its multiple dialectal variants. It is distributed under the GNU
 General Public License (http://www.gnu.org/licenses/gpl-3.0.txt).
 
-Installation
---------------
-
-The first steps depend on whether you have a distribution tarball or a cloned
-git repository.
+## Obtain saga:
 
 From git only:
 
     git clone https://github.com/TALP-UPC/saga.git
     cd saga
-    ./autogen.sh # generates the configure script. Requires autotools-dev
 
 From a downloaded tarball only
 
     tar xzf saga.tgz
     cd saga
+
+
+## Installation using meson
+
+Install meson if not available:
+
+    # From a Debian-like system
+    # sudo apt install meson
+    # Any system with python3 and pip3:
+    # pip3 --user install meson
+
+Build:
+
+    meson --prefix="/$HOME/saga" builddir && cd builddir
+    ninja test
+    ninja install # may require sudo, depending on the prefix
+
+## Installation autotools
 
 Typically you will want to install SAGA to a custom directory, use `--prefix=`
 to specify the directory where Saga will be installed.
@@ -31,8 +43,7 @@ to specify the directory where Saga will be installed.
     make
     make install
 
-Usage
-------
+## Usage
 
 SAGA is able to cover several grapheme-to-allophone transcriptions, covering
 some of the Spanish dialectal variants:
@@ -44,8 +55,7 @@ some of the Spanish dialectal variants:
 The `saga -L` argument controls the supported dialectal variants.
 
 
-Modifying SAGA
----------------
+## Modifying SAGA
 
 The `dicc` directory contains the dictionaries that change SAGA behaviour
 for the Spanish variants. These dictionaries can be modified to customize the
@@ -55,8 +65,7 @@ dialect.
 
 SAGA source code is available under the `src` directory.
 
-Using SAGA as a library
-------------------------
+## Using SAGA as a library
 
 In `test/saga_example.c` there is an example on how to use SAGA in an
 external program.
@@ -69,8 +78,7 @@ the necessary compiler flags:
  - `pkg-config --libs saga`
 
 
-Further documentation
-------------------------
+## Further documentation
 
 In the `doc` directory the following documents are available:
 
@@ -84,16 +92,14 @@ In the `doc` directory the following documents are available:
      Proc. ICSLP'98, pp. 189-192, Sydney, Australia (Nov. 1998).
      (SpanishDialectalVariants-ICSLP98)
 
-Main Authors
---------------
+## Main Authors
 
 - José B. Mariño, Polytechnic University of Catalonia -- BarcelonaTech
 - Albino Nogueiras Rodríguez, Polytechnic University of Catalonia -- BarcelonaTech
 
-Contributors
--------------
+## Contributors
 
 - Sergio Oller Moreno took care of adding autotools support, update
   documentation, write the SagaEngine API, provide pkg-config support and include
-  functions that replace their POSIX versions if needed for portability.
+  functions that replace their POSIX versions for portability.
 
