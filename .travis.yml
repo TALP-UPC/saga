@@ -1,16 +1,35 @@
 language: c
-os: linux
+sudo: false
 
-script: 
-  - ./autogen.sh
-  - ./configure --prefix="$PWD/install" CPPFLAGS="-Wall -Werror --std=c99" CFLAGS="--coverage --no-inline" LDFLAGS="$LDFLAGS --coverage"
-  - make
-  - make check
-  - make install
+matrix:
+  include:
+  - os: osx
+    env: BUILDSYS=meson
+    compiler: clang
+  - os: linux
+    dist: "trusty"
+    env: BUILDSYS=meson
+  - os: osx
+    env: BUILDSYS=automake
+    compiler: clang
+  - os: linux
+    dist: "trusty"
+    env: BUILDSYS=automake
+
+
+install:
+  - export PATH="`pwd`/build:${PATH}"
+  - if [[ "$TRAVIS_OS_NAME" == "osx"  ]]; then rvm get stable; brew update && brew install python3 ninja pkg-config automake libtool; echo "done"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget https://github.com/ninja-build/ninja/releases/download/v1.7.2/ninja-linux.zip && unzip -q ninja-linux.zip -d build; fi
+  - pip3 install meson
+
+script:
+  - if [[ "$BUILDSYS" == "meson" ]]; then meson builddir && ninja -C builddir && ninja -C builddir test; fi
+  - if [[ "$BUILDSYS" == "automake" ]]; then ./autogen.sh && ./configure --prefix="$PWD/install" CPPFLAGS="-Wall -Werror --std=c99" && make && make check && make install; fi
+
 
 after_success:
-  - for direct in $(find . -type d); do (cd "$direct"; for file in $(ls | grep "\\.gcno$"); do gcov -b "$file"; done)  done
-  - bash <(curl -s https://codecov.io/bash)
+  - if [[ "$BUILDSYS" == "automake" && "$TRAVIS_OS_NAME" == "linux" ]]; then for direct in $(find . -type d); do (cd "$direct"; for file in $(ls | grep "\\.gcno$"); do gcov -b "$file"; done)  done; bash <(curl -s https://codecov.io/bash)
 
 env:
   global:
@@ -34,4 +53,6 @@ addons:
     - automake
     - libtool
     - pkg-config
+    - python3
+    - python3-pip
 

@@ -15,6 +15,11 @@ pkgconfiginstall_DATA = saga.pc
 lib_LTLIBRARIES += libsaga.la
 libsaga_la_SOURCES = src/utils/LisUdf.c src/utils/Util.c src/utils/PosixCompat.c
 libsaga_la_CFLAGS = -DSAGA_DICCDIR=\"$(pkgdatadir)/dicc/\"
+
+if BUILDING_SHARED_LIBRARY
+libsaga_la_CFLAGS += -DSAGA_BUILDING_SHARED -fvisibility="hidden"
+endif
+
 # version-info is defined according to the libtool manual:
 #
 # 1. Start with version information of ‘0:0:0’
@@ -53,7 +58,7 @@ noinst_HEADERS += \
 bin_PROGRAMS += saga
 
 saga_CFLAGS = -I$(srcdir)/include -I$(srcdir)/src -I$(srcdir)/src/utils
-saga_SOURCES = bin/Saga.c
+saga_SOURCES = bin/Saga.c src/utils/PosixCompat.c src/utils/Util.c
 saga_LDADD = libsaga.la
 
 
@@ -138,8 +143,8 @@ test_saga_example_CFLAGS = $(libsaga_la_CFLAGS)
 
 
 
-test_test_saga_SOURCES = test/test_saga.c
-test_test_saga_LDADD = libsaga.la 
+test_test_saga_SOURCES = test/test_saga.c src/utils/LisUdf.c src/utils/Util.c src/utils/PosixCompat.c
+test_test_saga_LDADD = libsaga.la
 test_test_saga_CFLAGS = $(libsaga_la_CFLAGS) \
     -DTEST_FILE_DIR=\"$(top_srcdir)/test/\"
 

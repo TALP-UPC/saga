@@ -31,10 +31,6 @@
 
 char *saga_strdup(const char *str);
 
-int saga_getopt(int argc, char *const *nargv, const char *ostr);
-extern char *saga_optarg;
-extern int saga_optind, saga_opterr, saga_optopt;
-
 #include <stdio.h>
 #include <stdint.h>
 

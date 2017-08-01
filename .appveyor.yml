@@ -5,7 +5,6 @@ environment:
     compiler: msvc2015
   matrix:
     - arch: x86
-
     - arch: x64
 
 platform:
@@ -36,7 +35,7 @@ install:
 
 build_script:
   - cmd: echo Building on %arch% with %compiler%
-  - cmd: PATH=%cd%;%PYTHON_PATH%;%PATH%; && python %PYTHON_PATH%\\Scripts\\meson.py --default-library=static --backend=ninja builddir
+  - cmd: PATH=%cd%;%PYTHON_PATH%;%PATH%; && python %PYTHON_PATH%\\Scripts\\meson.py --backend=ninja builddir
   - cmd: PATH=%cd%;%PYTHON_PATH%;%PATH%; && C:\projects\saga\ninja.exe -C builddir
 
 test_script:

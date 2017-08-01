@@ -24,6 +24,9 @@ AC_C_BIGENDIAN
 LT_INIT()
 AC_TYPE_SSIZE_T
 
+AM_CONDITIONAL([BUILDING_SHARED_LIBRARY], [test "x$enable_shared" = xyes])
+AM_CONDITIONAL([BUILDING_STATIC_LIBRARY], [test "x$enable_static" = xyes])
+
 AC_CONFIG_FILES([Makefile saga.pc])
 AC_OUTPUT
 

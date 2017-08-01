@@ -15,66 +15,6 @@ char *saga_strdup(const char *str)
     return str_copy;
 }
 
-/*
- * This is a version of the public domain getopt implementation by
- * Henry Spencer originally posted to net.sources.
- *
- * This is in the public domain.
- */
-
-#include <stdio.h>
-#include <string.h>
-
-char *saga_optarg; /* Global argument pointer. */
-int saga_optind = 0; /* Global argv index. */
-
-int saga_getopt(int argc, char *const *argv, const char *ostr)
-{
-        static char *scan = NULL; /* Private scan pointer. */
-	char c;
-	char *place;
-
-	saga_optarg = NULL;
-
-	if (!scan || *scan == '\0') {
-		if (saga_optind == 0)
-			saga_optind++;
-
-		if (saga_optind >= argc || argv[saga_optind][0] != '-' || argv[saga_optind][1] == '\0')
-			return EOF;
-		if (argv[saga_optind][1] == '-' && argv[saga_optind][2] == '\0') {
-			saga_optind++;
-			return EOF;
-		}
-
-		scan = argv[saga_optind]+1;
-		saga_optind++;
-	}
-
-	c = *scan++;
-	place = strchr(ostr, c);
-
-	if (!place || c == ':') {
-		fprintf(stderr, "%s: unknown option -%c\n", argv[0], c);
-		return '?';
-	}
-
-	place++;
-	if (*place == ':') {
-		if (*scan != '\0') {
-			saga_optarg = scan;
-			scan = NULL;
-		} else if( saga_optind < argc ) {
-			saga_optarg = argv[saga_optind];
-			saga_optind++;
-		} else {
-			fprintf(stderr, "%s: option requires argument -%c\n", argv[0], c);
-			return ':';
-		}
-	}
-
-	return c;
-}
 
 /* saga_getline.c
  *

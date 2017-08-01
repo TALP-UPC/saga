@@ -1,4 +1,5 @@
 project('saga', 'c', default_options : ['c_std=c99'])
+c_compiler = meson.get_compiler('c')
 
 saga_version = '2.0.0'
 
@@ -7,18 +8,33 @@ diccdir = join_paths(get_option('datadir'), 'saga', 'dicc')
 
 saga_inc = include_directories(['src', 'src/utils', 'include'])
 
-sagalib = library('saga',
-        ['src/utils/LisUdf.c', 'src/utils/Util.c', 'src/utils/PosixCompat.c',
-         'src/SagaAcc.c', 'src/SagaDic.c', 'src/SagaExt.c', 'src/SagaSil.c',
-         'src/SagaTrn.c', 'src/SagaCom.c', 'src/SagaEngine.c'],
+build_dll = ['-DSAGA_BUILDING_SHARED']
+if c_compiler.has_argument('-fvisibility=hidden')
+  build_dll += ['-fvisibility=hidden']
+endif
+
+lib_src = ['src/utils/LisUdf.c', 'src/utils/Util.c', 'src/utils/PosixCompat.c',
+           'src/SagaAcc.c', 'src/SagaDic.c', 'src/SagaExt.c', 'src/SagaSil.c',
+           'src/SagaTrn.c', 'src/SagaCom.c', 'src/SagaEngine.c']
+
+saga_shared_lib = shared_library('saga', lib_src,
         include_directories : saga_inc,
         version : saga_version,
-        install : true)
+        install : true,
+        c_args : build_dll)
 
-sagadep = declare_dependency(link_with : sagalib, 
-                             include_directories : saga_inc)
+saga_static_lib = static_library('saga', lib_src,
+        include_directories : saga_inc,
+        version : saga_version,
+        install : true,
+        c_args : ['-DSAGA_BUILDING_STATIC'])
 
-executable('saga', 'bin/Saga.c', dependencies: sagadep, install: true)
+
+sagashareddep = declare_dependency(link_with : saga_shared_lib, 
+                                   include_directories : saga_inc)
+
+sagastaticdep = declare_dependency(link_with : saga_static_lib, 
+                                   include_directories : saga_inc)
 
 
 conf_data = configuration_data()
@@ -54,15 +70,21 @@ endforeach
 
 install_man('man/man1/saga.1')
 
-# Tests:
+executable('saga', ['bin/Saga.c'],
+           dependencies: sagastaticdep, # test_saga uses private functions
+           install: true,
+           c_args : ['-DSAGA_BUILDING_STATIC'])
 
+
+# Tests:
 e = executable('test_saga', 'test/test_saga.c',
-               dependencies: sagadep,
-               c_args : '-DTEST_FILE_DIR="@0@/test/"'.format(meson.current_source_dir()))
+               dependencies: sagastaticdep, # test_saga uses private functions
+               c_args : ['-DTEST_FILE_DIR="@0@/test/"'.format(meson.current_source_dir()),
+                         '-DSAGA_BUILDING_STATIC'])
 test('test_saga', e)
 
 e2 = executable('saga_example', 'test/saga_example.c',
-                dependencies: sagadep)
+                dependencies: sagashareddep) # this example uses only public functions
 
 test('saga_example', e2, env : ['SAGA_DICCDIR=@0@/dicc/'.format(meson.current_source_dir())])
 
@@ -70,7 +92,7 @@ test('saga_example', e2, env : ['SAGA_DICCDIR=@0@/dicc/'.format(meson.current_so
 
 pkg = import('pkgconfig')
 
-pkg.generate(libraries : sagalib, name : 'saga',
+pkg.generate(libraries : saga_shared_lib, name : 'saga',
              description: 'A library for Spanish phonetic transcription.',
              subdirs: 'saga',
              version: saga_version)
