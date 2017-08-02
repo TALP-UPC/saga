@@ -37,6 +37,8 @@ Si se desea instalar SAGA en un directorio personalizado, hay que usar
 
 ## Compilación mediante autotools
 
+(El sistema de compilación para saga usando autotools está obsoleto y se eliminará en un futuro)
+
 Si se desea instalar SAGA en un directorio personalizado, hay que usar 
 `--prefix=` a fin de especificar el directorio dónde se desee instalar SAGA.
     

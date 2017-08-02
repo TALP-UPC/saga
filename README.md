@@ -34,7 +34,9 @@ Build:
     ninja test
     ninja install # may require sudo, depending on the prefix
 
-## Installation autotools
+## Installation (using autotools)
+
+(The autotools build system for saga is deprecated and will be removed in future versions)
 
 Typically you will want to install SAGA to a custom directory, use `--prefix=`
 to specify the directory where Saga will be installed.
