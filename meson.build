@@ -1,7 +1,7 @@
-project('saga', 'c', default_options : ['c_std=c99'])
+project('saga', 'c', default_options : ['c_std=c99'], version : '2.0.1')
 c_compiler = meson.get_compiler('c')
 
-saga_version = '2.0.0'
+saga_version = meson.project_version()
 
 # Where the dictionaries are installed
 diccdir = join_paths(get_option('datadir'), 'saga', 'dicc')
@@ -25,7 +25,6 @@ saga_shared_lib = shared_library('saga', lib_src,
 
 saga_static_lib = static_library('saga', lib_src,
         include_directories : saga_inc,
-        version : saga_version,
         install : true,
         c_args : ['-DSAGA_BUILDING_STATIC'])
 
@@ -41,7 +40,7 @@ conf_data = configuration_data()
 conf_data.set('SAGA_DICCDIR', '"' + join_paths(get_option('prefix'), diccdir) + '"')
 
 configure_file(output : 'config.h',
-               configuration : conf_data, install: true)
+               configuration : conf_data)
 
 
 install_headers('include/Saga.h', subdir : 'saga')
