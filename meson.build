@@ -40,7 +40,9 @@ conf_data = configuration_data()
 conf_data.set('SAGA_DICCDIR', '"' + join_paths(get_option('prefix'), diccdir) + '"')
 
 configure_file(output : 'config.h',
-               configuration : conf_data)
+               configuration : conf_data,
+               install: true,
+               install_dir : get_option('includedir') / 'saga')
 
 
 install_headers('include/Saga.h', subdir : 'saga')
